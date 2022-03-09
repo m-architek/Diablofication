@@ -1,0 +1,22 @@
+BACKUP ~Diablofication/backup~
+SUPPORT ~https://github.com/m-architek/Diablofication~
+VERSION ~v0.0.1~
+
+
+
+BEGIN "Character respawn"
+REQUIRE_PREDICATE GAME_IS ~bgee~ ~~
+
+COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
+  WRITE_LONG 0x14 (THIS | BIT4) // add player1-can-die bit
+  BUT_ONLY
+
+/*
+ACTION_FOR_EACH script IN baldur baldur25 bdbaldur BEGIN
+  ACTION_IF FILE_EXISTS_IN_GAME ~%script%.bcs~ THEN BEGIN
+    EXTEND_TOP ~%script%.bcs~ ~cdtweaks/baf/deathcam.baf~
+  END	
+END 
+*/
+
+
