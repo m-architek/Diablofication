@@ -1,0 +1,46 @@
+IF
+	StateCheck(Player1,STATE_REALLY_DEAD)
+THEN
+	RESPONSE #100
+		ClearAllActions()
+		
+		StartCutSceneMode()
+		SmallWait(15)
+		FadeToColor([20.0],0)
+		SmallWait(30)
+		
+		ApplySpell(Player1,CLERIC_RAISE_DEAD)  // SPPR504.SPL (Raise Dead)
+		ApplySpell(Player2,CLERIC_RAISE_DEAD)  // SPPR504.SPL (Raise Dead)
+		ApplySpell(Player3,CLERIC_RAISE_DEAD)  // SPPR504.SPL (Raise Dead)
+		ApplySpell(Player4,CLERIC_RAISE_DEAD)  // SPPR504.SPL (Raise Dead)
+		ApplySpell(Player5,CLERIC_RAISE_DEAD)  // SPPR504.SPL (Raise Dead)
+		ApplySpell(Player6,CLERIC_RAISE_DEAD)  // SPPR504.SPL (Raise Dead)
+		
+		SmallWait(5)
+		
+		CopyGroundPilesTo("AR4802",[353.334])  // Temple of Helm (Nalin)
+		DestroyGroundPiles()
+		
+		SmallWait(5)
+		
+		ActionOverride(Player1,LeaveAreaLUA("AR4802","",[473.395],NE))  // Temple of Helm (Nalin)
+		ActionOverride(Player2,LeaveAreaLUA("AR4802","",[528.421],NE))  // Temple of Helm (Nalin)
+		ActionOverride(Player3,LeaveAreaLUA("AR4802","",[442.428],NE))  // Temple of Helm (Nalin)
+		ActionOverride(Player4,LeaveAreaLUA("AR4802","",[498.454],NE))  // Temple of Helm (Nalin)
+		ActionOverride(Player5,LeaveAreaLUA("AR4802","",[407.464],NE))  // Temple of Helm (Nalin)
+		ActionOverride(Player6,LeaveAreaLUA("AR4802","",[461.490],NE))  // Temple of Helm (Nalin)
+
+		SmallWait(5)
+		
+		ApplySpell(Player1,CLERIC_HEAL)  // SPPR607.SPL (Heal)
+		ApplySpell(Player2,CLERIC_HEAL)  // SPPR607.SPL (Heal)
+		ApplySpell(Player3,CLERIC_HEAL)  // SPPR607.SPL (Heal)
+		ApplySpell(Player4,CLERIC_HEAL)  // SPPR607.SPL (Heal)
+		ApplySpell(Player5,CLERIC_HEAL)  // SPPR607.SPL (Heal)
+		ApplySpell(Player6,CLERIC_HEAL)  // SPPR607.SPL (Heal)
+		
+		SmallWait(15)
+		FadeFromColor([20.0],0)
+		SmallWait(30)
+		EndCutSceneMode()
+END
