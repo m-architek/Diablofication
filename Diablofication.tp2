@@ -3,11 +3,14 @@ SUPPORT ~https://github.com/m-architek/Diablofication~
 VERSION ~v0.0.1~
 
 
+ALWAYS
+  OUTER_SPRINT src ~Diablofication/src~
+END
+
+
 BEGIN "Character respawn"
 REQUIRE_PREDICATE GAME_IS ~bgee~ ~~
 
-COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
-  WRITE_LONG 0x14 (THIS | BIT4) // add player1-can-die bit
-  BUT_ONLY
-
-EXTEND_TOP ~baldur.bcs~ ~Diablofication/chresp.baf~
+WITH_SCOPE BEGIN
+  INCLUDE ~%src%/chresp/module.tph~
+END
