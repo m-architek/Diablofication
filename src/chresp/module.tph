@@ -1,0 +1,16 @@
+OUTER_SPRINT src ~%src%~ ^ ~/chresp~
+
+COPY ~%src%/dbfchrr.itm~ ~override~
+  SAY NAME1 ~Ring~
+  SAY NAME2 ~Respawn Ring~
+  SAY IDENTIFIED_DESC ~This ring is gift from Gorion. It emanates with strong magical energy.~
+
+COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
+  WRITE_LONG 0x14 (THIS | BIT4) // add player1-can-die bit
+//   INNER_ACTION BEGIN
+//     EXTEND_TOP ~%SOURCE_RES%.bcs~ ~%src%%/chresp.baf~
+//       EVALUATE_BUFFER
+//   END
+  BUT_ONLY
+
+EXTEND_TOP ~baldur.bcs~ ~%src%/baldur.baf~
