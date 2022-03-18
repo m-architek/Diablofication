@@ -1,4 +1,4 @@
-OUTER_SPRINT src ~%src%~ ^ ~/chresp~
+OUTER_SPRINT src ~%src%~ ^ ~/character_respawn~
 
 COPY ~%src%/dbfchrr.itm~ ~override~
   SAY NAME1 ~Ring~
@@ -9,7 +9,6 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
   WRITE_LONG 0x14 (THIS | BIT4) // add player1-can-die bit
 //   INNER_ACTION BEGIN
 //     EXTEND_TOP ~%SOURCE_RES%.bcs~ ~%src%%/chresp.baf~
-//       EVALUATE_BUFFER
 //   END
   BUT_ONLY
 
