@@ -2,9 +2,12 @@ BACKUP ~Diablofication/backup~
 SUPPORT ~https://github.com/m-architek/Diablofication~
 VERSION ~v0.0.1~
 
-
+AUTO_EVAL_STRINGS
+NO_IF_EVAL_BUG
+  
 ALWAYS
-  OUTER_SPRINT src ~Diablofication/src~
+  CLEAR_EVERYTHING
+  OUTER_SPRINT src ~%MOD_FOLDER%/src~
 END
 
 
@@ -12,5 +15,5 @@ BEGIN "Character respawn"
 REQUIRE_PREDICATE GAME_IS ~bgee~ ~~
 
 WITH_SCOPE BEGIN
-  INCLUDE ~%src%/chresp/module.tph~
+  INCLUDE ~%src%/character_respawn/main.tpa~
 END
