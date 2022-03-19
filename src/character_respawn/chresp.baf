@@ -23,12 +23,26 @@ THEN
         ApplySpell(Player5, CLERIC_RESURRECTION)
         ApplySpell(Player6, CLERIC_RESURRECTION)
 
+        ApplySpell(Player1, CLERIC_HEAL)
+        ApplySpell(Player2, CLERIC_HEAL)
+        ApplySpell(Player3, CLERIC_HEAL)
+        ApplySpell(Player4, CLERIC_HEAL)
+        ApplySpell(Player5, CLERIC_HEAL)
+        ApplySpell(Player6, CLERIC_HEAL)
+
         ApplySpell(Player1, CLERIC_RESTORATION)
         ApplySpell(Player2, CLERIC_RESTORATION)
         ApplySpell(Player3, CLERIC_RESTORATION)
         ApplySpell(Player4, CLERIC_RESTORATION)
         ApplySpell(Player5, CLERIC_RESTORATION)
         ApplySpell(Player6, CLERIC_RESTORATION)
+
+        ApplySpell(Player1, FORCE_DISPEL_MAGIC)
+        ApplySpell(Player2, FORCE_DISPEL_MAGIC)
+        ApplySpell(Player3, FORCE_DISPEL_MAGIC)
+        ApplySpell(Player4, FORCE_DISPEL_MAGIC)
+        ApplySpell(Player5, FORCE_DISPEL_MAGIC)
+        ApplySpell(Player6, FORCE_DISPEL_MAGIC)
 
         ActionOverride(Player1, LeaveAreaLUAPanic("AR4802", "", [473.395], NE))
         ActionOverride(Player1, LeaveAreaLUA("AR4802", "", [473.395], NE))
