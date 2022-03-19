@@ -7,9 +7,9 @@ COPY ~%src%/dbfchrr.itm~ ~override~
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
   WRITE_LONG 0x14 (THIS | BIT4) // add player1-can-die bit
-//   INNER_ACTION BEGIN
-//     EXTEND_TOP ~%SOURCE_RES%.bcs~ ~%src%%/chresp.baf~
-//   END
+  INNER_ACTION BEGIN
+    EXTEND_TOP ~%SOURCE_RES%.bcs~ ~%src%/chresp.baf~
+  END
   BUT_ONLY
 
 EXTEND_TOP ~baldur.bcs~ ~%src%/baldur.baf~

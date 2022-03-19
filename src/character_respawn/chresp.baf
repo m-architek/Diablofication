@@ -1,0 +1,54 @@
+IF
+    HP(Player1, 1)
+THEN
+    RESPONSE #100
+        ClearAllActions()
+
+        StartCutSceneMode()
+        SmallWait(15)
+        FadeToColor([20.0], 0)
+        SmallWait(15)
+
+        ApplySpell(Player1, WIZARD_STONE_TO_FLESH)
+        ApplySpell(Player2, WIZARD_STONE_TO_FLESH)
+        ApplySpell(Player3, WIZARD_STONE_TO_FLESH)
+        ApplySpell(Player4, WIZARD_STONE_TO_FLESH)
+        ApplySpell(Player5, WIZARD_STONE_TO_FLESH)
+        ApplySpell(Player6, WIZARD_STONE_TO_FLESH)
+
+        ApplySpell(Player1, CLERIC_RAISE_DEAD)
+        ApplySpell(Player2, CLERIC_RAISE_DEAD)
+        ApplySpell(Player3, CLERIC_RAISE_DEAD)
+        ApplySpell(Player4, CLERIC_RAISE_DEAD)
+        ApplySpell(Player5, CLERIC_RAISE_DEAD)
+        ApplySpell(Player6, CLERIC_RAISE_DEAD)
+
+        ActionOverride(Player1, LeaveAreaLUAPanic("AR4802", "", [473.395], NE))
+        ActionOverride(Player1, LeaveAreaLUA("AR4802", "", [473.395], NE))
+        ActionOverride(Player2, LeaveAreaLUA("AR4802", "", [528.421], NE))
+        ActionOverride(Player3, LeaveAreaLUA("AR4802", "", [442.428], NE))
+        ActionOverride(Player4, LeaveAreaLUA("AR4802", "", [498.454], NE))
+        ActionOverride(Player5, LeaveAreaLUA("AR4802", "", [407.464], NE))
+        ActionOverride(Player6, LeaveAreaLUA("AR4802", "", [461.490], NE))
+
+        SetMasterArea("AR4800")
+        MultiPlayerSync()
+
+        ApplySpell(Player1, CLERIC_HEAL)
+        ApplySpell(Player2, CLERIC_HEAL)
+        ApplySpell(Player3, CLERIC_HEAL)
+        ApplySpell(Player4, CLERIC_HEAL)
+        ApplySpell(Player5, CLERIC_HEAL)
+        ApplySpell(Player6, CLERIC_HEAL)
+
+        ActionOverride(Player1, Rest())
+        ActionOverride(Player2, Rest())
+        ActionOverride(Player3, Rest())
+        ActionOverride(Player4, Rest())
+        ActionOverride(Player5, Rest())
+        ActionOverride(Player6, Rest())
+
+        SmallWait(15)
+        FadeFromColor([20.0], 0)
+        EndCutSceneMode()
+END
