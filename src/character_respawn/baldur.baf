@@ -9,48 +9,11 @@ THEN
 END
 
 IF
-    HP(Player1, 1)
+    OnCreation()
+    HasItem("dbfchrr", Player1)
+    !HasItemEquiped("dbfchrr", Player1)
 THEN
     RESPONSE #100
-        ClearAllActions()
-
-        StartCutSceneMode()
-        SmallWait(15)
-        FadeToColor([20.0], 0)
-        SmallWait(30)
-
-        ApplySpell(Player2, CLERIC_RAISE_DEAD)  // SPPR504.SPL (Raise Dead)
-        ApplySpell(Player3, CLERIC_RAISE_DEAD)  // SPPR504.SPL (Raise Dead)
-        ApplySpell(Player4, CLERIC_RAISE_DEAD)  // SPPR504.SPL (Raise Dead)
-        ApplySpell(Player5, CLERIC_RAISE_DEAD)  // SPPR504.SPL (Raise Dead)
-        ApplySpell(Player6, CLERIC_RAISE_DEAD)  // SPPR504.SPL (Raise Dead)
-
-        ActionOverride(Player1, LeaveAreaLUA("AR4802", "", [473.395], NE))  // Temple of Helm (Nalin)
-        ActionOverride(Player2, LeaveAreaLUA("AR4802", "", [528.421], NE))  // Temple of Helm (Nalin)
-        ActionOverride(Player3, LeaveAreaLUA("AR4802", "", [442.428], NE))  // Temple of Helm (Nalin)
-        ActionOverride(Player4, LeaveAreaLUA("AR4802", "", [498.454], NE))  // Temple of Helm (Nalin)
-        ActionOverride(Player5, LeaveAreaLUA("AR4802", "", [407.464], NE))  // Temple of Helm (Nalin)
-        ActionOverride(Player6, LeaveAreaLUA("AR4802", "", [461.490], NE))  // Temple of Helm (Nalin)
-
-        SetMasterArea("AR4800")
-        MultiPlayerSync()
-
-        ApplySpell(Player1, CLERIC_HEAL)  // SPPR607.SPL (Heal)
-        ApplySpell(Player2, CLERIC_HEAL)  // SPPR607.SPL (Heal)
-        ApplySpell(Player3, CLERIC_HEAL)  // SPPR607.SPL (Heal)
-        ApplySpell(Player4, CLERIC_HEAL)  // SPPR607.SPL (Heal)
-        ApplySpell(Player5, CLERIC_HEAL)  // SPPR607.SPL (Heal)
-        ApplySpell(Player6, CLERIC_HEAL)  // SPPR607.SPL (Heal)
-
-        ActionOverride(Player1, Rest())
-        ActionOverride(Player2, Rest())
-        ActionOverride(Player3, Rest())
-        ActionOverride(Player4, Rest())
-        ActionOverride(Player5, Rest())
-        ActionOverride(Player6, Rest())
-
-        SmallWait(15)
-        FadeFromColor([20.0], 0)
-        SmallWait(30)
-        EndCutSceneMode()
+        XEquipItem("dbfchrr", Player1, SLOT_RING_RIGHT, EQUIP)
+        Continue()
 END
