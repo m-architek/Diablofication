@@ -16,12 +16,19 @@ THEN
         ApplySpell(Player5, WIZARD_STONE_TO_FLESH)
         ApplySpell(Player6, WIZARD_STONE_TO_FLESH)
 
-        ApplySpell(Player1, CLERIC_RAISE_DEAD)
-        ApplySpell(Player2, CLERIC_RAISE_DEAD)
-        ApplySpell(Player3, CLERIC_RAISE_DEAD)
-        ApplySpell(Player4, CLERIC_RAISE_DEAD)
-        ApplySpell(Player5, CLERIC_RAISE_DEAD)
-        ApplySpell(Player6, CLERIC_RAISE_DEAD)
+        ApplySpell(Player1, CLERIC_RESURRECTION)
+        ApplySpell(Player2, CLERIC_RESURRECTION)
+        ApplySpell(Player3, CLERIC_RESURRECTION)
+        ApplySpell(Player4, CLERIC_RESURRECTION)
+        ApplySpell(Player5, CLERIC_RESURRECTION)
+        ApplySpell(Player6, CLERIC_RESURRECTION)
+
+        ApplySpell(Player1, CLERIC_RESTORATION)
+        ApplySpell(Player2, CLERIC_RESTORATION)
+        ApplySpell(Player3, CLERIC_RESTORATION)
+        ApplySpell(Player4, CLERIC_RESTORATION)
+        ApplySpell(Player5, CLERIC_RESTORATION)
+        ApplySpell(Player6, CLERIC_RESTORATION)
 
         ActionOverride(Player1, LeaveAreaLUAPanic("AR4802", "", [473.395], NE))
         ActionOverride(Player1, LeaveAreaLUA("AR4802", "", [473.395], NE))
@@ -33,13 +40,6 @@ THEN
 
         SetMasterArea("AR4800")
         MultiPlayerSync()
-
-        ApplySpell(Player1, CLERIC_HEAL)
-        ApplySpell(Player2, CLERIC_HEAL)
-        ApplySpell(Player3, CLERIC_HEAL)
-        ApplySpell(Player4, CLERIC_HEAL)
-        ApplySpell(Player5, CLERIC_HEAL)
-        ApplySpell(Player6, CLERIC_HEAL)
 
         ActionOverride(Player1, Rest())
         ActionOverride(Player2, Rest())
