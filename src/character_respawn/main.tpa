@@ -13,3 +13,13 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
   BUT_ONLY
 
 EXTEND_TOP ~baldur.bcs~ ~%src%/baldur.baf~
+
+COPY ~%config%/respawn_points.2da~ ~override~
+  LPF READ_2DA_KEYS RET_ARRAY respawn_point_keys = out END
+  PHP_EACH respawn_point_keys AS _ => respawn_point_key BEGIN
+    PATCH_PRINT ~respawn_point: %respawn_point_key%~
+    // LPF READ_2DA_VALUE STR_VAR key = ~%respawn_point_key%~ RET_ARRAY respawn_point = out END
+    // PHP_EACH respawn_point AS key => value BEGIN
+    //   PATCH_PRINT ~%key%: %value%~
+    // END
+  END
