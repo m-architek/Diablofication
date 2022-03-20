@@ -1,7 +1,8 @@
 OUTER_SET 2DA_CONTENT_OFFSET = 3
-OUTER_SET 2DA_CONTENT_HEADER_ROW = 2
+OUTER_SET 2DA_CONTENT_HEADER_ROW_INDEX = 2
 
-DEFINE_PATCH_FUNCTION READ_2DA_KEYS
+
+DEFINE_PATCH_FUNCTION READ_2DA_ROW_NAMES
     RET_ARRAY out
 BEGIN
     COUNT_2DA_ROWS 0 raw_rows_count
@@ -10,33 +11,44 @@ BEGIN
     DEFINE_ASSOCIATIVE_ARRAY out BEGIN END
     FOR (content_row_index = 0; content_row_index < content_rows_count; ++content_row_index) BEGIN
         SET raw_row_index = content_row_index + 2DA_CONTENT_OFFSET // READ_2DA_ENTRY counts from the begginign of the file
-        READ_2DA_ENTRY raw_row_index 0 0 row_id
-        DEFINE_ASSOCIATIVE_ARRAY out BEGIN ~%content_row_index%~ => ~%row_id%~ END
+        READ_2DA_ENTRY raw_row_index 0 0 row_name
+        DEFINE_ASSOCIATIVE_ARRAY out BEGIN ~%content_row_index%~ => ~%row_name%~ END
     END
 END
 
+DEFINE_PATCH_FUNCTION READ_2DA_COLUMN_NAMES
+    RET_ARRAY out
+BEGIN
+    COUNT_2DA_COLS raw_columns_count
+    SET content_columns_count = raw_columns_count - 1 // First column does not have name
 
-// DEFINE_PATCH_FUNCTION READ_2DA_VALUE
-//     STR_VAR key = 0
-//     RET_ARRAY out
-// BEGIN
-//     COUNT_2DA_ROWS 0 raw_rows_count
-//     COUNT_2DA_COLS raw_columns_count
+    DEFINE_ASSOCIATIVE_ARRAY out BEGIN END
+    FOR (content_coulmn_index = 0; content_coulmn_index < content_columns_count; ++content_coulmn_index) BEGIN
+        READ_2DA_ENTRY 2DA_CONTENT_HEADER_ROW_INDEX content_coulmn_index 0 column_name
+        DEFINE_ASSOCIATIVE_ARRAY out BEGIN ~%content_coulmn_index%~ => ~%column_name%~ END
+    END
+END
 
-//     SET content_rows_count = raw_rows_count - 2DA_CONTENT_OFFSET
-//     SET content_columns_count = raw_columns_count - 1
+DEFINE_PATCH_FUNCTION READ_2DA_ROW
+    STR_VAR row_name = 0
+    RET_ARRAY out
+BEGIN
+    LPF READ_2DA_COLUMN_NAMES RET_ARRAY column_names = out END
 
-//     DEFINE_ASSOCIATIVE_ARRAY out BEGIN END
-//     FOR (content_row_index = 0; content_row_index < content_rows_count; ++content_row_index) BEGIN
-//         SET raw_row_index = content_row_index + 2DA_CONTENT_OFFSET // READ_2DA_ENTRY counts from the begginign of the file
-//         READ_2DA_ENTRY raw_row_index 0 0 row_id
+    COUNT_2DA_ROWS 0 raw_rows_count
+    SET content_rows_count = raw_rows_count - 2DA_CONTENT_OFFSET
+
+    DEFINE_ASSOCIATIVE_ARRAY out BEGIN END
+    FOR (content_row_index = 0; content_row_index < content_rows_count; ++content_row_index) BEGIN
+        SET raw_row_index = content_row_index + 2DA_CONTENT_OFFSET // READ_2DA_ENTRY counts from the begginign of the file
+        READ_2DA_ENTRY raw_row_index 0 0 this_row_name
         
-//         PATCH_IF (~%row_id%~ STRING_EQUAL ~%key%~) BEGIN
-//             FOR (content_column_index = 1; content_column_index < content_columns_count; ++content_column_index) BEGIN
-//                 READ_2DA_ENTRY 2DA_CONTENT_HEADER_ROW content_column_index 0 column_name
-//                 READ_2DA_ENTRY raw_row_index content_column_index 0 column_value
-//                 DEFINE_ASSOCIATIVE_ARRAY out BEGIN ~%column_name%~ => ~%column_value%~ END
-//             END
-//         END
-//     END
-// END
+        PATCH_IF (~%this_row_name%~ STRING_EQUAL ~%row_name%~) BEGIN
+            PHP_EACH column_names AS column_index => column_name BEGIN
+                SET raw_column_index = column_index + 1 // First column does not have name
+                READ_2DA_ENTRY raw_row_index raw_column_index 0 column_value
+                DEFINE_ASSOCIATIVE_ARRAY out BEGIN ~%column_name%~ => ~%column_value%~ END
+            END
+        END
+    END
+END
