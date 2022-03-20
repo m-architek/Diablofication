@@ -6,8 +6,11 @@ AUTO_EVAL_STRINGS
 NO_IF_EVAL_BUG
   
 ALWAYS
-  CLEAR_EVERYTHING
-  OUTER_SPRINT src ~%MOD_FOLDER%/src~
+    CLEAR_EVERYTHING
+    OUTER_SPRINT config ~%MOD_FOLDER%/config~
+    OUTER_SPRINT lib ~%MOD_FOLDER%/lib~
+    OUTER_SPRINT src ~%MOD_FOLDER%/src~
+    INCLUDE ~%lib%/2da.tpa~
 END
 
 
@@ -15,5 +18,5 @@ BEGIN "Character respawn"
 REQUIRE_PREDICATE GAME_IS ~bgee~ ~~
 
 WITH_SCOPE BEGIN
-  INCLUDE ~%src%/character_respawn/main.tpa~
+    INCLUDE ~%src%/character_respawn/main.tpa~
 END
