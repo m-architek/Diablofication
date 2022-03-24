@@ -7,9 +7,12 @@ NO_IF_EVAL_BUG
   
 ALWAYS
     CLEAR_EVERYTHING
+
+    OUTER_SPRINT assets ~%MOD_FOLDER%/assets~
     OUTER_SPRINT config ~%MOD_FOLDER%/config~
     OUTER_SPRINT lib ~%MOD_FOLDER%/lib~
     OUTER_SPRINT src ~%MOD_FOLDER%/src~
+
     INCLUDE ~%lib%/2da.tpa~
 END
 

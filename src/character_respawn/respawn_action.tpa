@@ -1,9 +1,18 @@
-IF
-    HP(Player1, 1)
-THEN
-    RESPONSE #100
-        ClearAllActions()
+DEFINE_ACTION_FUNCTION BUILD_RESPAWN_ACTION
+    STR_VAR respawn_point_ref = 0
+    RET out
+BEGIN
+    OUTER_SPRINT area $~%respawn_point_ref%~(AREA)
+    OUTER_SPRINT master_area $~%respawn_point_ref%~(MASTER_AREA)
+    OUTER_SPRINT p1_pos $~%respawn_point_ref%~(PLAYER1_POS)
+    OUTER_SPRINT p2_pos $~%respawn_point_ref%~(PLAYER2_POS)
+    OUTER_SPRINT p3_pos $~%respawn_point_ref%~(PLAYER3_POS)
+    OUTER_SPRINT p4_pos $~%respawn_point_ref%~(PLAYER4_POS)
+    OUTER_SPRINT p5_pos $~%respawn_point_ref%~(PLAYER5_POS)
+    OUTER_SPRINT p6_pos $~%respawn_point_ref%~(PLAYER6_POS)
+    OUTER_SPRINT face $~%respawn_point_ref%~(FACE)
 
+    OUTER_SPRINT out ~~~~~
         StartCutSceneMode()
         SmallWait(15)
         FadeToColor([20.0], 0)
@@ -44,15 +53,15 @@ THEN
         ApplySpell(Player5, FORCE_DISPEL_MAGIC)
         ApplySpell(Player6, FORCE_DISPEL_MAGIC)
 
-        ActionOverride(Player1, LeaveAreaLUAPanic("AR4802", "", [473.395], NE))
-        ActionOverride(Player1, LeaveAreaLUA("AR4802", "", [473.395], NE))
-        ActionOverride(Player2, LeaveAreaLUA("AR4802", "", [528.421], NE))
-        ActionOverride(Player3, LeaveAreaLUA("AR4802", "", [442.428], NE))
-        ActionOverride(Player4, LeaveAreaLUA("AR4802", "", [498.454], NE))
-        ActionOverride(Player5, LeaveAreaLUA("AR4802", "", [407.464], NE))
-        ActionOverride(Player6, LeaveAreaLUA("AR4802", "", [461.490], NE))
+        ActionOverride(Player1, LeaveAreaLUAPanic("%area%", "", %p1_pos%, %face%))
+        ActionOverride(Player1, LeaveAreaLUA("%area%", "", %p1_pos%, %face%))
+        ActionOverride(Player2, LeaveAreaLUA("%area%", "", %p2_pos%, %face%))
+        ActionOverride(Player3, LeaveAreaLUA("%area%", "", %p3_pos%, %face%))
+        ActionOverride(Player4, LeaveAreaLUA("%area%", "", %p4_pos%, %face%))
+        ActionOverride(Player5, LeaveAreaLUA("%area%", "", %p5_pos%, %face%))
+        ActionOverride(Player6, LeaveAreaLUA("%area%", "", %p6_pos%, %face%))
 
-        SetMasterArea("AR4800")
+        SetMasterArea("%master_area%")
         MultiPlayerSync()
 
         ActionOverride(Player1, Rest())
@@ -65,4 +74,5 @@ THEN
         SmallWait(15)
         FadeFromColor([20.0], 0)
         EndCutSceneMode()
+    ~~~~~
 END
