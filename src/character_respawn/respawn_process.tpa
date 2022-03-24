@@ -1,0 +1,49 @@
+INCLUDE ~%src%/respawn_action.tpa~
+
+COPY ~%config%/respawn_points.2da~ ~~
+    LPF READ_2DA_ROW_NAMES RET_ARRAY respawn_point_names = out END
+    PHP_EACH respawn_point_names AS _ => respawn_point_name BEGIN
+        LPF READ_2DA_ROW STR_VAR row_name = ~%respawn_point_name%~ RET_ARRAY ~respawn_point_%respawn_point_name%~ = out END
+    END
+    BUT_ONLY
+
+<<<<<<<< .../area_script_extension.baf
+IF
+    HP(Player1, 1)
+    %respawn_filter%
+THEN
+    RESPONSE #100
+        ClearAllActions()
+        %respawn_action%
+END
+>>>>>>>>
+
+DEFINE_ACTION_FUNCTION EXTEND_TOP_WITH_DEFAULT_RESPAWN_RULE
+    STR_VAR SOURCE_RES = 0
+BEGIN
+    OUTER_SPRINT default_respawn_point_name ~NASHKEL~
+   
+    OUTER_SPRINT respawn_filter ~~
+
+    LAF BUILD_RESPAWN_ACTION STR_VAR respawn_point_ref = ~respawn_point_%default_respawn_point_name%~
+        RET respawn_action = out END
+
+    EXTEND_TOP ~%SOURCE_RES%.bcs~ ~.../area_script_extension.baf~ 
+        EVALUATE_BUFFER
+END
+
+// DEFINE_ACTION_FUNCTION EXTEND_TOP_WITH_AREA_SPECIFIC_RESPAWN_RULE
+//     RET out
+// BEGIN
+// END
+
+// DEFINE_ACTION_FUNCTION EXTEND_TOP_WITH_PLOT_CRITICAL_RESPAWN_RULES
+//     RET out
+// BEGIN
+// END
+
+COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
+    INNER_ACTION BEGIN
+    LAF EXTEND_TOP_WITH_DEFAULT_RESPAWN_RULE STR_VAR SOURCE_RES END
+    END
+    BUT_ONLY
