@@ -1,25 +1,5 @@
 OUTER_SPRINT src ~%src%~ ^ ~/character_respawn~
 
-COPY ~%src%/dbfchrr.itm~ ~override~
-    SAY NAME1 ~Ring~
-    SAY NAME2 ~Respawn Ring~
-    SAY IDENTIFIED_DESC ~This ring is gift from Gorion. It emanates with strong magical energy.~
+INCLUDE ~%src%/true_death_prevention.tpa~
 
-COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
-    WRITE_LONG 0x14 (THIS | BIT4) // add player1-can-die bit
-    INNER_ACTION BEGIN
-        EXTEND_TOP ~%SOURCE_RES%.bcs~ ~%src%/chresp.baf~
-    END
-    BUT_ONLY
-
-EXTEND_TOP ~baldur.bcs~ ~%src%/baldur.baf~
-
-COPY ~%config%/respawn_points.2da~ ~override~
-    LPF READ_2DA_ROW_NAMES RET_ARRAY respawn_point_names = out END
-    PHP_EACH respawn_point_names AS _ => respawn_point_name BEGIN
-        PATCH_PRINT ~respawn_point: %respawn_point_name%~
-        LPF READ_2DA_ROW STR_VAR row_name = ~%respawn_point_name%~ RET_ARRAY respawn_point = out END
-        PHP_EACH respawn_point AS key => value BEGIN
-            PATCH_PRINT ~%key%: %value%~
-        END
-    END
+INCLUDE ~%src%/respawn_process.tpa~

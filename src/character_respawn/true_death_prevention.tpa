@@ -1,0 +1,52 @@
+/**
+    Set "Player1 can die" flag on all areas.
+    This should prevent "game over" on petrification, maze or charm
+*/
+
+COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
+    WRITE_LONG 0x14 (THIS | BIT4)
+    BUT_ONLY
+
+
+
+/**
+    Give Player1 ring that protects from death
+    Ring sets Player1 minimal hp to 1 what prevents from normal death
+
+    Protection agains other death effects:
+    - Petrification: hp is reduced to 1 and eqipment stays on character. (Respawn can be triggered)
+    - Disintegration: hp is reduced to 1 but character still die and drop equipment. (FIXME) 
+    - Slay ("Finger of death"): -,,- (FIXME) 
+*/
+
+OUTER_SPRINT respawn_ring ~dbfchrr~
+
+COPY ~%assets%/itm/%respawn_ring%.itm~ ~override~
+    SAY NAME1 ~Ring~
+    SAY NAME2 ~Respawn Ring~
+    SAY IDENTIFIED_DESC ~This ring is gift from Gorion. It emanates with strong magical energy.~
+
+<<<<<<<< .../give_player_respawn_ring.baf
+IF
+    OnCreation()
+    !HasItem("%respawn_ring%", Player1)
+THEN
+    RESPONSE #100
+        GiveItemCreate("%respawn_ring%", Player1, 0, 0, 0)
+        XEquipItem("%respawn_ring%", Player1, SLOT_RING_RIGHT, EQUIP)
+        Continue()
+END
+
+IF
+    OnCreation()
+    HasItem("%respawn_ring%", Player1)
+    !HasItemEquiped("%respawn_ring%", Player1)
+THEN
+    RESPONSE #100
+        XEquipItem("%respawn_ring%", Player1, SLOT_RING_RIGHT, EQUIP)
+        Continue()
+END
+>>>>>>>>
+
+EXTEND_TOP ~baldur.bcs~ ~.../give_player_respawn_ring.baf~
+    EVALUATE_BUFFER
