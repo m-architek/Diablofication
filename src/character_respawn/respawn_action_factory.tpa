@@ -71,6 +71,13 @@ BEGIN
         ActionOverride(Player5, Rest())
         ActionOverride(Player6, Rest())
 
+        ActionOverride(Player1,CreateVisualEffectObject("SPFLESHS",Player1))
+        ActionOverride(Player2,CreateVisualEffectObject("SPFLESHS",Player2))
+        ActionOverride(Player3,CreateVisualEffectObject("SPFLESHS",Player3))
+        ActionOverride(Player4,CreateVisualEffectObject("SPFLESHS",Player4))
+        ActionOverride(Player5,CreateVisualEffectObject("SPFLESHS",Player5))
+        ActionOverride(Player6,CreateVisualEffectObject("SPFLESHS",Player6))
+
         SmallWait(15)
         FadeFromColor([20.0], 0)
         EndCutSceneMode()

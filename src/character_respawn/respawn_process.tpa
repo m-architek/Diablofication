@@ -1,9 +1,10 @@
-INCLUDE ~%src%/respawn_action.tpa~
+INCLUDE ~%src%/respawn_action_factory.tpa~
 
 COPY ~%config%/respawn_points.2da~ ~~
     LPF READ_2DA_ROW_NAMES RET_ARRAY respawn_point_names = out END
     PHP_EACH respawn_point_names AS _ => respawn_point_name BEGIN
-        LPF READ_2DA_ROW STR_VAR row_name = ~%respawn_point_name%~ RET_ARRAY ~respawn_point_%respawn_point_name%~ = out END
+        LPF READ_2DA_ROW STR_VAR row_name = ~%respawn_point_name%~ 
+            RET_ARRAY ~respawn_point_%respawn_point_name%~ = out END
     END
     BUT_ONLY
 
@@ -18,10 +19,8 @@ THEN
 END
 >>>>>>>>
 
-DEFINE_ACTION_FUNCTION EXTEND_TOP_WITH_DEFAULT_RESPAWN_RULE
-    STR_VAR SOURCE_RES = 0
-BEGIN
-    OUTER_SPRINT default_respawn_point_name ~NASHKEL~
+DEFINE_ACTION_FUNCTION EXTEND_AREA_SCRIPT_TOP_WITH_DEFAULT_RESPAWN_RULE BEGIN
+    OUTER_SPRINT default_respawn_point_name ~FRIENDLY_ARM_INN~
    
     OUTER_SPRINT respawn_filter ~~
 
@@ -32,18 +31,52 @@ BEGIN
         EVALUATE_BUFFER
 END
 
-// DEFINE_ACTION_FUNCTION EXTEND_TOP_WITH_AREA_SPECIFIC_RESPAWN_RULE
-//     RET out
-// BEGIN
-// END
+DEFINE_ACTION_FUNCTION EXTEND_AREA_SCRIPT_TOP_WITH_PLOT_CRITICAL_RESPAWN_RULES BEGIN
+    // Candlekeep Prologue
+    OUTER_SPRINT respawn_filter ~Global("Chapter", "GLOBAL", 0)~
+    OUTER_SPRINT respawn_point_name ~CANDLEKEEP_PROLOGUE~
+    LAF BUILD_RESPAWN_ACTION STR_VAR respawn_point_ref = ~respawn_point_%respawn_point_name%~
+        RET respawn_action = out END
+    EXTEND_TOP ~%SOURCE_RES%.bcs~ ~.../area_script_extension.baf~ 
+        EVALUATE_BUFFER
 
-// DEFINE_ACTION_FUNCTION EXTEND_TOP_WITH_PLOT_CRITICAL_RESPAWN_RULES
-//     RET out
-// BEGIN
-// END
+    // Candlekeep Chapter 6
+    OUTER_SPRINT respawn_filter ~~~~~
+        Global("Chapter", "GLOBAL", 6)
+        Global("DbfCandlekeepEnter", "GLOBAL", 1)
+        Global("Criminal", "GLOBAL", 0)
+    ~~~~~
+    OUTER_SPRINT respawn_point_name ~CANDLEKEEP~
+        LAF BUILD_RESPAWN_ACTION STR_VAR respawn_point_ref = ~respawn_point_%respawn_point_name%~
+            RET respawn_action = out END
+        EXTEND_TOP ~%SOURCE_RES%.bcs~ ~.../area_script_extension.baf~ 
+            EVALUATE_BUFFER
+
+    // Candlekeep Catacombs
+    OUTER_SPRINT respawn_filter ~~~~~
+        Global("Chapter", "GLOBAL", 6)
+        Global("Criminal", "GLOBAL", 1)
+    ~~~~~
+    OUTER_SPRINT respawn_point_name ~CANDLEKEEP_CATACOMBS~
+        LAF BUILD_RESPAWN_ACTION STR_VAR respawn_point_ref = ~respawn_point_%respawn_point_name%~
+            RET respawn_action = out END
+        EXTEND_TOP ~%SOURCE_RES%.bcs~ ~.../area_script_extension.baf~ 
+            EVALUATE_BUFFER
+END
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
     INNER_ACTION BEGIN
-    LAF EXTEND_TOP_WITH_DEFAULT_RESPAWN_RULE STR_VAR SOURCE_RES END
+        LAF EXTEND_AREA_SCRIPT_TOP_WITH_DEFAULT_RESPAWN_RULE END
+        LAF EXTEND_AREA_SCRIPT_TOP_WITH_PLOT_CRITICAL_RESPAWN_RULES END
     END
     BUT_ONLY
+
+
+<<<<<<<< .../candlekeep_enterence_extension.d
+ADD_TRANS_ACTION KEEPER 
+    BEGIN 4 END 
+    BEGIN 0 END 
+    ~SetGlobal("DbfCandlekeepEnter", "GLOBAL", 1)~
+>>>>>>>>
+
+COMPILE ~.../candlekeep_enterence_extension.d~
