@@ -2,4 +2,7 @@
 0
                         AREA    MASTER_AREA     PLAYER1_POS     PLAYER2_POS     PLAYER3_POS     PLAYER4_POS     PLAYER5_POS     PLAYER6_POS     FACE
 CANDLEKEEP_PROLOGUE     AR2600  AR2600          [4054.675]      [4102.702]      [4026.716]      [4075.741]      [3995.754]      [4060.779]      NE
+FRIENDLY_ARM_INN        AR2304  AR2300          [438.355]       [376.332]       [473.318]       [408.292]       [490.283]       [438.255]       SW
 NASHKEL                 AR4802  AR4800          [473.395]       [528.421]       [442.428]       [498.454]       [407.464]       [461.490]       NE
+CANDLEKEEP              AR2626  AR2626          [4054.675]      [4102.702]      [4026.716]      [4075.741]      [3995.754]      [4060.779]      NE
+CANDLEKEEP_CATACOMBS    AR2613  AR2626          [133.278]       [179.225]       [248.199]       [323.199]       [361.224]       [192.344]       E
