@@ -16,6 +16,8 @@ THEN
     RESPONSE #100
         ClearAllActions()
         %respawn_action%
+        SetGlobal("DbfRespawnChargeGold", "GLOBAL", 1)
+        SetGlobal("DbfRespawnChargeXP", "GLOBAL", 1)
 END
 >>>>>>>>
 
@@ -66,6 +68,7 @@ END
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
     INNER_ACTION BEGIN
+        // Extending top, so rules need to be applied in reverse order to their priority
         LAF EXTEND_AREA_SCRIPT_TOP_WITH_DEFAULT_RESPAWN_RULE END
         LAF EXTEND_AREA_SCRIPT_TOP_WITH_PLOT_CRITICAL_RESPAWN_RULES END
     END
