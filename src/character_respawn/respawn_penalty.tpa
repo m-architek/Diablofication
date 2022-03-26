@@ -1,0 +1,31 @@
+// SetGlobal("DbfRespawnChargeGold", "GLOBAL", 1)
+// SetGlobal("DbfRespawnChargeXP", "GLOBAL", 1)
+
+//XPGT(O:Object*,I:XP)
+
+COPY ~%config%/respawn_penalty_gold.2da~ ~~
+    LPF READ_2DA_ROW_NAMES RET_ARRAY respawn_penalty_gold_thresholds = out END
+    PHP_EACH respawn_penalty_gold_thresholds AS _ => respawn_penalty_gold_threshold BEGIN
+        LPF READ_2DA_ROW STR_VAR row_name = ~%respawn_penalty_gold_threshold%~ 
+            RET_ARRAY ~respawn_penalty_gold_threshold_%respawn_penalty_gold_threshold%~ = out END
+    END
+    BUT_ONLY
+
+<<<<<<<< .../apply_respawn_penalty_gold.baf
+IF
+    Global("DbfRespawnChargeGold", "GLOBAL", 1)
+    PartyGoldGT(%gold_threshold%)
+THEN
+    RESPONSE #100
+        TakePartyGold(%gold_penalty%)
+        SetGlobal("DbfRespawnChargeGold", "GLOBAL", 0)
+END
+>>>>>>>>
+
+ACTION_PHP_EACH respawn_penalty_gold_thresholds AS _ => respawn_penalty_gold_threshold BEGIN
+    OUTER_SPRINT respawn_penalty_gold_threshold_ref ~respawn_penalty_gold_threshold_%respawn_penalty_gold_threshold%~
+    OUTER_SPRINT gold_threshold $~%respawn_penalty_gold_threshold_ref%~(GOLD_GT)
+    OUTER_SPRINT gold_penalty $~%respawn_penalty_gold_threshold_ref%~(GOLD_PENALTY)
+    EXTEND_TOP ~baldur.bcs~ ~.../apply_respawn_penalty_gold.baf~
+        EVALUATE_BUFFER
+END
