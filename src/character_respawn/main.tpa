@@ -1,6 +1,6 @@
 OUTER_SPRINT src ~%src%~ ^ ~/character_respawn~
 
-INCLUDE ~%src%/true_death_prevention.tpa~
+INCLUDE ~%src%/death_prevention.tpa~
 
 INCLUDE ~%src%/respawn_process.tpa~
 
