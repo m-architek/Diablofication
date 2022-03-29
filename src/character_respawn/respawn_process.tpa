@@ -1,4 +1,4 @@
-INCLUDE ~%src%/respawn_action_factory.tpa~
+INCLUDE ~%src%/compile_respawn_cutscene.tpa~
 
 COPY ~%config%/respawn_points.2da~ ~~
     LPF READ_2DA_ROW_NAMES RET_ARRAY respawn_point_names = out END
@@ -8,6 +8,17 @@ COPY ~%config%/respawn_points.2da~ ~~
     END
     BUT_ONLY
 
+ACTION_DEFINE_ASSOCIATIVE_ARRAY respawn_cutscenes BEGIN END
+ACTION_PHP_EACH respawn_point_names AS respawn_point_index => respawn_point_name BEGIN
+    OUTER_SPRINT respawn_area $~respawn_point_%respawn_point_name%~(AREA)
+
+    LAF COMPILE_RESPAWN_CUTSCENE INT_VAR respawn_point_index 
+        STR_VAR respawn_point_ref = ~respawn_point_%respawn_point_name%~
+        RET respawn_cutscene_name
+        END
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY respawn_cutscenes BEGIN ~%respawn_point_name%~ => ~%respawn_cutscene_name%~ END
+END
+
 <<<<<<<< .../area_script_extension.baf
 IF
     HP(Player1, 1)
@@ -15,30 +26,26 @@ IF
 THEN
     RESPONSE #100
         ClearAllActions()
-        %respawn_action%
-        SetGlobal("DbfRespawnChargeGold", "GLOBAL", 1)
-        SetGlobal("DbfRespawnChargeXP", "GLOBAL", 1)
+        StartCutSceneEx("%respawn_cutscene%", TRUE)
 END
 >>>>>>>>
 
-DEFINE_ACTION_FUNCTION EXTEND_AREA_SCRIPT_TOP_WITH_DEFAULT_RESPAWN_RULE BEGIN
-    OUTER_SPRINT default_respawn_point_name ~FRIENDLY_ARM_INN~
-   
+DEFINE_ACTION_FUNCTION EXTEND_AREA_SCRIPT_TOP_WITH_DEFAULT_RESPAWN_RULE 
+    STR_VAR respawn_cutscenes_ref = 0
+BEGIN
     OUTER_SPRINT respawn_filter ~~
-
-    LAF BUILD_RESPAWN_ACTION STR_VAR respawn_point_ref = ~respawn_point_%default_respawn_point_name%~
-        RET respawn_action = out END
+    OUTER_SPRINT respawn_cutscene $~%respawn_cutscenes_ref%~(FRIENDLY_ARM_INN)
 
     EXTEND_TOP ~%SOURCE_RES%.bcs~ ~.../area_script_extension.baf~ 
         EVALUATE_BUFFER
 END
 
-DEFINE_ACTION_FUNCTION EXTEND_AREA_SCRIPT_TOP_WITH_PLOT_CRITICAL_RESPAWN_RULES BEGIN
+DEFINE_ACTION_FUNCTION EXTEND_AREA_SCRIPT_TOP_WITH_PLOT_CRITICAL_RESPAWN_RULES
+    STR_VAR respawn_cutscenes_ref = 0
+BEGIN
     // Candlekeep Prologue
     OUTER_SPRINT respawn_filter ~Global("Chapter", "GLOBAL", 0)~
-    OUTER_SPRINT respawn_point_name ~CANDLEKEEP_PROLOGUE~
-    LAF BUILD_RESPAWN_ACTION STR_VAR respawn_point_ref = ~respawn_point_%respawn_point_name%~
-        RET respawn_action = out END
+    OUTER_SPRINT respawn_cutscene $~%respawn_cutscenes_ref%~(CANDLEKEEP_PROLOGUE)
     EXTEND_TOP ~%SOURCE_RES%.bcs~ ~.../area_script_extension.baf~ 
         EVALUATE_BUFFER
 
@@ -48,33 +55,30 @@ DEFINE_ACTION_FUNCTION EXTEND_AREA_SCRIPT_TOP_WITH_PLOT_CRITICAL_RESPAWN_RULES B
         Global("DbfCandlekeepEnter", "GLOBAL", 1)
         Global("Criminal", "GLOBAL", 0)
     ~~~~~
-    OUTER_SPRINT respawn_point_name ~CANDLEKEEP~
-        LAF BUILD_RESPAWN_ACTION STR_VAR respawn_point_ref = ~respawn_point_%respawn_point_name%~
-            RET respawn_action = out END
-        EXTEND_TOP ~%SOURCE_RES%.bcs~ ~.../area_script_extension.baf~ 
-            EVALUATE_BUFFER
+    OUTER_SPRINT respawn_cutscene $~%respawn_cutscenes_ref%~(CANDLEKEEP)
+    EXTEND_TOP ~%SOURCE_RES%.bcs~ ~.../area_script_extension.baf~ 
+        EVALUATE_BUFFER
 
     // Candlekeep Catacombs
     OUTER_SPRINT respawn_filter ~~~~~
         Global("Chapter", "GLOBAL", 6)
         Global("Criminal", "GLOBAL", 1)
     ~~~~~
-    OUTER_SPRINT respawn_point_name ~CANDLEKEEP_CATACOMBS~
-        LAF BUILD_RESPAWN_ACTION STR_VAR respawn_point_ref = ~respawn_point_%respawn_point_name%~
-            RET respawn_action = out END
-        EXTEND_TOP ~%SOURCE_RES%.bcs~ ~.../area_script_extension.baf~ 
-            EVALUATE_BUFFER
+    OUTER_SPRINT respawn_cutscene $~%respawn_cutscenes_ref%~(CANDLEKEEP_CATACOMBS)
+    EXTEND_TOP ~%SOURCE_RES%.bcs~ ~.../area_script_extension.baf~ 
+        EVALUATE_BUFFER
 END
 
-COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
+COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~~
     INNER_ACTION BEGIN
         // Extending top, so rules need to be applied in reverse order to their priority
-        LAF EXTEND_AREA_SCRIPT_TOP_WITH_DEFAULT_RESPAWN_RULE END
-        LAF EXTEND_AREA_SCRIPT_TOP_WITH_PLOT_CRITICAL_RESPAWN_RULES END
+        LAF EXTEND_AREA_SCRIPT_TOP_WITH_DEFAULT_RESPAWN_RULE STR_VAR respawn_cutscenes_ref = respawn_cutscenes END
+        LAF EXTEND_AREA_SCRIPT_TOP_WITH_PLOT_CRITICAL_RESPAWN_RULES STR_VAR respawn_cutscenes_ref = respawn_cutscenes END
     END
     BUT_ONLY
 
 
+//TODO: replace with Ch6cut01 extension
 <<<<<<<< .../candlekeep_enterence_extension.d
 ADD_TRANS_ACTION KEEPER 
     BEGIN 4 END 

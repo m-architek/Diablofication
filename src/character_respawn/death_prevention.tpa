@@ -19,9 +19,9 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
     - Slay ("Finger of death"): -,,- (FIXME) 
 */
 
-OUTER_SPRINT respawn_ring ~dbfchrr~
+OUTER_SPRINT respawn_ring ~dbfcrr~
 
-COPY ~%assets%/itm/%respawn_ring%.itm~ ~override~
+COPY ~%resources%/itm/%respawn_ring%.itm~ ~override~
     SAY NAME1 ~Ring~
     SAY NAME2 ~Respawn Ring~
     SAY IDENTIFIED_DESC ~This ring is gift from Gorion. It emanates with strong magical energy.~
