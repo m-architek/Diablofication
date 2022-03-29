@@ -1,21 +1,12 @@
-DEFINE_ACTION_FUNCTION BUILD_RESPAWN_ACTION
-    STR_VAR respawn_point_ref = 0
-    RET out
-BEGIN
-    OUTER_SPRINT area $~%respawn_point_ref%~(AREA)
-    OUTER_SPRINT master_area $~%respawn_point_ref%~(MASTER_AREA)
-    OUTER_SPRINT p1_pos $~%respawn_point_ref%~(PLAYER1_POS)
-    OUTER_SPRINT p2_pos $~%respawn_point_ref%~(PLAYER2_POS)
-    OUTER_SPRINT p3_pos $~%respawn_point_ref%~(PLAYER3_POS)
-    OUTER_SPRINT p4_pos $~%respawn_point_ref%~(PLAYER4_POS)
-    OUTER_SPRINT p5_pos $~%respawn_point_ref%~(PLAYER5_POS)
-    OUTER_SPRINT p6_pos $~%respawn_point_ref%~(PLAYER6_POS)
-    OUTER_SPRINT face $~%respawn_point_ref%~(FACE)
+IF
+    True()
+THEN
+    RESPONSE #100
+        CutSceneId(Player1)
 
-    OUTER_SPRINT out ~~~~~
         StartCutSceneMode()
         SmallWait(15)
-        FadeToColor([20.0], 0)
+        FadeToColor([15.0], 0)
         SmallWait(15)
 
         ApplySpell(Player1, WIZARD_STONE_TO_FLESH)
@@ -53,8 +44,8 @@ BEGIN
         ApplySpell(Player5, FORCE_DISPEL_MAGIC)
         ApplySpell(Player6, FORCE_DISPEL_MAGIC)
 
-        ActionOverride(Player1, LeaveAreaLUAPanic("%area%", "", %p1_pos%, %face%))
-        ActionOverride(Player1, LeaveAreaLUA("%area%", "", %p1_pos%, %face%))
+        LeaveAreaLUAPanic("%area%", "", %p1_pos%, %face%)
+        LeaveAreaLUA("%area%", "", %p1_pos%, %face%)
         ActionOverride(Player2, LeaveAreaLUA("%area%", "", %p2_pos%, %face%))
         ActionOverride(Player3, LeaveAreaLUA("%area%", "", %p3_pos%, %face%))
         ActionOverride(Player4, LeaveAreaLUA("%area%", "", %p4_pos%, %face%))
@@ -64,22 +55,25 @@ BEGIN
         SetMasterArea("%master_area%")
         MultiPlayerSync()
 
-        ActionOverride(Player1, Rest())
+        Rest()
         ActionOverride(Player2, Rest())
         ActionOverride(Player3, Rest())
         ActionOverride(Player4, Rest())
         ActionOverride(Player5, Rest())
         ActionOverride(Player6, Rest())
 
-        ActionOverride(Player1,CreateVisualEffectObject("SPFLESHS",Player1))
-        ActionOverride(Player2,CreateVisualEffectObject("SPFLESHS",Player2))
-        ActionOverride(Player3,CreateVisualEffectObject("SPFLESHS",Player3))
-        ActionOverride(Player4,CreateVisualEffectObject("SPFLESHS",Player4))
-        ActionOverride(Player5,CreateVisualEffectObject("SPFLESHS",Player5))
-        ActionOverride(Player6,CreateVisualEffectObject("SPFLESHS",Player6))
+        CreateVisualEffectObject("SPFLESHS", Player1)
+        CreateVisualEffectObject("SPFLESHS", Player2)
+        CreateVisualEffectObject("SPFLESHS", Player3)
+        CreateVisualEffectObject("SPFLESHS", Player4)
+        CreateVisualEffectObject("SPFLESHS", Player5)
+        CreateVisualEffectObject("SPFLESHS", Player6)
 
         SmallWait(15)
-        FadeFromColor([20.0], 0)
+        FadeFromColor([15.0], 0)
+        SmallWait(15)
         EndCutSceneMode()
-    ~~~~~
+
+        SetGlobal("DbfRespawnChargeGold", "GLOBAL", 1)
+        SetGlobal("DbfRespawnChargeXP", "GLOBAL", 1)
 END
