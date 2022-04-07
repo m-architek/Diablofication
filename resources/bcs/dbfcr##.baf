@@ -74,6 +74,7 @@ THEN
         SmallWait(15)
         EndCutSceneMode()
 
-        SetGlobal("DbfRespawnChargeGold", "GLOBAL", 1)
-        SetGlobal("DbfRespawnChargeXP", "GLOBAL", 1)
+        // SetGlobal("DbfRespawnChargeGold", "GLOBAL", 1)
+        // SetGlobal("DbfRespawnChargeXP", "GLOBAL", 1)
+        StartCutSceneEx("dbfcrxp", TRUE)
 END
