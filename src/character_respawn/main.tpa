@@ -5,3 +5,5 @@ INCLUDE ~%src%/death_prevention.tpa~
 INCLUDE ~%src%/respawn_process.tpa~
 
 INCLUDE ~%src%/respawn_penalty.tpa~
+
+LAF APPLY_RESPAWN_PENALTY END
