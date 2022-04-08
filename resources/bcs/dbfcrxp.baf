@@ -1,7 +1,1 @@
-IF
-    True()
-THEN
-    RESPONSE #100
-        CutSceneId(Player1)
-        NoAction()
-END
+// Placeholder
