@@ -1,4 +1,4 @@
-DEFINE_ACTION_FUNCTION APPLY_RESPAWN_PENALTY BEGIN
+DEFINE_ACTION_FUNCTION APPLY_RESPAWN_PENALTY RET penalty_cutscene_name BEGIN
     LAF APPLY_RESPAWN_PENALTY_XP RET 
         xp_check_cutscene_name = check_cutscene_name
         xp_penalty_cutscene_name = penalty_cutscene_name
@@ -17,6 +17,8 @@ DEFINE_ACTION_FUNCTION APPLY_RESPAWN_PENALTY BEGIN
             StartCutSceneEx("%next_cutscene_name%", TRUE)
     END
     >>>>>>>>
+
+    OUTER_SPRINT penalty_cutscene_name ~%xp_check_cutscene_name%~
 
     EXTEND_BOTTOM ~%xp_check_cutscene_name%.bcs~ ~.../start_next_cutscene.baf~
         SPRINT next_cutscene_name ~%xp_penalty_cutscene_name%~

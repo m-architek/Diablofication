@@ -1,0 +1,64 @@
+<<<<<<<< .../area_script_extension.baf
+IF
+    HP(Player1, 1)
+    %respawn_filter%
+THEN
+    RESPONSE #100
+        ClearAllActions()
+        StartCutSceneEx("%respawn_cutscene%", TRUE)
+END
+>>>>>>>>
+
+DEFINE_ACTION_FUNCTION EXTEND_GLOBAL_SCRIPT_TOP_WITH_DEFAULT_RESPAWN_RULE 
+    STR_VAR respawn_cutscenes_ref = 0
+BEGIN
+    OUTER_SPRINT respawn_filter ~~
+    OUTER_SPRINT respawn_cutscene $~%respawn_cutscenes_ref%~(FRIENDLY_ARM_INN)
+
+    EXTEND_TOP ~baldur.bcs~ ~.../area_script_extension.baf~ 
+        EVALUATE_BUFFER
+END
+
+DEFINE_ACTION_FUNCTION EXTEND_GLOBAL_SCRIPT_TOP_WITH_PLOT_CRITICAL_RESPAWN_RULES
+    STR_VAR respawn_cutscenes_ref = 0
+BEGIN
+    // Candlekeep Prologue
+    OUTER_SPRINT respawn_filter ~Global("Chapter", "GLOBAL", 0)~
+    OUTER_SPRINT respawn_cutscene $~%respawn_cutscenes_ref%~(CANDLEKEEP_PROLOGUE)
+    EXTEND_TOP ~baldur.bcs~ ~.../area_script_extension.baf~ 
+        EVALUATE_BUFFER
+
+    // Candlekeep Chapter 6
+    OUTER_SPRINT respawn_filter ~~~~~
+        Global("Chapter", "GLOBAL", 6)
+        Global("DbfCandlekeepEnter", "GLOBAL", 1)
+        Global("Criminal", "GLOBAL", 0)
+    ~~~~~
+    OUTER_SPRINT respawn_cutscene $~%respawn_cutscenes_ref%~(CANDLEKEEP)
+    EXTEND_TOP ~baldur.bcs~ ~.../area_script_extension.baf~ 
+        EVALUATE_BUFFER
+
+    // Candlekeep Catacombs
+    OUTER_SPRINT respawn_filter ~~~~~
+        Global("Chapter", "GLOBAL", 6)
+        Global("Criminal", "GLOBAL", 1)
+    ~~~~~
+    OUTER_SPRINT respawn_cutscene $~%respawn_cutscenes_ref%~(CANDLEKEEP_CATACOMBS)
+    EXTEND_TOP ~baldur.bcs~ ~.../area_script_extension.baf~ 
+        EVALUATE_BUFFER
+END
+
+// Extending top, so rules need to be applied in reverse order to their priority
+LAF EXTEND_GLOBAL_SCRIPT_TOP_WITH_DEFAULT_RESPAWN_RULE STR_VAR respawn_cutscenes_ref = respawn_cutscenes END
+LAF EXTEND_GLOBAL_SCRIPT_TOP_WITH_PLOT_CRITICAL_RESPAWN_RULES STR_VAR respawn_cutscenes_ref = respawn_cutscenes END
+
+
+//TODO: replace with Ch6cut01 extension
+<<<<<<<< .../candlekeep_enterence_extension.d
+ADD_TRANS_ACTION KEEPER 
+    BEGIN 4 END 
+    BEGIN 0 END 
+    ~SetGlobal("DbfCandlekeepEnter", "GLOBAL", 1)~
+>>>>>>>>
+
+COMPILE ~.../candlekeep_enterence_extension.d~
