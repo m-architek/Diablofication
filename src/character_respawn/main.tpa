@@ -1,13 +1,21 @@
 OUTER_SPRINT src ~%src%~ ^ ~/character_respawn~
+INCLUDE ~%src%/respawn_trigger.tpa~
+INCLUDE ~%src%/respawn_execution.tpa~
 INCLUDE ~%src%/respawn_process.tpa~
 INCLUDE ~%src%/respawn_penalty.tpa~
 
 LAF APPLY_RESPAWN_PENALTY RET penalty_cutscene_name END
 
 LAF APPLY_RESPAWN_PROCESS STR_VAR penalty_cutscene_name
-    RET_ARRAY respawn_cutscenes 
+    RET_ARRAY respawn_point_names respawn_cutscenes 
     END
 
-INCLUDE ~%src%/death_prevention.tpa~
+LAF APPLY_RESPAWN_EXECUTION 
+    STR_VAR respawn_point_names_ref = respawn_point_names 
+        respawn_cutscenes_ref = respawn_cutscenes
+    RET respawn_execution_cutscene
+    END
 
-INCLUDE ~%src%/respawn_trigger.tpa~
+LAF APPLY_RESPAWN_TRIGGER STR_VAR respawn_execution_cutscene END
+
+INCLUDE ~%src%/death_prevention.tpa~

@@ -1,0 +1,138 @@
+DEFINE_ACTION_FUNCTION APPLY_RESPAWN_EXECUTION
+    STR_VAR respawn_point_names_ref = 0 
+        respawn_cutscenes_ref = 0
+    RET respawn_execution_cutscene
+BEGIN
+    LAF APPLY_RESPAWN_PROCESS_EXECUTION STR_VAR respawn_point_names_ref respawn_cutscenes_ref
+        RET respawn_point_indicator_variable respawn_process_execution_cutscene
+        RET_ARRAY respawn_points_indicators_ref = respawn_points_indicators
+        END
+    LAF APPLY_RESPAWN_POINT_RESOLVING STR_VAR respawn_point_indicator_variable respawn_points_indicators_ref
+        RET respawn_point_resolving_cutscene 
+        END
+
+    <<<<<<<< .../start_next_cutscene.baf
+    IF
+        True()
+    THEN
+        RESPONSE #100
+            CutSceneId(Player1)
+            StartCutSceneEx("%next_cutscene_name%", TRUE)
+    END
+    >>>>>>>>
+
+    OUTER_SPRINT respawn_execution_cutscene ~%respawn_point_resolving_cutscene%~
+
+    EXTEND_BOTTOM ~%respawn_point_resolving_cutscene%.bcs~ ~.../start_next_cutscene.baf~
+        SPRINT next_cutscene_name ~%respawn_process_execution_cutscene%~
+        EVALUATE_BUFFER
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_RESPAWN_PROCESS_EXECUTION
+    STR_VAR respawn_point_names_ref = 0
+        respawn_cutscenes_ref = 0
+    RET respawn_point_indicator_variable respawn_process_execution_cutscene
+    RET_ARRAY respawn_points_indicators
+BEGIN
+    OUTER_SPRINT respawn_process_execution_cutscene ~dbfcrex~
+    COMPILE ~%resources%/bcs/%respawn_process_execution_cutscene%.baf~
+
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY respawn_points_indicators BEGIN END
+    ACTION_PHP_EACH ~%respawn_point_names_ref%~ AS respawn_point_index => respawn_point_name BEGIN
+        ACTION_DEFINE_ASSOCIATIVE_ARRAY respawn_points_indicators BEGIN ~%respawn_point_name%~ => ~%respawn_point_index%~ END
+    END
+
+    OUTER_SPRINT respawn_point_indicator_variable ~%GLOBAL_CR_RESPAWN_POINT%~
+
+    <<<<<<<< .../execute_respawn_process.baf
+    IF
+        Global("%respawn_point_indicator_variable%", "GLOBAL", %respawn_point_indicator%)
+    THEN
+        RESPONSE #100
+            CutSceneId(Player1)
+            StartCutSceneEx("%respawn_cutscene%", TRUE)
+    END
+    >>>>>>>>
+
+    ACTION_PHP_EACH respawn_points_indicators AS respawn_point_name => respawn_point_indicator BEGIN
+        OUTER_SPRINT respawn_cutscene $~%respawn_cutscenes_ref%~(~%respawn_point_name%~)
+        EXTEND_TOP ~%respawn_process_execution_cutscene%.bcs~ ~.../execute_respawn_process.baf~
+            EVALUATE_BUFFER
+    END
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_RESPAWN_POINT_RESOLVING
+    STR_VAR respawn_point_indicator_variable = 0
+        respawn_points_indicators_ref = 0
+    RET respawn_point_resolving_cutscene 
+BEGIN
+    OUTER_SPRINT respawn_point_resolving_cutscene ~dbfcrer~
+    COMPILE ~%resources%/bcs/%respawn_point_resolving_cutscene%.baf~
+
+    <<<<<<<< .../respawn_point_rule.baf
+    IF
+        %respawn_point_filter%
+    THEN
+        RESPONSE #100
+            CutSceneId(Player1)
+            SetGlobal("%respawn_point_indicator_variable%", "GLOBAL", %respawn_point_indicator%)
+    END
+    >>>>>>>>
+
+
+    /*
+        DEFAULT
+    */
+    EXTEND_BOTTOM ~%respawn_point_resolving_cutscene%.bcs~ ~.../respawn_point_rule.baf~ 
+        SPRINT respawn_point_filter ~True()~
+        SPRINT respawn_point_indicator $~%respawn_points_indicators_ref%~(FRIENDLY_ARM_INN)
+        EVALUATE_BUFFER
+
+
+    /*
+        PLOT CRITICAL
+    */
+    LAF APPLY_PLOT_CRITICAL_RESPAWN_POINT_VARIABLES RET candlekeep_enter_variable END
+
+    EXTEND_BOTTOM ~%respawn_point_resolving_cutscene%.bcs~ ~.../respawn_point_rule.baf~ 
+        SPRINT respawn_point_filter ~Global("Chapter", "GLOBAL", 0)~
+        SPRINT respawn_point_indicator $~%respawn_points_indicators_ref%~(CANDLEKEEP_PROLOGUE)
+        EVALUATE_BUFFER
+
+    EXTEND_BOTTOM ~%respawn_point_resolving_cutscene%.bcs~ ~.../respawn_point_rule.baf~ 
+        SPRINT respawn_point_filter ~~~~~
+            Global("Chapter", "GLOBAL", 6)
+            Global("%candlekeep_enter_variable%", "GLOBAL", 1)
+            Global("Criminal", "GLOBAL", 0)
+        ~~~~~
+        SPRINT respawn_point_indicator $~%respawn_points_indicators_ref%~(CANDLEKEEP)
+        EVALUATE_BUFFER
+
+    EXTEND_BOTTOM ~%respawn_point_resolving_cutscene%.bcs~ ~.../respawn_point_rule.baf~ 
+        SPRINT respawn_point_filter ~~~~~
+            Global("Chapter", "GLOBAL", 6)
+            Global("Criminal", "GLOBAL", 1)
+        ~~~~~
+        SPRINT respawn_point_indicator $~%respawn_points_indicators_ref%~(CANDLEKEEP_CATACOMBS)
+        EVALUATE_BUFFER
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_PLOT_CRITICAL_RESPAWN_POINT_VARIABLES
+    RET candlekeep_enter_variable
+BEGIN
+    OUTER_SPRINT candlekeep_enter_variable ~%GLOBAL_CR_CANDLEKEEP_ENTER%~
+
+    //TODO: replace with CH6CUT01 extension
+    <<<<<<<< .../candlekeep_enterence_extension.d
+    ADD_TRANS_ACTION KEEPER 
+        BEGIN 4 END 
+        BEGIN 0 END 
+        ~SetGlobal("%candlekeep_enter_variable%", "GLOBAL", 1)~
+    >>>>>>>>
+
+    COMPILE ~.../candlekeep_enterence_extension.d~
+        EVALUATE_BUFFER
+END
