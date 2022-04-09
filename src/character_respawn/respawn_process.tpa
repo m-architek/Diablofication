@@ -1,6 +1,6 @@
 DEFINE_ACTION_FUNCTION APPLY_RESPAWN_PROCESS 
     STR_VAR penalty_cutscene_name = 0
-    RET_ARRAY respawn_cutscenes
+    RET_ARRAY respawn_point_names respawn_cutscenes
 BEGIN
     COPY - ~%config%/respawn_points.2da~ ~~
         LPF READ_2DA_ROW_NAMES RET_ARRAY respawn_point_names = out END
