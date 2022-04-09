@@ -1,85 +1,46 @@
-INCLUDE ~%src%/compile_respawn_cutscene.tpa~
-
-COPY ~%config%/respawn_points.2da~ ~~
-    LPF READ_2DA_ROW_NAMES RET_ARRAY respawn_point_names = out END
-    PHP_EACH respawn_point_names AS _ => respawn_point_name BEGIN
-        LPF READ_2DA_ROW STR_VAR row_name = ~%respawn_point_name%~ 
-            RET_ARRAY ~respawn_point_%respawn_point_name%~ = out END
-    END
-    BUT_ONLY
-
-ACTION_DEFINE_ASSOCIATIVE_ARRAY respawn_cutscenes BEGIN END
-ACTION_PHP_EACH respawn_point_names AS respawn_point_index => respawn_point_name BEGIN
-    OUTER_SPRINT respawn_area $~respawn_point_%respawn_point_name%~(AREA)
-
-    LAF COMPILE_RESPAWN_CUTSCENE INT_VAR respawn_point_index 
-        STR_VAR respawn_point_ref = ~respawn_point_%respawn_point_name%~
-        RET respawn_cutscene_name
+DEFINE_ACTION_FUNCTION APPLY_RESPAWN_PROCESS 
+    STR_VAR penalty_cutscene_name = 0
+    RET_ARRAY respawn_cutscenes
+BEGIN
+    COPY - ~%config%/respawn_points.2da~ ~~
+        LPF READ_2DA_ROW_NAMES RET_ARRAY respawn_point_names = out END
+        PHP_EACH respawn_point_names AS _ => respawn_point_name BEGIN
+            LPF READ_2DA_ROW STR_VAR row_name = ~%respawn_point_name%~ 
+                RET_ARRAY ~respawn_point_%respawn_point_name%~ = out END
         END
-    ACTION_DEFINE_ASSOCIATIVE_ARRAY respawn_cutscenes BEGIN ~%respawn_point_name%~ => ~%respawn_cutscene_name%~ END
+
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY respawn_cutscenes BEGIN END
+    ACTION_PHP_EACH respawn_point_names AS respawn_point_index => respawn_point_name BEGIN
+        OUTER_SPRINT respawn_area $~respawn_point_%respawn_point_name%~(AREA)
+    
+        LAF APPLY_RESPAWN_CUTSCENE INT_VAR respawn_point_index 
+            STR_VAR respawn_point_ref = ~respawn_point_%respawn_point_name%~
+            RET respawn_cutscene_name
+            END
+        ACTION_DEFINE_ASSOCIATIVE_ARRAY respawn_cutscenes BEGIN ~%respawn_point_name%~ => ~%respawn_cutscene_name%~ END
+    END
 END
 
-<<<<<<<< .../area_script_extension.baf
-IF
-    HP(Player1, 1)
-    %respawn_filter%
-THEN
-    RESPONSE #100
-        ClearAllActions()
-        StartCutSceneEx("%respawn_cutscene%", TRUE)
-END
->>>>>>>>
 
-DEFINE_ACTION_FUNCTION EXTEND_GLOBAL_SCRIPT_TOP_WITH_DEFAULT_RESPAWN_RULE 
-    STR_VAR respawn_cutscenes_ref = 0
+DEFINE_ACTION_FUNCTION APPLY_RESPAWN_CUTSCENE
+    INT_VAR respawn_point_index = ~~
+    STR_VAR respawn_point_ref = 0
+    RET respawn_cutscene_name
 BEGIN
-    OUTER_SPRINT respawn_filter ~~
-    OUTER_SPRINT respawn_cutscene $~%respawn_cutscenes_ref%~(FRIENDLY_ARM_INN)
+    OUTER_SPRINT respawn_cutscene_prefix ~dbfcr~
+    OUTER_SPRINT respawn_cutscene_name ~%respawn_cutscene_prefix%%respawn_point_index%~
 
-    EXTEND_TOP ~baldur.bcs~ ~.../area_script_extension.baf~ 
+    OUTER_SPRINT area $~%respawn_point_ref%~(AREA)
+    OUTER_SPRINT master_area $~%respawn_point_ref%~(MASTER_AREA)
+    OUTER_SPRINT p1_pos $~%respawn_point_ref%~(PLAYER1_POS)
+    OUTER_SPRINT p2_pos $~%respawn_point_ref%~(PLAYER2_POS)
+    OUTER_SPRINT p3_pos $~%respawn_point_ref%~(PLAYER3_POS)
+    OUTER_SPRINT p4_pos $~%respawn_point_ref%~(PLAYER4_POS)
+    OUTER_SPRINT p5_pos $~%respawn_point_ref%~(PLAYER5_POS)
+    OUTER_SPRINT p6_pos $~%respawn_point_ref%~(PLAYER6_POS)
+    OUTER_SPRINT face $~%respawn_point_ref%~(FACE)
+    
+    COPY ~%resources%/bcs/%respawn_cutscene_prefix%##.baf~ ~override/%respawn_cutscene_name%.bcs~
         EVALUATE_BUFFER
+        COMPILE_BAF_TO_BCS
 END
-
-DEFINE_ACTION_FUNCTION EXTEND_GLOBAL_SCRIPT_TOP_WITH_PLOT_CRITICAL_RESPAWN_RULES
-    STR_VAR respawn_cutscenes_ref = 0
-BEGIN
-    // Candlekeep Prologue
-    OUTER_SPRINT respawn_filter ~Global("Chapter", "GLOBAL", 0)~
-    OUTER_SPRINT respawn_cutscene $~%respawn_cutscenes_ref%~(CANDLEKEEP_PROLOGUE)
-    EXTEND_TOP ~baldur.bcs~ ~.../area_script_extension.baf~ 
-        EVALUATE_BUFFER
-
-    // Candlekeep Chapter 6
-    OUTER_SPRINT respawn_filter ~~~~~
-        Global("Chapter", "GLOBAL", 6)
-        Global("DbfCandlekeepEnter", "GLOBAL", 1)
-        Global("Criminal", "GLOBAL", 0)
-    ~~~~~
-    OUTER_SPRINT respawn_cutscene $~%respawn_cutscenes_ref%~(CANDLEKEEP)
-    EXTEND_TOP ~baldur.bcs~ ~.../area_script_extension.baf~ 
-        EVALUATE_BUFFER
-
-    // Candlekeep Catacombs
-    OUTER_SPRINT respawn_filter ~~~~~
-        Global("Chapter", "GLOBAL", 6)
-        Global("Criminal", "GLOBAL", 1)
-    ~~~~~
-    OUTER_SPRINT respawn_cutscene $~%respawn_cutscenes_ref%~(CANDLEKEEP_CATACOMBS)
-    EXTEND_TOP ~baldur.bcs~ ~.../area_script_extension.baf~ 
-        EVALUATE_BUFFER
-END
-
-// Extending top, so rules need to be applied in reverse order to their priority
-LAF EXTEND_GLOBAL_SCRIPT_TOP_WITH_DEFAULT_RESPAWN_RULE STR_VAR respawn_cutscenes_ref = respawn_cutscenes END
-LAF EXTEND_GLOBAL_SCRIPT_TOP_WITH_PLOT_CRITICAL_RESPAWN_RULES STR_VAR respawn_cutscenes_ref = respawn_cutscenes END
-
-
-//TODO: replace with Ch6cut01 extension
-<<<<<<<< .../candlekeep_enterence_extension.d
-ADD_TRANS_ACTION KEEPER 
-    BEGIN 4 END 
-    BEGIN 0 END 
-    ~SetGlobal("DbfCandlekeepEnter", "GLOBAL", 1)~
->>>>>>>>
-
-COMPILE ~.../candlekeep_enterence_extension.d~

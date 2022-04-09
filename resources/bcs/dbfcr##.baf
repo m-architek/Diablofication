@@ -74,5 +74,5 @@ THEN
         SmallWait(15)
         EndCutSceneMode()
 
-        StartCutSceneEx("dbfcrxc", TRUE)
+        StartCutSceneEx("%penalty_cutscene_name%", TRUE)
 END
