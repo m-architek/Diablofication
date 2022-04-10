@@ -92,6 +92,21 @@ BEGIN
 
 
     /*
+        NEAREST
+    */
+    LAF APPLY_NEAREST_RESPAWN_POINT_VARIABLES STR_VAR respawn_points_indicators_ref
+        RET nearest_respawn_point_variable 
+        END
+
+    ACTION_PHP_EACH ~%respawn_points_indicators_ref%~ AS _ => respawn_point_indicator BEGIN
+        EXTEND_BOTTOM ~%respawn_point_resolving_cutscene%.bcs~ ~.../respawn_point_rule.baf~ 
+            SPRINT respawn_point_filter ~Global("%nearest_respawn_point_variable%", "GLOBAL", %respawn_point_indicator%)~
+            SPRINT respawn_point_indicator ~%respawn_point_indicator%~
+            EVALUATE_BUFFER
+    END
+
+
+    /*
         PLOT CRITICAL
     */
     LAF APPLY_PLOT_CRITICAL_RESPAWN_POINT_VARIABLES RET candlekeep_enter_variable END
@@ -117,6 +132,40 @@ BEGIN
         ~~~~~
         SPRINT respawn_point_indicator $~%respawn_points_indicators_ref%~(CANDLEKEEP_CATACOMBS)
         EVALUATE_BUFFER
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_NEAREST_RESPAWN_POINT_VARIABLES
+    STR_VAR respawn_points_indicators_ref = 0
+    RET nearest_respawn_point_variable
+BEGIN
+    OUTER_SPRINT nearest_respawn_point_variable ~%GLOBAL_CR_NEAREST_RESPAWN_POINT%~
+
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY nearest_respawn_points BEGIN END
+    COPY - ~%config%/respawn_points_nearest.2da~ ~~
+        LPF READ_2DA_ROW_NAMES RET_ARRAY area_names = out END
+        PHP_EACH area_names AS _ => area_name BEGIN
+            LPF READ_2DA_ROW STR_VAR row_name = ~%area_name%~ 
+                RET_ARRAY area_row = out END
+            DEFINE_ASSOCIATIVE_ARRAY nearest_respawn_points BEGIN ~%area_name%~ => $area_row(RESPAWN_POINT) END
+        END
+
+
+    <<<<<<<< .../nearest_respawn_point.baf
+    IF
+        OnCreation()
+    THEN
+        RESPONSE #100
+            SetGlobal("%nearest_respawn_point_variable%", "GLOBAL", %respawn_point_indicator%)
+            Continue()
+    END
+    >>>>>>>>
+
+    ACTION_PHP_EACH nearest_respawn_points AS area_name => respawn_point_name BEGIN
+        EXTEND_TOP ~%area_name%.bcs~ ~.../nearest_respawn_point.baf~ 
+            SPRINT respawn_point_indicator $~%respawn_points_indicators_ref%~(~%respawn_point_name%~)
+            EVALUATE_BUFFER
+    END
 END
 
 
