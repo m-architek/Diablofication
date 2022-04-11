@@ -2,11 +2,12 @@ OUTER_SET SPL_ABILITIES_OFFSET = 0x64
 OUTER_SET SPL_ABILITIES_COUNT = 0x68
 OUTER_SET SPL_ABILITY_SIZE = 40
 
-OUTER_SET SPL_ABILITY_TYPE_OFFSET = 0x2
-OUTER_SET SPL_ABILITY_TYPE_SPELL = 2
-
 OUTER_SET SPL_EFFECTS_OFFSET = 0x6a
 OUTER_SET SPL_EFFECT_SIZE = 48
+
+OUTER_SET SPL_ABILITY_TYPE_OFFSET = 0x2
+OUTER_SET SPL_ABILITY_TYPE_SPELL = 2
+OUTER_SET SPL_ABILITY_TYPE_INNATE = 4
 
 OUTER_SET SPL_ABILITY_EFFECTS_COUNT = 0x1e
 OUTER_SET SPL_ABILITY_EFFECTS_INDEX_OFFSET = 0x20
@@ -17,20 +18,67 @@ OUTER_SET SPL_CASTING_EFFECTS_COUNT = 0x70
 
 DEFINE_PATCH_FUNCTION ADD_SPL_ABILITY
     INT_VAR ability_type = 0
-    RET index
+    RET ability_index
 BEGIN
     READ_LONG SPL_ABILITIES_OFFSET abilities_offset
-    READ_SHORT SPL_ABILITIES_COUNT index
+    READ_SHORT SPL_ABILITIES_COUNT abilities_count
     READ_LONG SPL_EFFECTS_OFFSET effects_offset
 
-    SET offset = abilities_offset + index * SPL_ABILITY_SIZE
+    SET ability_index = abilities_count
+    SET ability_offset = abilities_offset + ability_index * SPL_ABILITY_SIZE
 
-    INSERT_BYTES offset SPL_ABILITY_SIZE
+    INSERT_BYTES ability_offset SPL_ABILITY_SIZE
 
-    WRITE_SHORT (offset + SPL_ABILITY_TYPE_SPELL) ability_type
+    WRITE_SHORT (ability_offset + SPL_ABILITY_TYPE_OFFSET) ability_type
 
-    WRITE_SHORT SPL_ABILITIES_COUNT (index + 1)
+    WRITE_SHORT SPL_ABILITIES_COUNT (ability_index + 1)
     WRITE_LONG SPL_EFFECTS_OFFSET (effects_offset + SPL_ABILITY_SIZE)
+END
+
+
+DEFINE_PATCH_FUNCTION ADD_SPL_ABILITY_EFFECT
+    INT_VAR ability_index = ~~
+        opcode = ~~
+        target_type = ~~
+        power = 0
+        param_1 = 0
+        param_2 = 0
+        timing_mode = ~~
+        dispel_resistance = 0
+        duration = 0
+        probability_1 = 100
+        probability_2 = 0
+    RET ability_effect_index
+BEGIN
+    READ_LONG SPL_ABILITIES_OFFSET abilities_offset
+    READ_SHORT SPL_ABILITIES_COUNT abilities_count
+    READ_LONG SPL_EFFECTS_OFFSET effects_offset
+
+    SET ability_offset = abilities_offset + ability_index * SPL_ABILITY_SIZE
+    READ_SHORT (ability_offset + SPL_ABILITY_EFFECTS_COUNT) ability_effects_count
+    READ_SHORT (ability_offset + SPL_ABILITY_EFFECTS_INDEX_OFFSET) ability_effects_index_offset
+
+    SET ability_effect_index = ability_effects_count
+    SET ability_effect_offset = effects_offset + (ability_effects_index_offset + ability_effect_index) * SPL_EFFECT_SIZE
+    INSERT_BYTES ability_effect_offset SPL_EFFECT_SIZE
+
+    WRITE_SHORT (ability_effect_offset + EFF_OPCODE_OFFSET) opcode
+    WRITE_BYTE (ability_effect_offset + EFF_TARGET_TYPE_OFFSET) target_type
+    WRITE_BYTE (ability_effect_offset + EFF_POWER_OFFSET) power
+    WRITE_LONG (ability_effect_offset + EFF_PARAM_1_OFFSET) param_1
+    WRITE_LONG (ability_effect_offset + EFF_PARAM_2_OFFSET) param_2
+
+    WRITE_BYTE (ability_effect_offset + EFF_TIMING_MODE_OFFSET) timing_mode
+    WRITE_BYTE (ability_effect_offset + EFF_DISPEL_RESISTANCE_OFFSET) dispel_resistance
+    WRITE_LONG (ability_effect_offset + EFF_DURATION_OFFSET) duration
+    WRITE_BYTE (ability_effect_offset + EFF_PROBABILITY_1_OFFSET) probability_1
+    WRITE_BYTE (ability_effect_offset + EFF_PROBABILITY_2_OFFSET) probability_2
+
+    WRITE_SHORT (ability_offset + SPL_ABILITY_EFFECTS_COUNT) (ability_effects_count + 1)
+    FOR (i = ability_effect_index + 1; i < ability_effects_count; ++i) BEGIN
+        SET next_ability_offset = abilities_offset + i * SPL_ABILITY_SIZE
+        WRITE_SHORT (next_ability_offset + SPL_ABILITY_EFFECTS_INDEX_OFFSET) (THIS + 1)
+    END
 END
 
 

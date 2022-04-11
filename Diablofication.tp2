@@ -14,9 +14,11 @@ ALWAYS
     OUTER_SPRINT resources ~%MOD_FOLDER%/resources~
 
     INCLUDE ~%lib%/2da.tpa~
+    INCLUDE ~%lib%/eff.tpa~
     INCLUDE ~%lib%/spl.tpa~
 
     INCLUDE ~%resources%/variables.tpa~
+    INCLUDE ~%resources%/spl.tpa~
 END
 
 
