@@ -1,52 +1,99 @@
-/**
-    Set "Player1 can die" flag on all areas.
-    This should prevent "game over" on petrification, maze or charm
-*/
-
-COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
-    WRITE_LONG 0x14 (THIS | BIT4)
-    BUT_ONLY
-
-
-
-/**
-    Give Player1 ring that protects from death
-    Ring sets Player1 minimal hp to 1 what prevents from normal death
-
-    Protection agains other death effects:
-    - Petrification: hp is reduced to 1 and eqipment stays on character. (Respawn can be triggered)
-    - Disintegration: hp is reduced to 1 but character still die and drop equipment. (FIXME) 
-    - Slay ("Finger of death"): -,,- (FIXME) 
-*/
-
-OUTER_SPRINT respawn_ring ~dbfcrr~
-
-COPY ~%resources%/itm/%respawn_ring%.itm~ ~override~
-    SAY NAME1 ~Ring~
-    SAY NAME2 ~Respawn Ring~
-    SAY IDENTIFIED_DESC ~This ring is gift from Gorion. It emanates with strong magical energy.~
-
-<<<<<<<< .../give_player_respawn_ring.baf
-IF
-    OnCreation()
-    !HasItem("%respawn_ring%", Player1)
-THEN
-    RESPONSE #100
-        GiveItemCreate("%respawn_ring%", Player1, 0, 0, 0)
-        XEquipItem("%respawn_ring%", Player1, SLOT_RING_RIGHT, EQUIP)
-        Continue()
+DEFINE_ACTION_FUNCTION APPLY_DEATH_PREVENTION BEGIN
+    LAF APPLY_PLAYER1_CAN_DIE_FLAG END
+    LAF APPLY_DEATH_PREVENTION_SPL END
+    // LAF APPLY_RESPAWN_RING END
 END
 
-IF
-    OnCreation()
-    HasItem("%respawn_ring%", Player1)
-    !HasItemEquiped("%respawn_ring%", Player1)
-THEN
-    RESPONSE #100
-        XEquipItem("%respawn_ring%", Player1, SLOT_RING_RIGHT, EQUIP)
-        Continue()
-END
->>>>>>>>
 
-EXTEND_TOP ~baldur.bcs~ ~.../give_player_respawn_ring.baf~
-    EVALUATE_BUFFER
+DEFINE_ACTION_FUNCTION APPLY_PLAYER1_CAN_DIE_FLAG BEGIN
+    COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
+        WRITE_LONG 0x14 (THIS | BIT4)
+        BUT_ONLY
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_DEATH_PREVENTION_SPL BEGIN
+
+    // COPY ~%resources%/blank.eff~ ~override/%RESREF_EFF_CR_DEATH_PREVENTION%.eff~
+    //     LPF ADD_EFF INT_VAR opcode = EFF_OPCODE_SCRIPT_LOCAL_VAR
+    //         param_1 = 1
+    //         target_type = EFF_TARGET_TYPE_SELF
+    //         timing_mode = EFF_TIMING_MODE_INSTANT_PERMANENT
+    //         STR_VAR variable_name = ~%GLOBAL_CR_DP_ON%~
+    //         END
+
+    COPY ~%resources%/blank.spl~ ~override/%RESREF_SPL_CR_DEATH_PREVENTION%.spl~
+        LPF ADD_SPL_ABILITY RET ability_index END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_HP_MINIMUM
+            param_1 = 1
+            target_type = EFF_TARGET_TYPE_PRESET
+            timing_mode = EFF_TIMING_MODE_INSTANT_PERMANENT
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_GRPAHICS_PLAY_EFFECT
+            target_type = EFF_TARGET_TYPE_PRESET
+            timing_mode = EFF_TIMING_MODE_INSTANT_PERMANENT
+            STR_VAR resref = ~SPSTRENH~ // VVC_RESTORATION
+            END
+        // LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+        //     opcode = EFF_OPCODE_USE_EFF_FILE
+        //     param_1 = 0
+        //     param_2 = 2
+        //     target_type = EFF_TARGET_TYPE_SELF
+        //     timing_mode = EFF_TIMING_MODE_INSTANT_PERMANENT
+        //     STR_VAR resref = ~%RESREF_EFF_CR_DEATH_PREVENTION%~
+        //     END
+
+    <<<<<<<< .../enable_death_prevention.baf
+    IF
+        OnCreation()
+        // TriggerOverride(Player1, Global("%GLOBAL_CR_DP_ON%", "LOCALS", 0))
+    THEN
+        RESPONSE #100
+            ApplySpellRES("%death_prevention_resref%", Player1)
+            // CreateVisualEffectObject("SPFLESHS", Player1)
+            Continue()
+    END
+    >>>>>>>>
+    
+    EXTEND_TOP ~baldur.bcs~ ~.../enable_death_prevention.baf~
+        SPRINT death_prevention_resref ~%RESREF_SPL_CR_DEATH_PREVENTION%~
+        TO_UPPER death_prevention_resref
+        EVALUATE_BUFFER
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_RESPAWN_RING BEGIN
+    OUTER_SPRINT respawn_ring ~dbfcrr~
+
+    COPY ~%resources%/itm/%respawn_ring%.itm~ ~override~
+        SAY NAME1 ~Ring~
+        SAY NAME2 ~Respawn Ring~
+        SAY IDENTIFIED_DESC ~This ring is gift from Gorion. It emanates with strong magical energy.~
+    
+    <<<<<<<< .../give_player_respawn_ring.baf
+    IF
+        OnCreation()
+        !HasItem("%respawn_ring%", Player1)
+    THEN
+        RESPONSE #100
+            GiveItemCreate("%respawn_ring%", Player1, 0, 0, 0)
+            XEquipItem("%respawn_ring%", Player1, SLOT_RING_RIGHT, EQUIP)
+            Continue()
+    END
+    
+    IF
+        OnCreation()
+        HasItem("%respawn_ring%", Player1)
+        !HasItemEquiped("%respawn_ring%", Player1)
+    THEN
+        RESPONSE #100
+            XEquipItem("%respawn_ring%", Player1, SLOT_RING_RIGHT, EQUIP)
+            Continue()
+    END
+    >>>>>>>>
+    
+    EXTEND_TOP ~baldur.bcs~ ~.../give_player_respawn_ring.baf~
+        EVALUATE_BUFFER
+END

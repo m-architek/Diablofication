@@ -7,6 +7,7 @@ BEGIN
     THEN
         RESPONSE #100
             ClearAllActions()
+            StartCutSceneMode()
             StartCutSceneEx("%respawn_execution_cutscene%", TRUE)
     END
     >>>>>>>>

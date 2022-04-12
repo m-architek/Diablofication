@@ -31,6 +31,19 @@ DEFINE_ACTION_FUNCTION APPLY_RESPAWN_PENALTY RET penalty_cutscene_name BEGIN
     EXTEND_BOTTOM ~%gold_check_cutscene_name%.bcs~ ~.../start_next_cutscene.baf~
         SPRINT next_cutscene_name ~%gold_penalty_cutscene_name%~
         EVALUATE_BUFFER
+
+
+    <<<<<<<< .../end_cutscene_chain.baf
+    IF
+        True()
+    THEN
+        RESPONSE #100
+            CutSceneId(Player1)
+            EndCutSceneMode()
+    END
+    >>>>>>>>
+
+    EXTEND_BOTTOM ~%gold_penalty_cutscene_name%.bcs~ ~.../end_cutscene_chain.baf~
 END
 
 

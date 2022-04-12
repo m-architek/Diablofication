@@ -18,7 +18,8 @@ ALWAYS
     INCLUDE ~%lib%/spl.tpa~
 
     INCLUDE ~%resources%/variables.tpa~
-    INCLUDE ~%resources%/spl.tpa~
+    INCLUDE ~%resources%/resref_eff.tpa~
+    INCLUDE ~%resources%/resref_spl.tpa~
 END
 
 
