@@ -15,6 +15,18 @@ OUTER_SET SPL_ABILITY_EFFECTS_INDEX_OFFSET = 0x20
 OUTER_SET SPL_CASTING_EFFECTS_INDEX_OFFSET = 0x6e
 OUTER_SET SPL_CASTING_EFFECTS_COUNT = 0x70
 
+OUTER_SET SPL_EFFECT_OPCODE_OFFSET = 0x0
+OUTER_SET SPL_EFFECT_TARGET_TYPE_OFFSET = 0x2
+OUTER_SET SPL_EFFECT_POWER_OFFSET = 0x3
+OUTER_SET SPL_EFFECT_PARAM_1_OFFSET = 0x4
+OUTER_SET SPL_EFFECT_PARAM_2_OFFSET = 0x8
+OUTER_SET SPL_EFFECT_TIMING_MODE_OFFSET = 0xc
+OUTER_SET SPL_EFFECT_DISPEL_RESISTANCE_OFFSET = 0xd
+OUTER_SET SPL_EFFECT_DURATION_OFFSET = 0xe
+OUTER_SET SPL_EFFECT_PROBABILITY_1_OFFSET = 0x12
+OUTER_SET SPL_EFFECT_PROBABILITY_2_OFFSET = 0x13
+OUTER_SET SPL_EFFECT_RESREF_OFFSET = 0x14
+
 
 DEFINE_PATCH_FUNCTION ADD_SPL_ABILITY
     INT_VAR ability_type = 0
@@ -48,6 +60,7 @@ DEFINE_PATCH_FUNCTION ADD_SPL_ABILITY_EFFECT
         duration = 0
         probability_1 = 100
         probability_2 = 0
+    STR_VAR resref = ~~
     RET ability_effect_index
 BEGIN
     READ_LONG SPL_ABILITIES_OFFSET abilities_offset
@@ -62,17 +75,17 @@ BEGIN
     SET ability_effect_offset = effects_offset + (ability_effects_index_offset + ability_effect_index) * SPL_EFFECT_SIZE
     INSERT_BYTES ability_effect_offset SPL_EFFECT_SIZE
 
-    WRITE_SHORT (ability_effect_offset + EFF_OPCODE_OFFSET) opcode
-    WRITE_BYTE (ability_effect_offset + EFF_TARGET_TYPE_OFFSET) target_type
-    WRITE_BYTE (ability_effect_offset + EFF_POWER_OFFSET) power
-    WRITE_LONG (ability_effect_offset + EFF_PARAM_1_OFFSET) param_1
-    WRITE_LONG (ability_effect_offset + EFF_PARAM_2_OFFSET) param_2
-
-    WRITE_BYTE (ability_effect_offset + EFF_TIMING_MODE_OFFSET) timing_mode
-    WRITE_BYTE (ability_effect_offset + EFF_DISPEL_RESISTANCE_OFFSET) dispel_resistance
-    WRITE_LONG (ability_effect_offset + EFF_DURATION_OFFSET) duration
-    WRITE_BYTE (ability_effect_offset + EFF_PROBABILITY_1_OFFSET) probability_1
-    WRITE_BYTE (ability_effect_offset + EFF_PROBABILITY_2_OFFSET) probability_2
+    WRITE_SHORT (ability_effect_offset + SPL_EFFECT_OPCODE_OFFSET) opcode
+    WRITE_BYTE (ability_effect_offset + SPL_EFFECT_TARGET_TYPE_OFFSET) target_type
+    WRITE_BYTE (ability_effect_offset + SPL_EFFECT_POWER_OFFSET) power
+    WRITE_LONG (ability_effect_offset + SPL_EFFECT_PARAM_1_OFFSET) param_1
+    WRITE_LONG (ability_effect_offset + SPL_EFFECT_PARAM_2_OFFSET) param_2
+    WRITE_BYTE (ability_effect_offset + SPL_EFFECT_TIMING_MODE_OFFSET) timing_mode
+    WRITE_BYTE (ability_effect_offset + SPL_EFFECT_DISPEL_RESISTANCE_OFFSET) dispel_resistance
+    WRITE_LONG (ability_effect_offset + SPL_EFFECT_DURATION_OFFSET) duration
+    WRITE_BYTE (ability_effect_offset + SPL_EFFECT_PROBABILITY_1_OFFSET) probability_1
+    WRITE_BYTE (ability_effect_offset + SPL_EFFECT_PROBABILITY_2_OFFSET) probability_2
+    WRITE_ASCII (ability_effect_offset + SPL_EFFECT_RESREF_OFFSET) ~%resref%~ #8
 
     WRITE_SHORT (ability_offset + SPL_ABILITY_EFFECTS_COUNT) (ability_effects_count + 1)
     FOR (i = ability_effect_index + 1; i < ability_effects_count; ++i) BEGIN

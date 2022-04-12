@@ -3,8 +3,6 @@ IF
 THEN
     RESPONSE #100
         CutSceneId(Player1)
-
-        StartCutSceneMode()
         SmallWait(15)
         FadeToColor([15.0], 0)
         SmallWait(15)
@@ -72,7 +70,5 @@ THEN
         SmallWait(15)
         FadeFromColor([15.0], 0)
         SmallWait(15)
-        EndCutSceneMode()
-
         StartCutSceneEx("%penalty_cutscene_name%", TRUE)
 END
