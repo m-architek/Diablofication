@@ -52,3 +52,36 @@ BEGIN
         END
     END
 END
+
+DEFINE_PATCH_FUNCTION READ_2DA_COLUMN
+    STR_VAR column_name = 0
+    RET_ARRAY out
+BEGIN
+    COUNT_2DA_COLS raw_columns_count
+    SET content_columns_count = raw_columns_count - 1 // First column does not have name
+
+    FOR (content_coulmn_index = 0; content_coulmn_index < content_columns_count; ++content_coulmn_index) BEGIN
+        READ_2DA_ENTRY 2DA_CONTENT_HEADER_ROW_INDEX content_coulmn_index 0 this_column_name
+        PATCH_IF (~%this_column_name%~ STRING_EQUAL ~%column_name%~) BEGIN
+            SET column_index = content_coulmn_index
+        END
+    END
+
+    PATCH_IF (NOT VARIABLE_IS_SET column_index) BEGIN
+        PATCH_FAIL ~READ_2DA_COLUMN %column_name% FROM %SOURCE_RES%: NO SUCH COLUMN~
+    END
+
+    COUNT_2DA_ROWS 0 raw_rows_count
+    SET content_rows_count = raw_rows_count - 2DA_CONTENT_OFFSET
+
+    DEFINE_ASSOCIATIVE_ARRAY out BEGIN END
+    FOR (content_row_index = 0; content_row_index < content_rows_count; ++content_row_index) BEGIN
+        SET raw_row_index = content_row_index + 2DA_CONTENT_OFFSET // READ_2DA_ENTRY counts from the begginign of the file
+        READ_2DA_ENTRY raw_row_index 0 0 row_name
+
+        SET raw_column_index = column_index + 1 // First column does not have name
+        READ_2DA_ENTRY raw_row_index raw_column_index 0 column_value
+
+        DEFINE_ASSOCIATIVE_ARRAY out BEGIN ~%row_name%~ => ~%column_value%~ END
+    END
+END

@@ -60,12 +60,12 @@ THEN
         ActionOverride(Player5, Rest())
         ActionOverride(Player6, Rest())
 
-        CreateVisualEffectObject("SPFLESHS", Player1)
-        CreateVisualEffectObject("SPFLESHS", Player2)
-        CreateVisualEffectObject("SPFLESHS", Player3)
-        CreateVisualEffectObject("SPFLESHS", Player4)
-        CreateVisualEffectObject("SPFLESHS", Player5)
-        CreateVisualEffectObject("SPFLESHS", Player6)
+        CreateVisualEffectObject("%VVC_RESREF_STONE_TO_FLESH%", Player1)
+        CreateVisualEffectObject("%VVC_RESREF_STONE_TO_FLESH%", Player2)
+        CreateVisualEffectObject("%VVC_RESREF_STONE_TO_FLESH%", Player3)
+        CreateVisualEffectObject("%VVC_RESREF_STONE_TO_FLESH%", Player4)
+        CreateVisualEffectObject("%VVC_RESREF_STONE_TO_FLESH%", Player5)
+        CreateVisualEffectObject("%VVC_RESREF_STONE_TO_FLESH%", Player6)
 
         SmallWait(15)
         FadeFromColor([15.0], 0)
