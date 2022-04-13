@@ -13,6 +13,26 @@ BEGIN
 
     IF
         StateCheck(Player1, STATE_CHARMED)
+        OR(3)
+            !Exists(Player2)
+            StateCheck(Player2, STATE_REALLY_DEAD)
+            StateCheck(Player2, STATE_CHARMED)
+        OR(3)
+            !Exists(Player3)
+            StateCheck(Player3, STATE_REALLY_DEAD)
+            StateCheck(Player3, STATE_CHARMED)
+        OR(3)
+            !Exists(Player4)
+            StateCheck(Player4, STATE_REALLY_DEAD)
+            StateCheck(Player4, STATE_CHARMED)
+        OR(3)
+            !Exists(Player5)
+            StateCheck(Player5, STATE_REALLY_DEAD)
+            StateCheck(Player5, STATE_CHARMED)
+        OR(3)
+            !Exists(Player6)
+            StateCheck(Player6, STATE_REALLY_DEAD)
+            StateCheck(Player6, STATE_CHARMED)
     THEN
         RESPONSE #100
             ClearAllActions()
