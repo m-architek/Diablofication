@@ -23,7 +23,7 @@ BEGIN
 
     OUTER_SPRINT respawn_execution_cutscene ~%respawn_point_resolving_cutscene%~
 
-    EXTEND_BOTTOM ~%respawn_point_resolving_cutscene%.bcs~ ~.../start_next_cutscene.baf~
+    EXTEND_BOTTOM ~%respawn_point_resolving_cutscene%.BCS~ ~.../start_next_cutscene.baf~
         SPRINT next_cutscene_name ~%respawn_process_execution_cutscene%~
         EVALUATE_BUFFER
 END
@@ -35,8 +35,7 @@ DEFINE_ACTION_FUNCTION APPLY_RESPAWN_PROCESS_EXECUTION
     RET respawn_point_indicator_variable respawn_process_execution_cutscene
     RET_ARRAY respawn_points_indicators
 BEGIN
-    OUTER_SPRINT respawn_process_execution_cutscene ~dbfcrex~
-    COMPILE ~%resources%/bcs/%respawn_process_execution_cutscene%.baf~
+    OUTER_SPRINT respawn_process_execution_cutscene ~%RESREF_BCS_CR_EXECUTION%~
 
     ACTION_DEFINE_ASSOCIATIVE_ARRAY respawn_points_indicators BEGIN END
     ACTION_PHP_EACH ~%respawn_point_names_ref%~ AS respawn_point_index => respawn_point_name BEGIN
@@ -57,7 +56,7 @@ BEGIN
 
     ACTION_PHP_EACH respawn_points_indicators AS respawn_point_name => respawn_point_indicator BEGIN
         OUTER_SPRINT respawn_cutscene $~%respawn_cutscenes_ref%~(~%respawn_point_name%~)
-        EXTEND_TOP ~%respawn_process_execution_cutscene%.bcs~ ~.../execute_respawn_process.baf~
+        EXTEND_TOP ~%respawn_process_execution_cutscene%.BCS~ ~.../execute_respawn_process.baf~
             EVALUATE_BUFFER
     END
 END
@@ -68,8 +67,7 @@ DEFINE_ACTION_FUNCTION APPLY_RESPAWN_POINT_RESOLVING
         respawn_points_indicators_ref = 0
     RET respawn_point_resolving_cutscene 
 BEGIN
-    OUTER_SPRINT respawn_point_resolving_cutscene ~dbfcrer~
-    COMPILE ~%resources%/bcs/%respawn_point_resolving_cutscene%.baf~
+    OUTER_SPRINT respawn_point_resolving_cutscene ~%RESREF_BCS_CR_POINT_RESOLVING%~
 
     <<<<<<<< .../respawn_point_rule.baf
     IF
@@ -85,7 +83,7 @@ BEGIN
     /*
         DEFAULT
     */
-    EXTEND_BOTTOM ~%respawn_point_resolving_cutscene%.bcs~ ~.../respawn_point_rule.baf~ 
+    EXTEND_BOTTOM ~%respawn_point_resolving_cutscene%.BCS~ ~.../respawn_point_rule.baf~ 
         SPRINT respawn_point_filter ~True()~
         SPRINT respawn_point_indicator $~%respawn_points_indicators_ref%~(FRIENDLY_ARM_INN)
         EVALUATE_BUFFER
@@ -99,7 +97,7 @@ BEGIN
         END
 
     ACTION_PHP_EACH ~%respawn_points_indicators_ref%~ AS _ => respawn_point_indicator BEGIN
-        EXTEND_BOTTOM ~%respawn_point_resolving_cutscene%.bcs~ ~.../respawn_point_rule.baf~ 
+        EXTEND_BOTTOM ~%respawn_point_resolving_cutscene%.BCS~ ~.../respawn_point_rule.baf~ 
             SPRINT respawn_point_filter ~Global("%nearest_respawn_point_variable%", "GLOBAL", %respawn_point_indicator%)~
             SPRINT respawn_point_indicator ~%respawn_point_indicator%~
             EVALUATE_BUFFER
@@ -111,12 +109,12 @@ BEGIN
     */
     LAF APPLY_PLOT_CRITICAL_RESPAWN_POINT_VARIABLES RET candlekeep_enter_variable END
 
-    EXTEND_BOTTOM ~%respawn_point_resolving_cutscene%.bcs~ ~.../respawn_point_rule.baf~ 
+    EXTEND_BOTTOM ~%respawn_point_resolving_cutscene%.BCS~ ~.../respawn_point_rule.baf~ 
         SPRINT respawn_point_filter ~Global("Chapter", "GLOBAL", 0)~
         SPRINT respawn_point_indicator $~%respawn_points_indicators_ref%~(CANDLEKEEP_PROLOGUE)
         EVALUATE_BUFFER
 
-    EXTEND_BOTTOM ~%respawn_point_resolving_cutscene%.bcs~ ~.../respawn_point_rule.baf~ 
+    EXTEND_BOTTOM ~%respawn_point_resolving_cutscene%.BCS~ ~.../respawn_point_rule.baf~ 
         SPRINT respawn_point_filter ~~~~~
             Global("Chapter", "GLOBAL", 6)
             Global("%candlekeep_enter_variable%", "GLOBAL", 1)
@@ -125,7 +123,7 @@ BEGIN
         SPRINT respawn_point_indicator $~%respawn_points_indicators_ref%~(CANDLEKEEP)
         EVALUATE_BUFFER
 
-    EXTEND_BOTTOM ~%respawn_point_resolving_cutscene%.bcs~ ~.../respawn_point_rule.baf~ 
+    EXTEND_BOTTOM ~%respawn_point_resolving_cutscene%.BCS~ ~.../respawn_point_rule.baf~ 
         SPRINT respawn_point_filter ~~~~~
             Global("Chapter", "GLOBAL", 6)
             Global("Criminal", "GLOBAL", 1)
@@ -141,15 +139,10 @@ DEFINE_ACTION_FUNCTION APPLY_NEAREST_RESPAWN_POINT_VARIABLES
 BEGIN
     OUTER_SPRINT nearest_respawn_point_variable ~%GLOBAL_CR_NEAREST_RESPAWN_POINT%~
 
-    ACTION_DEFINE_ASSOCIATIVE_ARRAY nearest_respawn_points BEGIN END
     COPY - ~%config%/respawn_points_nearest.2da~ ~~
-        LPF READ_2DA_ROW_NAMES RET_ARRAY area_names = out END
-        PHP_EACH area_names AS _ => area_name BEGIN
-            LPF READ_2DA_ROW STR_VAR row_name = ~%area_name%~ 
-                RET_ARRAY area_row = out END
-            DEFINE_ASSOCIATIVE_ARRAY nearest_respawn_points BEGIN ~%area_name%~ => $area_row(RESPAWN_POINT) END
-        END
-
+        LPF READ_2DA_COLUMN STR_VAR column_name = ~RESPAWN_POINT~
+            RET_ARRAY nearest_respawn_points = out
+            END
 
     <<<<<<<< .../nearest_respawn_point.baf
     IF
@@ -162,7 +155,7 @@ BEGIN
     >>>>>>>>
 
     ACTION_PHP_EACH nearest_respawn_points AS area_name => respawn_point_name BEGIN
-        EXTEND_TOP ~%area_name%.bcs~ ~.../nearest_respawn_point.baf~ 
+        EXTEND_TOP ~%area_name%.BCS~ ~.../nearest_respawn_point.baf~ 
             SPRINT respawn_point_indicator $~%respawn_points_indicators_ref%~(~%respawn_point_name%~)
             EVALUATE_BUFFER
     END
