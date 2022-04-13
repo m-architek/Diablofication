@@ -10,6 +10,15 @@ BEGIN
             StartCutSceneMode()
             StartCutSceneEx("%respawn_execution_cutscene%", TRUE)
     END
+
+    IF
+        StateCheck(Player1, STATE_CHARMED)
+    THEN
+        RESPONSE #100
+            ClearAllActions()
+            StartCutSceneMode()
+            StartCutSceneEx("%respawn_execution_cutscene%", TRUE)
+    END
     >>>>>>>>
 
     EXTEND_BOTTOM ~baldur.bcs~ ~.../respawn_trigger.baf~ 
