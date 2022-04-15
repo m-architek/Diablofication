@@ -7,8 +7,8 @@ DEFINE_ACTION_FUNCTION APPLY_PETRIFICATION_EXTENSION BEGIN
     OUTER_SPRINT extension_resref ~%RESREF_SPL_PETRIFICATION%~
     
     COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
-        LPF PATCH_PETRIFICATION_OPCODE STR_VAR extension_resref END
-        LPF PATCH_PETRIFICATION_IMMUNITY STR_VAR extension_resref END
+        LPF PATCH_SPL_PETRIFICATION_OPCODE STR_VAR extension_resref END
+        LPF PATCH_SPL_PETRIFICATION_IMMUNITY STR_VAR extension_resref END
         BUT_ONLY
 
     COPY ~%resources%/blank.spl~ ~override/%extension_resref%.SPL~
@@ -19,15 +19,16 @@ DEFINE_ACTION_FUNCTION APPLY_PETRIFICATION_EXTENSION BEGIN
             timing_mode = EFF_TIMING_MODE_INSTANT_PERMANENT_UNTIL_DEATH
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_GRPAHICS_PLAY_EFFECT
+            opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
+            param_1 = 1
             target_type = EFF_TARGET_TYPE_PRESET
             timing_mode = EFF_TIMING_MODE_INSTANT_PERMANENT_UNTIL_DEATH
-            STR_VAR resref = ~%VVC_RESREF_RESTORATION%~
+            STR_VAR resref = ~%LOCALS_STATE_PETRIFIED%~
             END
 END
 
 
-DEFINE_PATCH_FUNCTION PATCH_PETRIFICATION_OPCODE 
+DEFINE_PATCH_FUNCTION PATCH_SPL_PETRIFICATION_OPCODE 
         STR_VAR extension_resref = 0
 BEGIN
     LPF PATCH_SPL_ABILITY_EFFECT_IF INT_VAR opcode = EFF_OPCODE_STATE_PETRIFICATION
@@ -36,13 +37,26 @@ BEGIN
         to_param_2 = 0
         STR_VAR to_resref = ~%extension_resref%~
         END
+    LPF PATCH_SPL_CASTING_EFFECT_IF INT_VAR opcode = EFF_OPCODE_STATE_PETRIFICATION
+        to_opcode = EFF_OPCODE_APPLY_EFFECTS_LIST
+        to_param_1 = 0
+        to_param_2 = 0
+        STR_VAR to_resref = ~%extension_resref%~
+        END
 END
 
 
-DEFINE_PATCH_FUNCTION PATCH_PETRIFICATION_IMMUNITY 
+DEFINE_PATCH_FUNCTION PATCH_SPL_PETRIFICATION_IMMUNITY 
         STR_VAR extension_resref = 0
 BEGIN
     LPF PATCH_SPL_ABILITY_EFFECT_IF INT_VAR opcode = EFF_OPCODE_PROTECTION_FROM_OPCODE
+        param_2 = EFF_OPCODE_STATE_PETRIFICATION
+        to_opcode = EFF_OPCODE_PROTECTION_FROM_SPELL
+        to_param_1 = 0
+        to_param_2 = 0
+        STR_VAR to_resref = ~%extension_resref%~
+        END
+    LPF PATCH_SPL_CASTING_EFFECT_IF INT_VAR opcode = EFF_OPCODE_PROTECTION_FROM_OPCODE
         param_2 = EFF_OPCODE_STATE_PETRIFICATION
         to_opcode = EFF_OPCODE_PROTECTION_FROM_SPELL
         to_param_1 = 0

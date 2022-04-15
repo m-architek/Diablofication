@@ -7,6 +7,8 @@ THEN
         FadeToColor([15.0], 0)
         SmallWait(15)
 
+        SetGlobal("%LOCALS_STATE_PETRIFIED%", "LOCALS", 0)
+
         ApplySpell(Player1, WIZARD_STONE_TO_FLESH)
         ApplySpell(Player2, WIZARD_STONE_TO_FLESH)
         ApplySpell(Player3, WIZARD_STONE_TO_FLESH)

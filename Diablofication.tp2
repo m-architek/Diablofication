@@ -17,9 +17,9 @@ ALWAYS
     INCLUDE ~%lib%/vvc.tpa~
     INCLUDE ~%lib%/eff.tpa~
     INCLUDE ~%lib%/spl.tpa~
+    INCLUDE ~%lib%/itm.tpa~
 
     INCLUDE ~%resources%/variables.tpa~
-    INCLUDE ~%resources%/resref_eff.tpa~
     INCLUDE ~%resources%/resref_spl.tpa~
     INCLUDE ~%resources%/resref_bcs.tpa~
 END
