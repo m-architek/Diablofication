@@ -27,12 +27,18 @@ DEFINE_ACTION_FUNCTION APPLY_DEATH_PREVENTION_SPL BEGIN
             target_type = EFF_TARGET_TYPE_PRESET
             timing_mode = EFF_TIMING_MODE_INSTANT_PERMANENT
             END
-        // LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
-        //     opcode = EFF_OPCODE_PROTECTION_FROM_OPCODE
-        //     param_2 = EFF_OPCODE_STATE_PETRIFICATION
-        //     target_type = EFF_TARGET_TYPE_PRESET
-        //     timing_mode = EFF_TIMING_MODE_INSTANT_PERMANENT
-        //     END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
+            opcode = EFF_OPCODE_PROTECTION_FROM_OPCODE
+            param_2 = EFF_OPCODE_STATE_PETRIFICATION
+            target_type = EFF_TARGET_TYPE_PRESET
+            timing_mode = EFF_TIMING_MODE_INSTANT_PERMANENT
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
+            opcode = EFF_OPCODE_MINIMUM_BASE_STATS
+            param_2 = 1
+            target_type = EFF_TARGET_TYPE_PRESET
+            timing_mode = EFF_TIMING_MODE_INSTANT_PERMANENT
+            END
 
     <<<<<<<< .../enable_death_prevention.baf
     IF

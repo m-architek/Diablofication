@@ -6,7 +6,7 @@ INCLUDE ~%src%/respawn_execution.tpa~
 INCLUDE ~%src%/respawn_process.tpa~
 INCLUDE ~%src%/respawn_penalty.tpa~
 
-// LAF APPLY_OPCODE_EXTENSIONS END
+LAF APPLY_OPCODE_EXTENSIONS END
 
 LAF APPLY_DEATH_PREVENTION END
 
