@@ -1,0 +1,52 @@
+DEFINE_ACTION_FUNCTION APPLY_OPCODE_EXTENSIONS BEGIN
+    LAF APPLY_PETRIFICATION_EXTENSION END
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_PETRIFICATION_EXTENSION BEGIN
+    OUTER_SPRINT extension_resref ~%RESREF_SPL_PETRIFICATION%~
+    
+    COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
+        LPF PATCH_PETRIFICATION_OPCODE STR_VAR extension_resref END
+        LPF PATCH_PETRIFICATION_IMMUNITY STR_VAR extension_resref END
+        BUT_ONLY
+
+    COPY ~%resources%/blank.spl~ ~override/%extension_resref%.SPL~
+        LPF ADD_SPL_ABILITY RET ability_index END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_STATE_PETRIFICATION
+            target_type = EFF_TARGET_TYPE_PRESET
+            timing_mode = EFF_TIMING_MODE_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_GRPAHICS_PLAY_EFFECT
+            target_type = EFF_TARGET_TYPE_PRESET
+            timing_mode = EFF_TIMING_MODE_INSTANT_PERMANENT_UNTIL_DEATH
+            STR_VAR resref = ~%VVC_RESREF_RESTORATION%~
+            END
+END
+
+
+DEFINE_PATCH_FUNCTION PATCH_PETRIFICATION_OPCODE 
+        STR_VAR extension_resref = 0
+BEGIN
+    LPF PATCH_SPL_ABILITY_EFFECT_IF INT_VAR opcode = EFF_OPCODE_STATE_PETRIFICATION
+        to_opcode = EFF_OPCODE_APPLY_EFFECTS_LIST
+        to_param_1 = 0
+        to_param_2 = 0
+        STR_VAR to_resref = ~%extension_resref%~
+        END
+END
+
+
+DEFINE_PATCH_FUNCTION PATCH_PETRIFICATION_IMMUNITY 
+        STR_VAR extension_resref = 0
+BEGIN
+    LPF PATCH_SPL_ABILITY_EFFECT_IF INT_VAR opcode = EFF_OPCODE_PROTECTION_FROM_OPCODE
+        param_2 = EFF_OPCODE_STATE_PETRIFICATION
+        to_opcode = EFF_OPCODE_PROTECTION_FROM_SPELL
+        to_param_1 = 0
+        to_param_2 = 0
+        STR_VAR to_resref = ~%extension_resref%~
+        END
+END
