@@ -121,6 +121,7 @@ BEGIN
             READ_SHORT (ability_effect_offset + SPL_EFFECT_OPCODE_OFFSET) ability_effect_opcode
             READ_LONG (ability_effect_offset + SPL_EFFECT_PARAM_1_OFFSET) ability_effect_param_1
             READ_LONG (ability_effect_offset + SPL_EFFECT_PARAM_2_OFFSET) ability_effect_param_2
+            
             PATCH_IF (
                 ability_effect_opcode == opcode
                 && (param_1 == "-1" || ability_effect_param_1 == param_1)
