@@ -1,0 +1,82 @@
+DEFINE_ACTION_FUNCTION APPLY_EFFECTS_ALTERATION BEGIN
+    OUTER_SPRINT petrification_extension ~%RESREF_SPL_PETRIFICATION%~
+    
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_PETRIFICATION BEGIN
+        match_opcode => EFF_OPCODE_STATE_PETRIFICATION
+        opcode => EFF_OPCODE_APPLY_EFFECTS_LIST
+        parameter1 => 0
+        parameter2 => 0
+        resource => ~%petrification_extension%~
+    END
+
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_PETRIFICATION_IMMUNITY BEGIN
+        match_opcode => EFF_OPCODE_PROTECTION_FROM_OPCODE
+        match_parameter2 => EFF_OPCODE_STATE_PETRIFICATION
+        opcode => EFF_OPCODE_PROTECTION_FROM_SPELL
+        parameter1 => 0
+        parameter2 => 0
+        resource => ~%petrification_extension%~
+    END
+
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY patches BEGIN 
+        PETRIFICATION => patch_PETRIFICATION
+        PETRIFICATION_IMMUNITY => patch_PETRIFICATION_IMMUNITY
+    END
+
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY set_to_value_damage_types BEGIN
+        CRUSHING =>     0x00000001
+        ACID =>         0x00010001
+        COLD =>         0x00020001
+        ELECTRICITY =>  0x00040001
+        FIRE =>         0x00080001
+        PIERCING =>     0x00100001
+        POISON =>       0x00200001
+        MAGIC =>        0x00400001
+        MISSILE =>      0x00800001
+        SLASHING =>     0x01000001
+        MAGICFIRE =>    0x02000001
+        MAGICCOLD =>    0x04000001
+        STUNNING =>     0x08000001
+    END
+
+    ACTION_PHP_EACH set_to_value_damage_types AS set_to_value_damage_type_name => set_to_value_damage_type_value BEGIN
+        OUTER_SPRINT patch_name ~HARM_DMG_%set_to_value_damage_type_name%~
+        OUTER_SPRINT patch_ref ~patch_%patch_name%~
+        ACTION_DEFINE_ASSOCIATIVE_ARRAY ~%patch_ref%~ BEGIN
+            match_opcode => EFF_OPCODE_HP_DAMAGE
+            match_parameter1 => 1
+            match_parameter2 => ~%set_to_value_damage_type_value%~
+            parameter1 => 2
+        END
+        ACTION_DEFINE_ASSOCIATIVE_ARRAY patches BEGIN ~%patch_name%~ => ~%patch_ref%~ END
+    END
+
+
+    COPY_EXISTING_REGEXP GLOB ~^.+\.eff$~ ~override~
+        LPF PATCH_EFF_V2_EFFECT STR_VAR patches_ref = patches END
+        BUT_ONLY
+    
+    COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
+        LPF PATCH_SPL_EFFECTS STR_VAR patches_ref = patches END
+        BUT_ONLY
+
+    COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
+        LPF PATCH_ITM_EFFECTS STR_VAR patches_ref = patches END
+        BUT_ONLY
+
+
+    COPY ~%resources%/blank.spl~ ~override/%petrification_extension%.SPL~
+        LPF ADD_SPL_ABILITY RET ability_index END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_STATE_PETRIFICATION
+            target_type = EFF_TARGET_TYPE_PRESET
+            timing_mode = EFF_TIMING_MODE_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
+            param_1 = 1
+            target_type = EFF_TARGET_TYPE_PRESET
+            timing_mode = EFF_TIMING_MODE_INSTANT_PERMANENT_UNTIL_DEATH
+            STR_VAR resref = ~%LOCALS_STATE_PETRIFIED%~
+            END
+END

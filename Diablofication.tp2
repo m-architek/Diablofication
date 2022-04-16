@@ -16,6 +16,7 @@ ALWAYS
     INCLUDE ~%lib%/2da.tpa~
     INCLUDE ~%lib%/vvc.tpa~
     INCLUDE ~%lib%/eff.tpa~
+    INCLUDE ~%lib%/eff_v2.tpa~
     INCLUDE ~%lib%/spl.tpa~
     INCLUDE ~%lib%/itm.tpa~
 

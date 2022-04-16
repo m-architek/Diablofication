@@ -95,18 +95,13 @@ BEGIN
 END
 
 
-DEFINE_PATCH_FUNCTION PATCH_SPL_ABILITY_EFFECT_IF
-    INT_VAR opcode = ~~
-        param_1 = "-1"
-        param_2 = "-1"
-        to_opcode = ~~
-        to_param_1 = ~~
-        to_param_2 = ~~
-    STR_VAR to_resref = ~~
+DEFINE_PATCH_FUNCTION PATCH_SPL_EFFECTS
+    STR_VAR patches_ref = 0
 BEGIN
+    READ_LONG SPL_EFFECTS_OFFSET effects_offset
+
     READ_LONG SPL_ABILITIES_OFFSET abilities_offset
     READ_SHORT SPL_ABILITIES_COUNT abilities_count
-    READ_LONG SPL_EFFECTS_OFFSET effects_offset
 
     FOR (ability_index = 0; ability_index < abilities_count; ++ability_index) BEGIN
         SET ability_offset = abilities_offset + ability_index * SPL_ABILITY_SIZE
@@ -118,59 +113,21 @@ BEGIN
             SET ability_effect_offset = effects_offset +
                 (ability_effects_index_offset + ability_effect_index) * SPL_EFFECT_SIZE
 
-            READ_SHORT (ability_effect_offset + SPL_EFFECT_OPCODE_OFFSET) ability_effect_opcode
-            READ_LONG (ability_effect_offset + SPL_EFFECT_PARAM_1_OFFSET) ability_effect_param_1
-            READ_LONG (ability_effect_offset + SPL_EFFECT_PARAM_2_OFFSET) ability_effect_param_2
-            
-            PATCH_IF (
-                ability_effect_opcode == opcode
-                && (param_1 == "-1" || ability_effect_param_1 == param_1)
-                && (param_2 == "-1" || ability_effect_param_2 == param_2)
-            ) BEGIN
-                PATCH_PRINT ~Patching SPL %SOURCE_RES% ability effect: %ability_effect_opcode% => %to_opcode%~
-
-                WRITE_SHORT (ability_effect_offset + SPL_EFFECT_OPCODE_OFFSET) to_opcode
-                WRITE_LONG (ability_effect_offset + SPL_EFFECT_PARAM_1_OFFSET) to_param_1
-                WRITE_LONG (ability_effect_offset + SPL_EFFECT_PARAM_2_OFFSET) to_param_2
-                WRITE_ASCII (ability_effect_offset + SPL_EFFECT_RESREF_OFFSET) ~%to_resref%~ #8
-            END
+            LPF PATCH_EFF_EFFECT INT_VAR offset_shift = ability_effect_offset
+                STR_VAR patches_ref = ~%patches_ref%~
+                END
         END
     END
-END
 
-
-DEFINE_PATCH_FUNCTION PATCH_SPL_CASTING_EFFECT_IF
-    INT_VAR opcode = ~~
-        param_1 = "-1"
-        param_2 = "-1"
-        to_opcode = ~~
-        to_param_1 = ~~
-        to_param_2 = ~~
-    STR_VAR to_resref = ~~
-BEGIN
     READ_SHORT SPL_CASTING_EFFECTS_INDEX_OFFSET casting_effects_index_offset
     READ_SHORT SPL_CASTING_EFFECTS_COUNT casting_effects_count
-    READ_LONG SPL_EFFECTS_OFFSET effects_offset
 
     FOR (casting_effect_index = 0; casting_effect_index < casting_effects_count; ++casting_effect_index) BEGIN
         SET casting_effect_offset = effects_offset + 
             (casting_effects_index_offset + casting_effect_index) * SPL_EFFECT_SIZE       
 
-        READ_SHORT (casting_effect_offset + SPL_EFFECT_OPCODE_OFFSET) casting_effect_opcode
-        READ_LONG (casting_effect_offset + SPL_EFFECT_PARAM_1_OFFSET) casting_effect_param_1
-        READ_LONG (casting_effect_offset + SPL_EFFECT_PARAM_2_OFFSET) casting_effect_param_2
-
-        PATCH_IF (
-            casting_effect_opcode == opcode
-            && (param_1 == "-1" || casting_effect_param_1 == param_1)
-            && (param_2 == "-1" || casting_effect_param_2 == param_2)
-        ) BEGIN
-            PATCH_PRINT ~Patching SPL %SOURCE_RES% casting effect: %casting_effect_opcode% => %to_opcode%~
-
-            WRITE_SHORT (casting_effect_offset + SPL_EFFECT_OPCODE_OFFSET) to_opcode
-            WRITE_LONG (casting_effect_offset + SPL_EFFECT_PARAM_1_OFFSET) to_param_1
-            WRITE_LONG (casting_effect_offset + SPL_EFFECT_PARAM_2_OFFSET) to_param_2
-            WRITE_ASCII (casting_effect_offset + SPL_EFFECT_RESREF_OFFSET) ~%to_resref%~ #8
-        END
+        LPF PATCH_EFF_EFFECT INT_VAR offset_shift = casting_effect_offset
+            STR_VAR patches_ref = ~%patches_ref%~
+            END
     END
 END
