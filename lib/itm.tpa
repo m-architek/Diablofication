@@ -8,8 +8,8 @@ OUTER_SET ITM_EFFECT_SIZE = 48
 OUTER_SET ITM_ABILITY_EFFECTS_COUNT = 0x1e
 OUTER_SET ITM_ABILITY_EFFECTS_INDEX_OFFSET = 0x20
 
-OUTER_SET ITM_WEARING_EFFECTS_INDEX_OFFSET = 0x6e
-OUTER_SET ITM_WEARING_EFFECTS_COUNT = 0x70
+OUTER_SET ITM_EQUIPPED_EFFECTS_INDEX_OFFSET = 0x6e
+OUTER_SET ITM_EQUIPPED_EFFECTS_COUNT = 0x70
 
 OUTER_SET ITM_EFFECT_OPCODE_OFFSET = 0x0
 OUTER_SET ITM_EFFECT_TARGET_TYPE_OFFSET = 0x2
@@ -24,18 +24,13 @@ OUTER_SET ITM_EFFECT_PROBABILITY_2_OFFSET = 0x13
 OUTER_SET ITM_EFFECT_RESREF_OFFSET = 0x14
 
 
-DEFINE_PATCH_FUNCTION PATCH_ITM_ABILITY_EFFECT_IF
-    INT_VAR opcode = ~~
-        param_1 = "-1"
-        param_2 = "-1"
-        to_opcode = ~~
-        to_param_1 = ~~
-        to_param_2 = ~~
-    STR_VAR to_resref = ~~
+DEFINE_PATCH_FUNCTION PATCH_ITM_EFFECTS
+    STR_VAR patches_ref = 0
 BEGIN
+    READ_LONG ITM_EFFECTS_OFFSET effects_offset
+
     READ_LONG ITM_ABILITIES_OFFSET abilities_offset
     READ_SHORT ITM_ABILITIES_COUNT abilities_count
-    READ_LONG ITM_EFFECTS_OFFSET effects_offset
 
     FOR (ability_index = 0; ability_index < abilities_count; ++ability_index) BEGIN
         SET ability_offset = abilities_offset + ability_index * ITM_ABILITY_SIZE
@@ -47,60 +42,21 @@ BEGIN
             SET ability_effect_offset = effects_offset +
                 (ability_effects_index_offset + ability_effect_index) * ITM_EFFECT_SIZE
 
-            READ_SHORT (ability_effect_offset + ITM_EFFECT_OPCODE_OFFSET) ability_effect_opcode
-            READ_LONG (ability_effect_offset + ITM_EFFECT_PARAM_1_OFFSET) ability_effect_param_1
-            READ_LONG (ability_effect_offset + ITM_EFFECT_PARAM_2_OFFSET) ability_effect_param_2
-
-            PATCH_IF (
-                ability_effect_opcode == opcode
-                && (param_1 == "-1" || ability_effect_param_1 == param_1)
-                && (param_2 == "-1" || ability_effect_param_2 == param_2)
-            ) BEGIN
-                PATCH_PRINT ~Patching ITM %SOURCE_RES% ability effect: %ability_effect_opcode% => %to_opcode%~
-
-                WRITE_SHORT (ability_effect_offset + ITM_EFFECT_OPCODE_OFFSET) to_opcode
-                WRITE_LONG (ability_effect_offset + ITM_EFFECT_PARAM_1_OFFSET) to_param_1
-                WRITE_LONG (ability_effect_offset + ITM_EFFECT_PARAM_2_OFFSET) to_param_2
-                WRITE_ASCII (ability_effect_offset + ITM_EFFECT_RESREF_OFFSET) ~%to_resref%~ #8
-            END
+            LPF PATCH_EFF_EFFECT INT_VAR offset_shift = ability_effect_offset
+                STR_VAR patches_ref = ~%patches_ref%~
+                END
         END
     END
-END
 
+    READ_SHORT ITM_EQUIPPED_EFFECTS_INDEX_OFFSET equipped_effects_index_offset
+    READ_SHORT ITM_EQUIPPED_EFFECTS_COUNT equipped_effects_count
 
+    FOR (equipped_effect_index = 0; equipped_effect_index < equipped_effects_count; ++equipped_effect_index) BEGIN
+        SET equipped_effect_offset = effects_offset + 
+            (equipped_effects_index_offset + equipped_effect_index) * ITM_EFFECT_SIZE       
 
-DEFINE_PATCH_FUNCTION PATCH_ITM_WEARING_EFFECT_IF
-    INT_VAR opcode = ~~
-        param_1 = "-1"
-        param_2 = "-1"
-        to_opcode = ~~
-        to_param_1 = ~~
-        to_param_2 = ~~
-    STR_VAR to_resref = ~~
-BEGIN
-    READ_SHORT ITM_WEARING_EFFECTS_INDEX_OFFSET wearing_effects_index_offset
-    READ_SHORT ITM_WEARING_EFFECTS_COUNT wearing_effects_count
-    READ_LONG ITM_EFFECTS_OFFSET effects_offset
-
-    FOR (wearing_effect_index = 0; wearing_effect_index < wearing_effects_count; ++wearing_effect_index) BEGIN
-        SET wearing_effect_offset = effects_offset + 
-            (wearing_effects_index_offset + wearing_effect_index) * ITM_EFFECT_SIZE       
-
-        READ_SHORT (wearing_effect_offset + ITM_EFFECT_OPCODE_OFFSET) wearing_effect_opcode
-        READ_LONG (wearing_effect_offset + ITM_EFFECT_PARAM_1_OFFSET) wearing_effect_param_1
-        READ_LONG (wearing_effect_offset + ITM_EFFECT_PARAM_2_OFFSET) wearing_effect_param_2
-
-        PATCH_IF (
-            wearing_effect_opcode == opcode
-            && (param_1 == "-1" || wearing_effect_param_1 == param_1)
-            && (param_2 == "-1" || wearing_effect_param_2 == param_2)
-        ) BEGIN
-            PATCH_PRINT ~Patching ITM %SOURCE_RES% wearing effect: %wearing_effect_opcode% => %to_opcode%~
-
-            WRITE_SHORT (wearing_effect_offset + ITM_EFFECT_OPCODE_OFFSET) to_opcode
-            WRITE_LONG (wearing_effect_offset + ITM_EFFECT_PARAM_1_OFFSET) to_param_1
-            WRITE_LONG (wearing_effect_offset + ITM_EFFECT_PARAM_2_OFFSET) to_param_2
-            WRITE_ASCII (wearing_effect_offset + ITM_EFFECT_RESREF_OFFSET) ~%to_resref%~ #8
-        END
+        LPF PATCH_EFF_EFFECT INT_VAR offset_shift = equipped_effect_offset
+            STR_VAR patches_ref = ~%patches_ref%~
+            END
     END
 END
