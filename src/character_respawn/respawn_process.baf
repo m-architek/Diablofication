@@ -3,12 +3,13 @@ IF
 THEN
     RESPONSE #100
         CutSceneId(Player1)
-        SmallWait(30)
+        SmallWait(15)
         FadeToColor([15.0], 0)
         SmallWait(15)
 
         ApplySpellRES("%resurrection_spl%", Player1)
         SetGlobal("%patrification_state_variable%", "LOCALS", 0)
+        SetSequence(SEQ_READY)
 END
 
 
@@ -84,7 +85,7 @@ THEN
         CreateVisualEffectObject("%visual_effect%", Player5)
         CreateVisualEffectObject("%visual_effect%", Player6)
 
-        SmallWait(30)
+        SmallWait(15)
         FadeFromColor([15.0], 0)
         SmallWait(15)
         StartCutSceneEx("%penalty_cutscene_name%", TRUE)
