@@ -9,6 +9,7 @@ BEGIN
         RESPONSE #100
             ClearAllActions()
             StartCutSceneMode()
+            ActionOverride(Player1, SetSequence(SEQ_SLEEP))
             StartCutSceneEx("%respawn_execution_cutscene%", TRUE)
     END
 
@@ -47,6 +48,7 @@ BEGIN
         RESPONSE #100
             ClearAllActions()
             StartCutSceneMode()
+            CreateVisualEffectObject("%VVC_RESREF_FLESH_TO_STONE%", Player1)
             StartCutSceneEx("%respawn_execution_cutscene%", TRUE)
     END
     >>>>>>>>

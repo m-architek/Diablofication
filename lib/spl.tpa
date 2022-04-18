@@ -26,6 +26,7 @@ OUTER_SET SPL_EFFECT_DURATION_OFFSET = 0xe
 OUTER_SET SPL_EFFECT_PROBABILITY_1_OFFSET = 0x12
 OUTER_SET SPL_EFFECT_PROBABILITY_2_OFFSET = 0x13
 OUTER_SET SPL_EFFECT_RESREF_OFFSET = 0x14
+OUTER_SET SPL_EFFECT_SPECIAL_OFFSET = 0x2c
 
 
 DEFINE_PATCH_FUNCTION ADD_SPL_ABILITY
@@ -60,6 +61,7 @@ DEFINE_PATCH_FUNCTION ADD_SPL_ABILITY_EFFECT
         duration = 0
         probability1 = 100
         probability2 = 0
+        special = 0
     STR_VAR resource = ~~
     RET ability_effect_index
 BEGIN
@@ -86,6 +88,7 @@ BEGIN
     WRITE_BYTE (ability_effect_offset + SPL_EFFECT_PROBABILITY_1_OFFSET) probability1
     WRITE_BYTE (ability_effect_offset + SPL_EFFECT_PROBABILITY_2_OFFSET) probability2
     WRITE_ASCII (ability_effect_offset + SPL_EFFECT_RESREF_OFFSET) ~%resource%~ #8
+    WRITE_LONG (ability_effect_offset + SPL_EFFECT_SPECIAL_OFFSET) special
 
     WRITE_SHORT (ability_offset + SPL_ABILITY_EFFECTS_COUNT) (ability_effects_count + 1)
     FOR (i = ability_effect_index + 1; i < ability_effects_count; ++i) BEGIN

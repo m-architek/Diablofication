@@ -178,6 +178,7 @@ BEGIN
             parameter2 = 1 // Set to value
             target = EFF_TARGET_PRESET
             timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            special = 1 // BG1 mode
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_REMOVE_ICON
