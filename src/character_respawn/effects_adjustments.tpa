@@ -1,4 +1,16 @@
-DEFINE_ACTION_FUNCTION APPLY_EFFECTS_ALTERATION BEGIN
+DEFINE_ACTION_FUNCTION APPLY_EFFECTS_ADJUSTMENTS
+    RET petrification_extension
+BEGIN
+    PRINT ~~
+    PRINT ~Adjusting existing effects. This can take a while...~
+    PRINT ~~
+    
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY patches BEGIN END
+
+
+    /*
+        Petrification
+    */
     OUTER_SPRINT petrification_extension ~%RESREF_SPL_PETRIFICATION%~
     
     ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_PETRIFICATION BEGIN
@@ -23,6 +35,10 @@ DEFINE_ACTION_FUNCTION APPLY_EFFECTS_ALTERATION BEGIN
         PETRIFICATION_IMMUNITY => patch_PETRIFICATION_IMMUNITY
     END
 
+
+    /*
+        Damage: set to 1 HP
+    */
     ACTION_DEFINE_ASSOCIATIVE_ARRAY set_to_value_damage_types BEGIN
         CRUSHING =>     0x00000001
         ACID =>         0x00010001
@@ -52,6 +68,9 @@ DEFINE_ACTION_FUNCTION APPLY_EFFECTS_ALTERATION BEGIN
     END
 
 
+    /*
+        Apply patches
+    */
     COPY_EXISTING_REGEXP GLOB ~^.+\.eff$~ ~override~
         LPF PATCH_EFF_V2_EFFECT STR_VAR patches_ref = patches END
         BUT_ONLY
@@ -63,20 +82,4 @@ DEFINE_ACTION_FUNCTION APPLY_EFFECTS_ALTERATION BEGIN
     COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
         LPF PATCH_ITM_EFFECTS STR_VAR patches_ref = patches END
         BUT_ONLY
-
-
-    COPY ~%resources%/blank.spl~ ~override/%petrification_extension%.SPL~
-        LPF ADD_SPL_ABILITY RET ability_index END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_STATE_PETRIFICATION
-            target_type = EFF_TARGET_TYPE_PRESET
-            timing_mode = EFF_TIMING_MODE_INSTANT_PERMANENT_UNTIL_DEATH
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
-            param_1 = 1
-            target_type = EFF_TARGET_TYPE_PRESET
-            timing_mode = EFF_TIMING_MODE_INSTANT_PERMANENT_UNTIL_DEATH
-            STR_VAR resref = ~%LOCALS_STATE_PETRIFIED%~
-            END
 END

@@ -1,0 +1,21 @@
+DEFINE_ACTION_FUNCTION APPLY_EFFECTS_EXTENSIONS
+    STR_VAR petrification_extension = 0
+    RET patrification_state_variable
+BEGIN
+    OUTER_SPRINT patrification_state_variable ~%LOCALS_STATE_PETRIFIED%~
+
+    COPY ~%resources%/blank.spl~ ~override/%petrification_extension%.SPL~
+        LPF ADD_SPL_ABILITY RET ability_index END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_STATE_PETRIFICATION
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
+            parameter1 = 1
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            STR_VAR resource = ~%patrification_state_variable%~
+            END
+END

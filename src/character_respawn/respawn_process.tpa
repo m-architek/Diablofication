@@ -1,7 +1,11 @@
 DEFINE_ACTION_FUNCTION APPLY_RESPAWN_PROCESS 
     STR_VAR penalty_cutscene_name = 0
+        patrification_state_variable = 0
     RET_ARRAY respawn_point_names respawn_cutscenes
 BEGIN
+    LAF APPLY_RESPAWN_RESSURECTION RET resurrection_spl END
+    LAF APPLY_RESPAWN_HEAL RET heal_spl END
+
     COPY - ~%config%/respawn_points.2da~ ~~
         LPF READ_2DA_ROW_NAMES RET_ARRAY respawn_point_names = out END
         PHP_EACH respawn_point_names AS _ => respawn_point_name BEGIN
@@ -15,6 +19,9 @@ BEGIN
     
         LAF APPLY_RESPAWN_CUTSCENE INT_VAR respawn_point_index 
             STR_VAR respawn_point_ref = ~respawn_point_%respawn_point_name%~
+                resurrection_spl = ~%resurrection_spl%~ 
+                heal_spl = ~%heal_spl%~ 
+                patrification_state_variable = ~%patrification_state_variable%~
             RET respawn_cutscene_name
             END
         ACTION_DEFINE_ASSOCIATIVE_ARRAY respawn_cutscenes BEGIN ~%respawn_point_name%~ => ~%respawn_cutscene_name%~ END
@@ -22,9 +29,256 @@ BEGIN
 END
 
 
+DEFINE_ACTION_FUNCTION APPLY_RESPAWN_RESSURECTION 
+    RET resurrection_spl
+BEGIN
+    OUTER_SPRINT resurrection_spl ~%RESREF_SPL_CR_RESURRECTION%~
+
+    COPY ~%resources%/blank.spl~ ~override/%resurrection_spl%.SPL~
+        LPF ADD_SPL_ABILITY RET ability_index END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_RAISE_DEAD
+            parameter1 = 0
+            parameter2 = 0
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_APPLY_EFFECTS_LIST
+            parameter1 = 0
+            parameter2 = 0
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            STR_VAR resource = ~#RDREMOV~
+            END
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_RESPAWN_HEAL 
+    RET heal_spl
+BEGIN
+    OUTER_SPRINT heal_spl ~%RESREF_SPL_CR_HEAL%~
+
+    COPY ~%resources%/blank.spl~ ~override/%heal_spl%.SPL~
+        LPF ADD_SPL_ABILITY RET ability_index END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_CURE_INVISIBILITY
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_HP_CURRENT
+            parameter1 = 100
+            parameter2 = 2 // % mode
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_DISPLAY_STRING
+            parameter1 = 25810 // Healed
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_CURE_DRUNKENESS
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_REMOVE_ICON
+            parameter2 = 5 // Intoxicated (Drunkeness)
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_CURE_POISON
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_REMOVE_ICON
+            parameter2 = 6 // Poisoned
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_CURE_DISEASE
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_REMOVE_ICON
+            parameter2 = 7 // Diseased
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_CURE_BLINDENESS
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_REMOVE_ICON
+            parameter2 = 8 // Blind
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_CURE_DEAFNESS
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_REMOVE_ICON
+            parameter2 = 112 // Deaf
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_CURE_SILENCE
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_REMOVE_ICON
+            parameter2 = 34 // Silenced
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_CURE_FEEBLEMINDEDNESS
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_REMOVE_ICON
+            parameter2 = 48 // Feebleminded
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_CURE_LEVEL_DRAIN
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_REMOVE_ICON
+            parameter2 = 59 // Drain
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_CURE_HORROR
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_STAT_MORALE
+            parameter1 = 10 // Default morale
+            parameter2 = 1 // Set to value
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_REMOVE_ICON
+            parameter2 = 36 // Panic
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_CURE_CONFUSION
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_REMOVE_ICON
+            parameter2 = 2 // Rigid Thinking
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_REMOVE_ICON
+            parameter2 = 3 // Confused
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_REMOVE_ICON
+            parameter2 = 47 // Chaos
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_CURE_SLEEP
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_REMOVE_ICON
+            parameter2 = 14 // Sleep
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_CURE_BERSERK
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_REMOVE_ICON
+            parameter2 = 4 // Berserk
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_CURE_STUN
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_REMOVE_ICON
+            parameter2 = 55 // Stun
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_CURE_HOLD
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_REMOVE_ICON
+            parameter2 = 13 // Held
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_DISPEL_MAGIC
+            parameter1 = 0 // Level
+            parameter2 = 0 // Always dispel
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_DISPLAY_STRING
+            parameter1 = 25820 // Dispel Effects
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_SPELL_MAGICAL_REST
+            target = EFF_TARGET_PRESET
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            END 
+END
+
+
 DEFINE_ACTION_FUNCTION APPLY_RESPAWN_CUTSCENE
     INT_VAR respawn_point_index = ~~
     STR_VAR respawn_point_ref = 0
+        resurrection_spl = 0
+        heal_spl = 0
+        patrification_state_variable = 0
     RET respawn_cutscene_name
 BEGIN
     OUTER_SPRINT respawn_cutscene_name ~%RESREF_BCS_CR_RESPAWN_PROCESS_PREFIX%%respawn_point_index%~
@@ -39,6 +293,7 @@ BEGIN
         SPRINT p5_pos $~%respawn_point_ref%~(PLAYER5_POS)
         SPRINT p6_pos $~%respawn_point_ref%~(PLAYER6_POS)
         SPRINT face $~%respawn_point_ref%~(FACE)
+        SPRINT visual_effect ~%VVC_RESREF_RESTORATION%~
         EVALUATE_BUFFER
         COMPILE_BAF_TO_BCS
 END

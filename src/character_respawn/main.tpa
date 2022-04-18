@@ -1,18 +1,23 @@
 OUTER_SPRINT src ~%src%~ ^ ~/character_respawn~
-INCLUDE ~%src%/effects_alteration.tpa~
+INCLUDE ~%src%/effects_adjustments.tpa~
+INCLUDE ~%src%/effects_extensions.tpa~
 INCLUDE ~%src%/death_prevention.tpa~
 INCLUDE ~%src%/respawn_trigger.tpa~
 INCLUDE ~%src%/respawn_execution.tpa~
 INCLUDE ~%src%/respawn_process.tpa~
 INCLUDE ~%src%/respawn_penalty.tpa~
 
-LAF APPLY_EFFECTS_ALTERATION END
+LAF APPLY_EFFECTS_ADJUSTMENTS RET petrification_extension END
+
+LAF APPLY_EFFECTS_EXTENSIONS STR_VAR petrification_extension 
+    RET patrification_state_variable
+    END
 
 LAF APPLY_DEATH_PREVENTION END
 
 LAF APPLY_RESPAWN_PENALTY RET penalty_cutscene_name END
 
-LAF APPLY_RESPAWN_PROCESS STR_VAR penalty_cutscene_name
+LAF APPLY_RESPAWN_PROCESS STR_VAR penalty_cutscene_name patrification_state_variable
     RET_ARRAY respawn_point_names respawn_cutscenes 
     END
 
@@ -22,4 +27,4 @@ LAF APPLY_RESPAWN_EXECUTION
     RET respawn_execution_cutscene
     END
 
-LAF APPLY_RESPAWN_TRIGGER STR_VAR respawn_execution_cutscene END
+LAF APPLY_RESPAWN_TRIGGER STR_VAR respawn_execution_cutscene patrification_state_variable END
