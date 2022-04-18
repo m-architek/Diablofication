@@ -107,7 +107,7 @@ BEGIN
     /*
         PLOT CRITICAL
     */
-    LAF APPLY_PLOT_CRITICAL_RESPAWN_POINT_VARIABLES RET candlekeep_enter_variable ice_island_enter_variable END
+    LAF APPLY_PLOT_CRITICAL_EXTENSIONS RET candlekeep_enter_variable ice_island_enter_variable END
 
     EXTEND_BOTTOM ~%respawn_point_resolving_cutscene%.BCS~ ~.../respawn_point_rule.baf~ 
         SPRINT respawn_point_filter ~Global("Chapter", "GLOBAL", 0)~
@@ -127,6 +127,16 @@ BEGIN
         SPRINT respawn_point_filter ~~~~~
             Global("Chapter", "GLOBAL", 6)
             Global("Criminal", "GLOBAL", 1)
+            Global("Arrested", "GLOBAL", 0)
+        ~~~~~
+        SPRINT respawn_point_indicator $~%respawn_points_indicators_ref%~(CANDLEKEEP_PRISON)
+        EVALUATE_BUFFER
+
+    EXTEND_BOTTOM ~%respawn_point_resolving_cutscene%.BCS~ ~.../respawn_point_rule.baf~ 
+        SPRINT respawn_point_filter ~~~~~
+            Global("Chapter", "GLOBAL", 6)
+            Global("Criminal", "GLOBAL", 1)
+            Global("Arrested", "GLOBAL", 1)
         ~~~~~
         SPRINT respawn_point_indicator $~%respawn_points_indicators_ref%~(CANDLEKEEP_CATACOMBS)
         EVALUATE_BUFFER
@@ -170,20 +180,20 @@ BEGIN
 END
 
 
-DEFINE_ACTION_FUNCTION APPLY_PLOT_CRITICAL_RESPAWN_POINT_VARIABLES
+DEFINE_ACTION_FUNCTION APPLY_PLOT_CRITICAL_EXTENSIONS
     RET candlekeep_enter_variable ice_island_enter_variable
 BEGIN
-    LAF APPLY_CANDLEKEEP_ENTER_VARIABLE RET candlekeep_enter_variable END
-    LAF APPLY_ICE_ISLAND_ENTER_VARIABLE RET ice_island_enter_variable END
+    LAF APPLY_CANDLEKEEP_ENTER_EXTENSION RET candlekeep_enter_variable END
+    LAF APPLY_CANDLEKEEP_ARRESTED_EXTENSION END
+    LAF APPLY_ICE_ISLAND_ENTER_EXTENSION RET ice_island_enter_variable END
 END
 
 
-DEFINE_ACTION_FUNCTION APPLY_CANDLEKEEP_ENTER_VARIABLE
+DEFINE_ACTION_FUNCTION APPLY_CANDLEKEEP_ENTER_EXTENSION
     RET candlekeep_enter_variable
 BEGIN
     OUTER_SPRINT candlekeep_enter_variable ~%GLOBAL_CR_CANDLEKEEP_ENTER%~
 
-    //TODO: replace with CH6CUT01 extension
     <<<<<<<< .../candlekeep_enterence_extension.d
     ADD_TRANS_ACTION KEEPER 
         BEGIN 4 END 
@@ -196,12 +206,31 @@ BEGIN
 END
 
 
-DEFINE_ACTION_FUNCTION APPLY_ICE_ISLAND_ENTER_VARIABLE
+DEFINE_ACTION_FUNCTION APPLY_CANDLEKEEP_ARRESTED_EXTENSION BEGIN
+    <<<<<<<< .../candlekeep_arrested_extension.baf
+    IF
+        Global("Arrested", "GLOBAL", 0)
+    THEN
+        RESPONSE #100
+            Wait(2)
+            SetGlobal("Arrested","GLOBAL",1)
+            ClearAllActions()
+            StartCutSceneMode()
+            StartCutScene("ch6cut02")
+    END
+    >>>>>>>>
+
+    EXTEND_BOTTOM ~AR2631.BCS~ ~.../candlekeep_arrested_extension.baf~ 
+        EVALUATE_BUFFER
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_ICE_ISLAND_ENTER_EXTENSION
     RET ice_island_enter_variable
 BEGIN
     OUTER_SPRINT ice_island_enter_variable ~%GLOBAL_CR_ICE_ISLAND_ENTER%~
 
-    <<<<<<<< .../ice_isle_enterence_extension.baf
+    <<<<<<<< .../ice_island_enterence_extension.baf
     IF
         OnCreation()
         Global("%ice_island_enter_variable%", "GLOBAL", 0)
@@ -212,6 +241,6 @@ BEGIN
     END
     >>>>>>>>
 
-    EXTEND_TOP ~AR1008.BCS~ ~.../ice_isle_enterence_extension.baf~ 
+    EXTEND_TOP ~AR1008.BCS~ ~.../ice_island_enterence_extension.baf~ 
         EVALUATE_BUFFER
 END
