@@ -1,5 +1,6 @@
 DEFINE_ACTION_FUNCTION APPLY_RESPAWN_TRIGGER
     STR_VAR respawn_execution_cutscene = 0
+        patrification_state_variable = 0
 BEGIN
     <<<<<<<< .../respawn_trigger.baf
     IF
@@ -41,7 +42,7 @@ BEGIN
     END
 
     IF
-        TriggerOverride(Player1, Global("%LOCALS_STATE_PETRIFIED%", "LOCALS", 1))
+        TriggerOverride(Player1, Global("%patrification_state_variable%", "LOCALS", 1))
     THEN
         RESPONSE #100
             ClearAllActions()

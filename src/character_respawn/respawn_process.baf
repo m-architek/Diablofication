@@ -3,46 +3,68 @@ IF
 THEN
     RESPONSE #100
         CutSceneId(Player1)
-        SmallWait(15)
+        SmallWait(30)
         FadeToColor([15.0], 0)
         SmallWait(15)
 
-        SetGlobal("%LOCALS_STATE_PETRIFIED%", "LOCALS", 0)
+        ApplySpellRES("%resurrection_spl%", Player1)
+        SetGlobal("%patrification_state_variable%", "LOCALS", 0)
+END
 
-        ApplySpell(Player1, WIZARD_STONE_TO_FLESH)
-        ApplySpell(Player2, WIZARD_STONE_TO_FLESH)
-        ApplySpell(Player3, WIZARD_STONE_TO_FLESH)
-        ApplySpell(Player4, WIZARD_STONE_TO_FLESH)
-        ApplySpell(Player5, WIZARD_STONE_TO_FLESH)
-        ApplySpell(Player6, WIZARD_STONE_TO_FLESH)
 
-        ApplySpell(Player1, CLERIC_RESURRECTION)
-        ApplySpell(Player2, CLERIC_RESURRECTION)
-        ApplySpell(Player3, CLERIC_RESURRECTION)
-        ApplySpell(Player4, CLERIC_RESURRECTION)
-        ApplySpell(Player5, CLERIC_RESURRECTION)
-        ApplySpell(Player6, CLERIC_RESURRECTION)
+IF
+    StateCheck(Player2, STATE_REALLY_DEAD)
+THEN
+    RESPONSE #100
+        CutSceneId(Player1)
+        ApplySpellRES("%resurrection_spl%", Player2)
+END 
 
-        ApplySpell(Player1, CLERIC_HEAL)
-        ApplySpell(Player2, CLERIC_HEAL)
-        ApplySpell(Player3, CLERIC_HEAL)
-        ApplySpell(Player4, CLERIC_HEAL)
-        ApplySpell(Player5, CLERIC_HEAL)
-        ApplySpell(Player6, CLERIC_HEAL)
+IF
+    StateCheck(Player3, STATE_REALLY_DEAD)
+THEN
+    RESPONSE #100
+        CutSceneId(Player1)
+        ApplySpellRES("%resurrection_spl%", Player3)
+END 
 
-        ApplySpell(Player1, CLERIC_RESTORATION)
-        ApplySpell(Player2, CLERIC_RESTORATION)
-        ApplySpell(Player3, CLERIC_RESTORATION)
-        ApplySpell(Player4, CLERIC_RESTORATION)
-        ApplySpell(Player5, CLERIC_RESTORATION)
-        ApplySpell(Player6, CLERIC_RESTORATION)
+IF
+    StateCheck(Player4, STATE_REALLY_DEAD)
+THEN
+    RESPONSE #100
+        CutSceneId(Player1)
+        ApplySpellRES("%resurrection_spl%", Player4)
+END
 
-        ApplySpell(Player1, FORCE_DISPEL_MAGIC)
-        ApplySpell(Player2, FORCE_DISPEL_MAGIC)
-        ApplySpell(Player3, FORCE_DISPEL_MAGIC)
-        ApplySpell(Player4, FORCE_DISPEL_MAGIC)
-        ApplySpell(Player5, FORCE_DISPEL_MAGIC)
-        ApplySpell(Player6, FORCE_DISPEL_MAGIC)
+IF
+    StateCheck(Player5, STATE_REALLY_DEAD)
+THEN
+    RESPONSE #100
+        CutSceneId(Player1)
+        ApplySpellRES("%resurrection_spl%", Player5)
+END 
+
+IF
+    StateCheck(Player6, STATE_REALLY_DEAD)
+THEN
+    RESPONSE #100
+        CutSceneId(Player1)
+        ApplySpellRES("%resurrection_spl%", Player6)
+END 
+
+
+IF
+    True()
+THEN
+    RESPONSE #100
+        CutSceneId(Player1)
+
+        ApplySpellRES("%heal_spl%", Player1)
+        ApplySpellRES("%heal_spl%", Player2)
+        ApplySpellRES("%heal_spl%", Player3)
+        ApplySpellRES("%heal_spl%", Player4)
+        ApplySpellRES("%heal_spl%", Player5)
+        ApplySpellRES("%heal_spl%", Player6)
 
         LeaveAreaLUAPanic("%area%", "", %p1_pos%, %face%)
         LeaveAreaLUA("%area%", "", %p1_pos%, %face%)
@@ -55,21 +77,14 @@ THEN
         SetMasterArea("%master_area%")
         MultiPlayerSync()
 
-        Rest()
-        ActionOverride(Player2, Rest())
-        ActionOverride(Player3, Rest())
-        ActionOverride(Player4, Rest())
-        ActionOverride(Player5, Rest())
-        ActionOverride(Player6, Rest())
+        CreateVisualEffectObject("%visual_effect%", Player1)
+        CreateVisualEffectObject("%visual_effect%", Player2)
+        CreateVisualEffectObject("%visual_effect%", Player3)
+        CreateVisualEffectObject("%visual_effect%", Player4)
+        CreateVisualEffectObject("%visual_effect%", Player5)
+        CreateVisualEffectObject("%visual_effect%", Player6)
 
-        CreateVisualEffectObject("%VVC_RESREF_STONE_TO_FLESH%", Player1)
-        CreateVisualEffectObject("%VVC_RESREF_STONE_TO_FLESH%", Player2)
-        CreateVisualEffectObject("%VVC_RESREF_STONE_TO_FLESH%", Player3)
-        CreateVisualEffectObject("%VVC_RESREF_STONE_TO_FLESH%", Player4)
-        CreateVisualEffectObject("%VVC_RESREF_STONE_TO_FLESH%", Player5)
-        CreateVisualEffectObject("%VVC_RESREF_STONE_TO_FLESH%", Player6)
-
-        SmallWait(15)
+        SmallWait(30)
         FadeFromColor([15.0], 0)
         SmallWait(15)
         StartCutSceneEx("%penalty_cutscene_name%", TRUE)

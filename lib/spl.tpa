@@ -51,16 +51,16 @@ END
 DEFINE_PATCH_FUNCTION ADD_SPL_ABILITY_EFFECT
     INT_VAR ability_index = ~~
         opcode = ~~
-        target_type = ~~
+        target = ~~
         power = 0
-        param_1 = 0
-        param_2 = 0
-        timing_mode = ~~
-        dispel_resistance = 0
+        parameter1 = 0
+        parameter2 = 0
+        timing = ~~
+        resist_dispel = 0
         duration = 0
-        probability_1 = 100
-        probability_2 = 0
-    STR_VAR resref = ~~
+        probability1 = 100
+        probability2 = 0
+    STR_VAR resource = ~~
     RET ability_effect_index
 BEGIN
     READ_LONG SPL_ABILITIES_OFFSET abilities_offset
@@ -76,16 +76,16 @@ BEGIN
     INSERT_BYTES ability_effect_offset SPL_EFFECT_SIZE
 
     WRITE_SHORT (ability_effect_offset + SPL_EFFECT_OPCODE_OFFSET) opcode
-    WRITE_BYTE (ability_effect_offset + SPL_EFFECT_TARGET_TYPE_OFFSET) target_type
+    WRITE_BYTE (ability_effect_offset + SPL_EFFECT_TARGET_TYPE_OFFSET) target
     WRITE_BYTE (ability_effect_offset + SPL_EFFECT_POWER_OFFSET) power
-    WRITE_LONG (ability_effect_offset + SPL_EFFECT_PARAM_1_OFFSET) param_1
-    WRITE_LONG (ability_effect_offset + SPL_EFFECT_PARAM_2_OFFSET) param_2
-    WRITE_BYTE (ability_effect_offset + SPL_EFFECT_TIMING_MODE_OFFSET) timing_mode
-    WRITE_BYTE (ability_effect_offset + SPL_EFFECT_DISPEL_RESISTANCE_OFFSET) dispel_resistance
+    WRITE_LONG (ability_effect_offset + SPL_EFFECT_PARAM_1_OFFSET) parameter1
+    WRITE_LONG (ability_effect_offset + SPL_EFFECT_PARAM_2_OFFSET) parameter2
+    WRITE_BYTE (ability_effect_offset + SPL_EFFECT_TIMING_MODE_OFFSET) timing
+    WRITE_BYTE (ability_effect_offset + SPL_EFFECT_DISPEL_RESISTANCE_OFFSET) resist_dispel
     WRITE_LONG (ability_effect_offset + SPL_EFFECT_DURATION_OFFSET) duration
-    WRITE_BYTE (ability_effect_offset + SPL_EFFECT_PROBABILITY_1_OFFSET) probability_1
-    WRITE_BYTE (ability_effect_offset + SPL_EFFECT_PROBABILITY_2_OFFSET) probability_2
-    WRITE_ASCII (ability_effect_offset + SPL_EFFECT_RESREF_OFFSET) ~%resref%~ #8
+    WRITE_BYTE (ability_effect_offset + SPL_EFFECT_PROBABILITY_1_OFFSET) probability1
+    WRITE_BYTE (ability_effect_offset + SPL_EFFECT_PROBABILITY_2_OFFSET) probability2
+    WRITE_ASCII (ability_effect_offset + SPL_EFFECT_RESREF_OFFSET) ~%resource%~ #8
 
     WRITE_SHORT (ability_offset + SPL_ABILITY_EFFECTS_COUNT) (ability_effects_count + 1)
     FOR (i = ability_effect_index + 1; i < ability_effects_count; ++i) BEGIN
