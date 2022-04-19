@@ -88,5 +88,5 @@ THEN
         SmallWait(15)
         FadeFromColor([15.0], 0)
         SmallWait(15)
-        StartCutSceneEx("%penalty_cutscene_name%", TRUE)
+        StartCutSceneEx("%next_cutscene_name%", TRUE)
 END
