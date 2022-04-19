@@ -52,11 +52,11 @@ END
 DEFINE_PATCH_FUNCTION ADD_SPL_ABILITY_EFFECT
     INT_VAR ability_index = ~~
         opcode = ~~
-        target = ~~
+        target = EFF_TARGET_PRESET
         power = 0
         parameter1 = 0
         parameter2 = 0
-        timing = ~~
+        timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
         resist_dispel = 0
         duration = 0
         probability1 = 100

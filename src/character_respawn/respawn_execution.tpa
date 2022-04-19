@@ -142,12 +142,12 @@ BEGIN
         EVALUATE_BUFFER
 
     EXTEND_BOTTOM ~%respawn_point_resolving_cutscene%.BCS~ ~.../respawn_point_rule.baf~ 
-            SPRINT respawn_point_filter ~~~~~
-                Global("%ice_island_enter_variable%", "GLOBAL", 1)
-                Global("iceisle", "GLOBAL", 0)
-            ~~~~~
-            SPRINT respawn_point_indicator $~%respawn_points_indicators_ref%~(ICE_ISLAND)
-            EVALUATE_BUFFER
+        SPRINT respawn_point_filter ~~~~~
+            Global("%ice_island_enter_variable%", "GLOBAL", 1)
+            Global("iceisle", "GLOBAL", 0)
+        ~~~~~
+        SPRINT respawn_point_indicator $~%respawn_points_indicators_ref%~(ICE_ISLAND)
+        EVALUATE_BUFFER
 END
 
 
@@ -207,6 +207,7 @@ END
 
 
 DEFINE_ACTION_FUNCTION APPLY_CANDLEKEEP_ARRESTED_EXTENSION BEGIN
+
     <<<<<<<< .../candlekeep_arrested_extension.baf
     IF
         Global("Arrested", "GLOBAL", 0)

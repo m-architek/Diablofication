@@ -8,14 +8,10 @@ BEGIN
         LPF ADD_SPL_ABILITY RET ability_index END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_STATE_PETRIFICATION
-            target = EFF_TARGET_PRESET
-            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
             parameter1 = 1
-            target = EFF_TARGET_PRESET
-            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
             STR_VAR resource = ~%patrification_state_variable%~
             END
 END
