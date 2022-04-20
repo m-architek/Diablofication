@@ -39,11 +39,11 @@ DEFINE_ACTION_FUNCTION APPLY_DEATH_PREVENTION_SPL BEGIN
     <<<<<<<< .../enable_death_prevention.baf
     IF
         OnCreation()
-        Global("%GLOBAL_CR_DP_ON%", "GLOBAL", 0)
+        Global("%GLOBAL_CR_DEATH_PREVENTION_ON%", "GLOBAL", 0)
     THEN
         RESPONSE #100
             ApplySpellRES("%RESREF_SPL_CR_DEATH_PREVENTION%", Player1)
-            SetGlobal("%GLOBAL_CR_DP_ON%", "GLOBAL", 1)
+            SetGlobal("%GLOBAL_CR_DEATH_PREVENTION_ON%", "GLOBAL", 1)
             Continue()
     END
     >>>>>>>>

@@ -1,5 +1,24 @@
 DEFINE_ACTION_FUNCTION APPLY_EFFECTS_ADJUSTMENTS
-    RET petrification_extension
+    RET patrification_state_variable
+BEGIN
+    OUTER_SPRINT petrification_extension ~%RESREF_SPL_PETRIFICATION%~
+
+    LAF APPLY_EXISTING_EFFECTS_ADJUSTMENTS STR_VAR petrification_extension END
+    LAF APPLY_EFFECTS_EXTENSIONS STR_VAR petrification_extension 
+        RET patrification_state_variable
+        END
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_EXISTING_EFFECTS_ADJUSTMENTS
+    STR_VAR petrification_extension = 0
+BEGIN
+    LAF APPLY_GENERAL_EXISTING_EFFECTS_ADJUSTMENTS STR_VAR petrification_extension END
+    LAF APPLY_SAREVOK_STRIKE_ADJUSTMENT END
+END
+
+DEFINE_ACTION_FUNCTION APPLY_GENERAL_EXISTING_EFFECTS_ADJUSTMENTS
+    STR_VAR petrification_extension = 0
 BEGIN
     PRINT ~~
     PRINT ~Adjusting existing effects. This can take a while...~
@@ -11,8 +30,6 @@ BEGIN
     /*
         Petrification
     */
-    OUTER_SPRINT petrification_extension ~%RESREF_SPL_PETRIFICATION%~
-    
     ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_PETRIFICATION BEGIN
         match_opcode => EFF_OPCODE_STATE_PETRIFICATION
         opcode => EFF_OPCODE_APPLY_EFFECTS_LIST
@@ -82,4 +99,30 @@ BEGIN
     COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
         LPF PATCH_ITM_EFFECTS STR_VAR patches_ref = patches END
         BUT_ONLY
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_SAREVOK_STRIKE_ADJUSTMENT BEGIN
+    COPY_EXISTING ~SPWI979.SPL~ ~override~
+        LPF DELETE_SPELL_EFFECT INT_VAR opcode_to_delete = EFF_OPCODE_GRAPHICS_REMOVE_SELECTION_CIRCLE END
+        BUT_ONLY
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_EFFECTS_EXTENSIONS
+    STR_VAR petrification_extension = 0
+    RET patrification_state_variable
+BEGIN
+    OUTER_SPRINT patrification_state_variable ~%LOCALS_STATE_PETRIFICATION%~
+
+    COPY ~%resources%/blank.spl~ ~override/%petrification_extension%.SPL~
+        LPF ADD_SPL_ABILITY RET ability_index END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_STATE_PETRIFICATION
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
+            parameter1 = 1
+            STR_VAR resource = ~%patrification_state_variable%~
+            END
 END
