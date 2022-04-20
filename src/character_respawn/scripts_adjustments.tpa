@@ -3,6 +3,6 @@ DEFINE_ACTION_FUNCTION APPLY_SCRIPTS_ADJUSTMENTS BEGIN
     PRINT ~Adjusting existing scripts. This can take a while...~
     PRINT ~~
 
-// TODO: SPWI979: remove hiding circle (or maybe show circle in cure?)
+
 // TODO: Extend death opcode and use it insttead Kill(P1)
 END
