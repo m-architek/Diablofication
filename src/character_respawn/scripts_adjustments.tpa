@@ -19,7 +19,11 @@ END
 DEFINE_PATCH_FUNCTION PATCH_KILL_PLAYER1_ACTIONS 
     STR_VAR kill_player1_variable = 0
 BEGIN
-    SPRINT kill_player1_action ~SetGlobal("%kill_player1_variable%", "GLOBAL", 1)~
+    SPRINT kill_player1_action ~~~~~
+        SetGlobal("%kill_player1_variable%", "GLOBAL", 1)
+        Continue()
+    ~~~~~
+
     REPLACE_TEXTUALLY EXACT_MATCH ~Kill(Player1)~ ~%kill_player1_action%~
     REPLACE_TEXTUALLY EXACT_MATCH ~Kill(Protagonist)~ ~%kill_player1_action%~
     REPLACE_TEXTUALLY EXACT_MATCH ~GameOver(19377)~ ~%kill_player1_action%~
