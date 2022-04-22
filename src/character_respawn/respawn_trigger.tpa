@@ -5,6 +5,18 @@ DEFINE_ACTION_FUNCTION APPLY_RESPAWN_TRIGGER
 BEGIN
     <<<<<<<< .../respawn_trigger.baf
     IF
+        Global("%kill_player1_variable%", "GLOBAL", 1)
+        GlobalTimerExpired("PoisonParty2", "GLOBAL")
+        Global("PartyCured", "GLOBAL", 0)
+    THEN
+        RESPONSE #100
+            SetGlobalTimer("PoisonParty", "GLOBAL", ONE_DAY)
+            SetGlobalTimer("PoisonParty2", "GLOBAL", TEN_DAYS)
+            SetGlobal("PoisonWarning" ,"GLOBAL", 0)
+            Continue()
+    END
+
+    IF
         OR(2)    
             HP(Player1, 1)
             Global("%kill_player1_variable%", "GLOBAL", 1)
