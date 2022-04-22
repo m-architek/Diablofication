@@ -1,15 +1,19 @@
 DEFINE_ACTION_FUNCTION APPLY_RESPAWN_TRIGGER
     STR_VAR respawn_execution_cutscene = 0
         patrification_state_variable = 0
+        kill_player1_variable = 0
 BEGIN
     <<<<<<<< .../respawn_trigger.baf
     IF
-        HP(Player1, 1)
+        OR(2)    
+            HP(Player1, 1)
+            Global("%kill_player1_variable%", "GLOBAL", 1)
     THEN
         RESPONSE #100
             ClearAllActions()
             StartCutSceneMode()
             ActionOverride(Player1, SetSequence(SEQ_SLEEP))
+            ActionOverride(Player1, VerbalConstant(Player1, DYING))
             StartCutSceneEx("%respawn_execution_cutscene%", TRUE)
     END
 
