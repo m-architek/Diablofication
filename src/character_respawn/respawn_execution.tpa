@@ -213,10 +213,12 @@ DEFINE_ACTION_FUNCTION APPLY_CANDLEKEEP_ARRESTED_EXTENSION BEGIN
         Global("Arrested", "GLOBAL", 0)
     THEN
         RESPONSE #100
-            Wait(2)
-            SetGlobal("Arrested","GLOBAL",1)
+            Deactivate("Ulraunt")
+            Deactivate("Tethtoril2")
+            Wait(5)
             ClearAllActions()
             StartCutSceneMode()
+            SetGlobal("Arrested", "GLOBAL", 1)
             StartCutScene("ch6cut02")
     END
     >>>>>>>>

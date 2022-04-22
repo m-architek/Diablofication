@@ -8,6 +8,7 @@ THEN
         SmallWait(15)
 
         ApplySpellRES("%resurrection_spl%", Player1)
+        SetGlobal("%kill_player1_variable%", "GLOBAL", 0)
         SetGlobal("%patrification_state_variable%", "LOCALS", 0)
         SetSequence(SEQ_READY)
 END

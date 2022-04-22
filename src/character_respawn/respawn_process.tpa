@@ -1,6 +1,7 @@
 DEFINE_ACTION_FUNCTION APPLY_RESPAWN_PROCESS 
     STR_VAR penalty_cutscene_name = 0
         patrification_state_variable = 0
+        kill_player1_variable = 0
     RET_ARRAY respawn_point_names respawn_cutscenes
 BEGIN
     LAF APPLY_RESPAWN_RESSURECTION RET resurrection_spl END
@@ -22,6 +23,7 @@ BEGIN
                 resurrection_spl = ~%resurrection_spl%~ 
                 heal_spl = ~%heal_spl%~ 
                 patrification_state_variable = ~%patrification_state_variable%~
+                kill_player1_variable = ~%kill_player1_variable%~
                 next_cutscene_name = ~%penalty_cutscene_name%~
             RET respawn_cutscene_name
             END
@@ -206,6 +208,7 @@ DEFINE_ACTION_FUNCTION APPLY_RESPAWN_CUTSCENE
         resurrection_spl = 0
         heal_spl = 0
         patrification_state_variable = 0
+        kill_player1_variable = 0
         next_cutscene_name = 0
     RET respawn_cutscene_name
 BEGIN
