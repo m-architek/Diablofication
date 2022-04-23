@@ -1,6 +1,8 @@
 BACKUP ~Diablofication/backup~
-SUPPORT ~https://github.com/m-architek/Diablofication~
-VERSION ~v0.0.1~
+SUPPORT ~https://github.com/m-architek/Diablofication/issues~
+VERSION ~v0.1~
+
+README ~%MOD_FOLDER%/readme.html~
 
 AUTO_EVAL_STRINGS
 NO_IF_EVAL_BUG
@@ -26,7 +28,10 @@ ALWAYS
 END
 
 
-BEGIN "Character respawn"
+LANGUAGE ~Universal (no new lines added)~ ~universal~
+
+
+BEGIN "Character Respawn (Alpha)"
 REQUIRE_PREDICATE GAME_IS ~bgee~ ~~
 
 WITH_SCOPE BEGIN
