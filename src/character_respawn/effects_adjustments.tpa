@@ -1,9 +1,11 @@
 DEFINE_ACTION_FUNCTION APPLY_EFFECTS_ADJUSTMENTS
-    RET patrification_state_variable
+    RET patrification_state_variable instant_death_variable
 BEGIN
     OUTER_SPRINT petrification_extension ~%RESREF_SPL_PETRIFICATION%~
 
-    LAF APPLY_EXISTING_EFFECTS_ADJUSTMENTS STR_VAR petrification_extension END
+    LAF APPLY_EXISTING_EFFECTS_ADJUSTMENTS STR_VAR petrification_extension 
+        RET instant_death_variable
+        END
     LAF APPLY_EFFECTS_EXTENSIONS STR_VAR petrification_extension 
         RET patrification_state_variable
         END
@@ -12,9 +14,11 @@ END
 
 DEFINE_ACTION_FUNCTION APPLY_EXISTING_EFFECTS_ADJUSTMENTS
     STR_VAR petrification_extension = 0
+    RET instant_death_variable
 BEGIN
     LAF APPLY_GENERAL_EXISTING_EFFECTS_ADJUSTMENTS STR_VAR petrification_extension END
     LAF APPLY_SAREVOK_STRIKE_ADJUSTMENT END
+    LAF APPLY_TANARI_DEATH_GAZE_ADJUSTMENT RET instant_death_variable END
 END
 
 DEFINE_ACTION_FUNCTION APPLY_GENERAL_EXISTING_EFFECTS_ADJUSTMENTS
@@ -105,6 +109,21 @@ END
 DEFINE_ACTION_FUNCTION APPLY_SAREVOK_STRIKE_ADJUSTMENT BEGIN
     COPY_EXISTING ~SPWI979.SPL~ ~override~
         LPF DELETE_SPELL_EFFECT INT_VAR opcode_to_delete = EFF_OPCODE_GRAPHICS_REMOVE_SELECTION_CIRCLE END
+        BUT_ONLY
+END
+
+DEFINE_ACTION_FUNCTION APPLY_TANARI_DEATH_GAZE_ADJUSTMENT 
+        RET instant_death_variable
+BEGIN
+    OUTER_SPRINT instant_death_variable ~%LOCALS_STATE_INSTANT_DEATH%~
+
+    COPY_EXISTING ~SPIN996.SPL~ ~override~
+        LPF CLONE_EFFECT INT_VAR match_opcode = EFF_OPCODE_SUMMON_REPLACE_CREATURE 
+            opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
+            parameter1 = 1
+            parameter2 = 0
+            STR_VAR resource = ~%instant_death_variable%~
+            END
         BUT_ONLY
 END
 

@@ -1,6 +1,7 @@
 DEFINE_ACTION_FUNCTION APPLY_RESPAWN_TRIGGER
     STR_VAR respawn_execution_cutscene = 0
         patrification_state_variable = 0
+        instant_death_variable = 0
         kill_player1_variable = 0
 BEGIN
     <<<<<<<< .../respawn_trigger.baf
@@ -17,9 +18,10 @@ BEGIN
     END
 
     IF
-        OR(2)    
+        OR(3)    
             HP(Player1, 1)
             Global("%kill_player1_variable%", "GLOBAL", 1)
+            TriggerOverride(Player1, Global("%instant_death_variable%", "LOCALS", 1))
     THEN
         RESPONSE #100
             ClearAllActions()
