@@ -10,6 +10,7 @@ THEN
         ApplySpellRES("%resurrection_spl%", Player1)
         SetGlobal("%kill_player1_variable%", "GLOBAL", 0)
         SetGlobal("%patrification_state_variable%", "LOCALS", 0)
+        SetGlobal("%instant_death_variable%", "LOCALS", 0)
         SetSequence(SEQ_READY)
 END
 
