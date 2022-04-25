@@ -8,7 +8,7 @@
 
 ## Overview
 
-Diablofication is Infinity Enigne modification that aims to implement some of the mechanics known from Diablo II into Baldur's Gate games series.
+Diablofication is Infinity Engine modification that aims to implement some of the mechanics known from Diablo II into Baldur's Gate games series.
 
 Diablo II and Baldur's Gate are two very different games. Diablofication doesn't try to change that by being total conversion mod. Instead, it tries to understand why certain mechanic is fun in Diablo II and introduce changes to Baldur's Gate to obtain the same result, without turning game upside down. 
 
@@ -18,11 +18,11 @@ Consequently, Diablofication is collection of tweaks that focus on following asp
 
 - Randomization and diversification of game content.
 
-- Various hack'n'slash flavourde tweaks, especially ones focused on solo playthrough.
+- Various hack'n'slash flavoured changes, especially focused on solo playthrough.
 
 See [components list](#components) for more details about mod content.
 
-Although some of the changes brought by Diablofication have major impact on game exepriance, this modification tries to maintain compatibility with other mods by following "maximum effect at minimum cost" rule (obviously together with best modding practices). See [compatibility section](#compatibility) for more details.
+Diablofication tries to maintain compatibility with other mods by following best modding practices joined together with "maximum effect at minimum cost" rule. See [compatibility section](#compatibility) for more details.
 
 
 ## Installation
@@ -66,7 +66,7 @@ Special thanks goes to:
 - [lynx](https://www.gibberlings3.net/profile/2635-lynx/), [Sam.](https://www.gibberlings3.net/profile/3522-sam/), [jmerry](https://www.gibberlings3.net/profile/12457-jmerry/), [Taimon](https://www.gibberlings3.net/profile/2297-taimon/), [argent77](https://www.gibberlings3.net/profile/3876-argent77/), [DavidW](https://www.gibberlings3.net/profile/1067-davidw/), [subtledoctor](https://www.gibberlings3.net/profile/6306-subtledoctor/) for technical help (in order of appearance).
 - [Jarno Mikkola](https://www.gibberlings3.net/profile/2129-jarno-mikkola/), [In_A_Graveyard](https://www.gibberlings3.net/profile/12821-in_a_graveyard/), [Endarire](https://www.gibberlings3.net/profile/5772-endarire/), [kijikun](https://www.gibberlings3.net/profile/5820-kijikun/) for interest and suggestions (in order of appearance).
 
-This modification is powered by [WeiDU v249](https://github.com/WeiDUorg/weidu/releases/tag/v249.00). You can find this in every mod readme, but it is not exaguration: thanks Weimer, The Bigg, Wisp and all contributors for creating this!
+This modification is powered by [WeiDU v249](https://github.com/WeiDUorg/weidu/releases/tag/v249.00). You can find this in every mod readme, but it is not exaggeration: thanks Weimer, The Bigg, Wisp and all contributors for creating this tool!
 
 Infinity Engine related resources that was invaluable help in creating this modification:
 - [IESDP](https://gibberlings3.github.io/iesdp/)
