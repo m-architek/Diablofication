@@ -12,13 +12,13 @@ Diablofication is Infinity Enigne modification that aims to implement some of th
 
 Diablo II and Baldur's Gate are two very different games. Diablofication doesn't try to change that by being total conversion mod. Instead, it tries to understand why certain mechanic is fun in Diablo II and introduce changes to Baldur's Gate to obtain the same result, without turning game upside down. 
 
-Consequently, Diablofication is tweak collection mod that focus on following aspects of gameplay:
+Consequently, Diablofication is collection of tweaks that focus on following aspects of the game:
 
-- Improve immersion by adding facilities for "no reload" gameplay, including ones that make this style of playing available for less experienced players.
+- Improvements for "no reload" gameplay, including ones that make this style of playing available for less experienced players.
 
-- Increase replayability by randomization of game content.
+- Randomization and diversification of game content.
 
-- Enhance hack'n'slash aspect by introducing certain content changes, quality of life features and rules tweaks, especially ones focused on "no reload" solo playthrough.
+- Various hack'n'slash flavourde tweaks, especially ones focused on solo playthrough.
 
 See [components list](#components) for more details about mod content.
 
