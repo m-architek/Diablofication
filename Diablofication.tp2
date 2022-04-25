@@ -1,4 +1,4 @@
-BACKUP ~Diablofication/backup~
+BACKUP ~%MOD_FOLDER%/backup~
 SUPPORT ~https://github.com/m-architek/Diablofication/issues~
 VERSION ~v0.1~
 
@@ -28,11 +28,14 @@ ALWAYS
 END
 
 
-LANGUAGE ~Universal (no new lines added)~ ~universal~
+LANGUAGE ~Universal (no new lines added)~ ~~
 
 
-BEGIN "Character Respawn (Alpha)"
+BEGIN "Character Respawn (Alpha)" DESIGNATED 110
 REQUIRE_PREDICATE GAME_IS ~bgee~ ~~
+REQUIRE_PREDICATE NOT GAME_INCLUDES ~sod~ ~~
+REQUIRE_PREDICATE NOT MOD_IS_INSTALLED ~cdtweaks/setup-cdtweaks.tp2~ 3300 ~~
+REQUIRE_PREDICATE NOT MOD_IS_INSTALLED ~Protagonist_Can_Die/Protagonist_Can_Die.tp2~ 0 ~~
 
 WITH_SCOPE BEGIN
     INCLUDE ~%src%/character_respawn/main.tpa~

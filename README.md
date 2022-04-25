@@ -10,7 +10,7 @@
 
 Diablofication is Infinity Enigne modification that aims to implement some of the mechanics known from Diablo II into Baldur's Gate games series.
 
-Diablo II and Baldur's Gate are two very different games. Diablofication doesn't try to change that by being total conversion mod. Instead, it tries to understand why certain mechanic is fun in Diablo II and introduce changes to Baldur's Gate to obtain the same result, without turning game balance upside down. 
+Diablo II and Baldur's Gate are two very different games. Diablofication doesn't try to change that by being total conversion mod. Instead, it tries to understand why certain mechanic is fun in Diablo II and introduce changes to Baldur's Gate to obtain the same result, without turning game upside down. 
 
 Consequently, Diablofication is tweak collection mod that focus on following aspects of gameplay:
 
@@ -18,7 +18,7 @@ Consequently, Diablofication is tweak collection mod that focus on following asp
 
 - Increase replayability by randomization of game content.
 
-- Enhance hack'n'slash aspect by introducing certain quality of life features and rules tweaks, especially ones focused on "no reload" solo playthrough.
+- Enhance hack'n'slash aspect by introducing certain content changes, quality of life features and rules tweaks, especially ones focused on "no reload" solo playthrough.
 
 See [components list](#components) for more details about mod content.
 
@@ -89,4 +89,4 @@ License: [GPL v3](LICENSE)
 ## Changelog
 
 ### v0.1
-- Alpha version of Character Respawn component 
+- Character Respawn (Alpha) for BG1 EE v2.6 (no SoD support) 
