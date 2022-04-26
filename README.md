@@ -49,7 +49,7 @@ Diablofication mod consists of following components. All components are optional
 
 ### Character Respawn (Alpha)
 
-In case of Protagonist death, entire party will be ressurected in nearest temple (or in other sensible place if temple is currently unavailable). This will however has consequence in certain amount of gold and experience points loss.
+In case of Protagonist death, entire party will be resurrected in nearest temple (or in other sensible place if temple is currently unavailable). This will however has consequence in certain amount of gold and experience points loss.
 
 **Motivation:** This component is designed to allow "no reload" play style for less experianced players. You can now play "no realod" and your character death will have certain consequences, but it will not end your playtrough. If you always wanted start playing "no realod", but you were intimidated by too severe consequence of your eventual mistake, this component is exactly for you. It can also be useful if you already play "no reload" and enjoy it, but you want to make it more casual and open for experiments.
 
