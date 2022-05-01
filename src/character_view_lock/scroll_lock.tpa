@@ -1,0 +1,14 @@
+DEFINE_ACTION_FUNCTION APPLY_SCROLL_LOCK BEGIN
+    <<<<<<<< .../scroll_lock.baf
+    IF
+        OnCreation()
+    THEN
+        RESPONSE #100
+            ActionOverride(Player1, LockScroll())
+            Continue()
+    END
+    >>>>>>>>
+    
+    EXTEND_TOP ~baldur.bcs~ ~.../scroll_lock.baf~ 
+        EVALUATE_BUFFER
+END
