@@ -1,23 +1,75 @@
-<h2>Character Respawn</h2>
+<!DOCTYPE html>
+<html lang="en-US">
 
-<p>This component prevents "Game Over" screen on protagonist character death (including petrification), situations when all party members are charmed and some plot related situations (fail to cure Marek's poison on time, refusing arrest in Candlekeep).</p>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Diablofication | Character Respawn</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
 
-<p>Regarding first point, Protagonist is now never really dead. The minimum HP cap of 1 is introduced to prevent real death (maximum HP is also increased by 1 to "give back" occupied point). When Protagonist HP reach value of 1, respawn process is triggered by scripts. As side effect of this approach, effects that previously drop target HP to 1 now leaves 2 HP. In case of instant kill effects (like petrification), Protagonist is immune to effect itself, but instead respawn process is triggered.</p>
+<body>
+    <div class="container-lg px-3 my-5 markdown-body">
+        <h2 id="character-respawn">Character Respawn</h2>
 
-<p>Since Infinity Engine provides many ways to kill character, not all of them are properly handled at current stage of component development. At this point, all ways that can cause death in non-modded game should be handled properly, with the exception of reducing character stat below 1 (currently Protagonist is simply protected aginst it).</p>
+        <p>This component prevents "Game Over" screen on protagonist character death (including petrification),
+            situations when all party members are charmed and some plot related situations (fail to cure Marek's poison
+            on time, refusing arrest in Candlekeep).</p>
 
-<p>"Game over" when entire party is charmed seems to be performed by engine itself, however it can be conifigured per location. This component prevents "game over" in such situations for every location in the game (included those from mods). Situation when entire party is charmed is detected by scripts and triggers respawn process.</p>
+        <p>Regarding first point, Protagonist is now never really dead. The minimum HP cap of 1 is introduced to prevent
+            real death (maximum HP is also increased by 1 to "give back" occupied point). When Protagonist HP reach
+            value of 1, respawn process is triggered by scripts. As side effect of this approach, effects that
+            previously drop target HP to 1 now leaves 2 HP. In case of instant kill effects (like petrification),
+            Protagonist is immune to effect itself, but instead respawn process is triggered.</p>
 
-<p>For plot related "game over" situations, component tries to recover game in arguably most sensible way. If you die from Marek's poison you will respawn normally and another ten days would be given for you to stop this poison. If you die in Candlekeep after you will be marekd as "criminal", you will respawn in Candlekeep prison and game will continue from there as you would be normally arrested. Note, that since attacking Iron Throne leaders mark you as criminal, you have only one chance to deal with this encounter.</p>
+        <p>Since Infinity Engine provides many ways to kill character, not all of them are properly handled at current
+            stage of component development. At this point, all ways that can cause death in non-modded game should be
+            handled properly, with the exception of reducing character stat below 1 (currently Protagonist is simply
+            protected aginst it).</p>
 
-<p>All possible respawn points are configured in <a href="../config/respawn_points.2da">this 2da table</a>. Configuration includes areas and players positon after respawn. Plot related respawn points are hardcoded and always take precedence, however you can configure nearest respawn point for master areas with <a href="../config/respawn_points_nearest.2da">this 2da table</a>. If newly visited master area do not have respawn point configured here, the value of previously visited master area would be used. Note that all changes to those 2da tables must be performed before component is installed.</p>
+        <p>"Game over" when entire party is charmed seems to be performed by engine itself, however it can be
+            conifigured per location. This component prevents "game over" in such situations for every location in the
+            game (included those from mods). Situation when entire party is charmed is detected by scripts and triggers
+            respawn process.</p>
 
-<p>During respawn process all party members are resurrected and healed. After respawn Protagonist should be in state that would be the case after death and resurrection, although this part was not deeply tested and probably not work correctly in some cases. Healing process, that is applied to every party member, include all effects of normal heal, restoration and dispel magic. It also makes party fully rest.</p>
+        <p>For plot related "game over" situations, component tries to recover game in arguably most sensible way. If
+            you die from Marek's poison you will respawn normally and another ten days would be given for you to stop
+            this poison. If you die in Candlekeep after you will be marekd as "criminal", you will respawn in Candlekeep
+            prison and game will continue from there as you would be normally arrested. Note, that since attacking Iron
+            Throne leaders mark you as criminal, you have only one chance to deal with this encounter.</p>
 
-<p>After respawn, Protagonist should have all equipment that was possesed in moment of "death", however equipment of dead companions is still on battlefield (unless it was pickuped meanwhile by Protagonist or other party member). Please note, that in case when battlefield is far enough from respawn point, this can cause equipment disappear before you will be able to recover it. Some equipment loss can also take place in case when you cannot go back to place of party member death (e.g. fight with Iron Throne leaders in Candlekeep).</p>
+        <p>All possible respawn points are configured in <a href="../config/respawn_points.2da">this 2da table</a>.
+            Configuration includes areas and players positon after respawn. Plot related respawn points are hardcoded
+            and always take precedence, however you can configure nearest respawn point for master areas with <a
+                href="../config/respawn_points_nearest.2da">this 2da table</a>. If newly visited master area do not have
+            respawn point configured here, the value of previously visited master area would be used. Note that all
+            changes to those 2da tables must be performed before component is installed.</p>
 
-<p>Each respawn has consequence in certain penalty of gold and XP. Amount of gold that is taken from the party depends on current party gold and it is configured in <a href="../config/respawn_penalty_gold.2da">this 2da table</a>. XP penalty is applied on each party member separately and it depends on character current XP, it is configured in <a href="../config/respawn_penalty_xp.2da">this 2da table</a>. Note that all changes to those 2da tables must be performed before component is installed. In case you change configuration, you should also avoid reducing character's XP below 0, which is not handled properly by the engine. XP penalty does not affect character level, it just delays getting next level.</p>
+        <p>During respawn process all party members are resurrected and healed. After respawn Protagonist should be in
+            state that would be the case after death and resurrection, although this part was not deeply tested and
+            probably not work correctly in some cases. Healing process, that is applied to every party member, include
+            all effects of normal heal, restoration and dispel magic. It also makes party fully rest.</p>
 
-<hr />
+        <p>After respawn, Protagonist should have all equipment that was possesed in moment of "death", however
+            equipment of dead companions is still on battlefield (unless it was pickuped meanwhile by Protagonist or
+            other party member). Please note, that in case when battlefield is far enough from respawn point, this can
+            cause equipment disappear before you will be able to recover it. Some equipment loss can also take place in
+            case when you cannot go back to place of party member death (e.g. fight with Iron Throne leaders in
+            Candlekeep).</p>
 
-<p><a href="../#character-respawn-alpha">&lt; Back to README</a></p>
+        <p>Each respawn has consequence in certain penalty of gold and XP. Amount of gold that is taken from the party
+            depends on current party gold and it is configured in <a href="../config/respawn_penalty_gold.2da">this 2da
+                table</a>. XP penalty is applied on each party member separately and it depends on character current XP,
+            it is configured in <a href="../config/respawn_penalty_xp.2da">this 2da table</a>. Note that all changes to
+            those 2da tables must be performed before component is installed. In case you change configuration, you
+            should also avoid reducing character's XP below 0, which is not handled properly by the engine. XP penalty
+            does not affect character level, it just delays getting next level.</p>
+
+        <hr />
+
+        <p><a href="./index.html#character-respawn-alpha">&lt; Back to README</a></p>
+    </div>
+</body>
+
+</html>
