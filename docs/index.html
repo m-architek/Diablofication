@@ -1,0 +1,90 @@
+<h1>Diablofication</h1>
+
+<p><strong>Version:</strong> v0.1 (<a href="https://github.com/m-architek/Diablofication/releases">Download</a>) <br />
+<strong>Game</strong>: BG1 EE v2.6 without SoD <br />
+<strong>Platform:</strong> Windows <br />
+<strong>Language:</strong> Universal (no new lines added)  </p>
+
+<h2>Overview</h2>
+
+<p>Diablofication is Infinity Engine modification that aims to implement some of the mechanics known from Diablo II into Baldur's Gate games series.</p>
+
+<p>Diablo II and Baldur's Gate are two very different games. Diablofication doesn't try to change that by being total conversion mod. Instead, it tries to understand why certain mechanic is fun in Diablo II and introduce changes to Baldur's Gate to obtain the same result, without turning game upside down. </p>
+
+<p>Consequently, Diablofication is collection of tweaks that focus on following aspects of the game:</p>
+
+<ul>
+<li><p>Improvements for "no reload" gameplay, including ones that make this style of playing available for less experienced players.</p></li>
+<li><p>Randomization and diversification of game content.</p></li>
+<li><p>Various hack'n'slash flavoured changes, especially focused on solo playthrough.</p></li>
+</ul>
+
+<p>See <a href="#components">components list</a> for more details about mod content.</p>
+
+<p>Diablofication tries to maintain compatibility with other mods by following best modding practices joined together with "maximum effect at minimum cost" rule. See <a href="#compatibility">compatibility section</a> for more details.</p>
+
+<h2>Installation</h2>
+
+<p>Unpack mod archive in main game directory. Run setup-Diablofication.exe and follow instructions on the screen. To make this mod work properly starting new game is required.</p>
+
+<p>For deinstallation reverse steps of installation process. Run setup-Diablofication.exe and choose [U]ninstall option. After process finish, you can remove mod files from your game directory. Please note, that after mod deinstallation, using saves made when mod was yet installed can lead to unexpected issues.</p>
+
+<p>See <a href="https://www.gibberlings3.net/forums/topic/33164-a-new-player%E2%80%99s-guide-to-installing-and-playing-mods">here</a> for more details about installing and playing Inifnity Engine modifications.</p>
+
+<h2>Compatibility</h2>
+
+<p>Diablofication is using WeiDU for patching game files in a way that will be compatible with patches done by other WeiDU based modifications. However, this "technical" compatibility not guarantee flawless in-game experiance so please read following notes about cross-mod compatibility and installation order.</p>
+
+<p>Diablofication is tweak collection mod and should be installed possibly late in mod installation process (preferably as the last mod). It tries to detect changes done by other modifications and acts accordingly to provide best compatibility.</p>
+
+<p>Each Diablofication component makes changes in different aspect of the game, detail compatibility notes are maintaied per each component indyvidually, please read them before installation. Moreover, some Diablofication components will refuse to install if they will detect incompatibility with one of already installed mod (this feature is obviously limited only to some of the most popular modifications).</p>
+
+<h2>Components</h2>
+
+<p>Diablofication mod consists of following components. All components are optional and independent from each other.</p>
+
+<h3>Character Respawn (Alpha)</h3>
+
+<p>In case of Protagonist death, entire party will be resurrected in nearest temple (or in other sensible place if temple is currently unavailable). This will however has consequence in certain amount of gold and experience points loss.</p>
+
+<p><strong>Motivation:</strong> This component is designed to allow "no reload" play style for less experianced players. You can now play "no realod" and your character death will have certain consequences, but it will not end your playtrough. If you always wanted start playing "no realod", but you were intimidated by too severe consequence of your eventual mistake, this component is exactly for you. It can also be useful if you already play "no reload" and enjoy it, but you want to make it more casual and open for experiments.</p>
+
+<p><strong>Compatibility:</strong> This component should be installed after every mod that add new areas, items or spells. Resolving respawn place cannot work perfect in mod-added areas, it is advised to visit closest non-mod area before traveling there. Sometimes this component can produce strange results together with mods that add complex plot (e.g. when you die in mod-added area that is no longer reacheble from nearest temple, what makes impossible to finish your quest). In case of such problems, you can always fallback to standard "reload" approach for this part of the game. In general, taking into account current stage of development, it is advised to save game normally, and just not reload it, unless some unpredicted problem occurs. This component is not compatible with mods that make changes related to Protagonist death like "Death Cam" component of <a href="https://www.gibberlings3.net/mods/tweaks/tweaks/">Tweaks Anthology</a> or <a href="https://www.gibberlings3.net/forums/topic/28910-protagonist-can-die/page/2/#comment-280191">Protagonist Can Die</a> tweak.</p>
+
+<p>See <a href="./character_respawn">here</a> for more details (this can include spoilers).</p>
+
+<h2>Final notes</h2>
+
+<p>This mod wouldn't exist without help of <a href="https://www.gibberlings3.net/">The Gibberlings Three</a> modding community. <br />
+Special thanks goes to:
+- <a href="https://www.gibberlings3.net/profile/11489-the_baffled_king/">The<em>Baffled</em>King</a> for groundbreaking technical insights and suggestions.
+- <a href="https://www.gibberlings3.net/profile/2635-lynx/">lynx</a>, <a href="https://www.gibberlings3.net/profile/3522-sam/">Sam.</a>, <a href="https://www.gibberlings3.net/profile/12457-jmerry/">jmerry</a>, <a href="https://www.gibberlings3.net/profile/2297-taimon/">Taimon</a>, <a href="https://www.gibberlings3.net/profile/3876-argent77/">argent77</a>, <a href="https://www.gibberlings3.net/profile/1067-davidw/">DavidW</a>, <a href="https://www.gibberlings3.net/profile/6306-subtledoctor/">subtledoctor</a> for technical help (in order of appearance).
+- <a href="https://www.gibberlings3.net/profile/2129-jarno-mikkola/">Jarno Mikkola</a>, <a href="https://www.gibberlings3.net/profile/12821-in_a_graveyard/">In<em>A</em>Graveyard</a>, <a href="https://www.gibberlings3.net/profile/5772-endarire/">Endarire</a>, <a href="https://www.gibberlings3.net/profile/5820-kijikun/">kijikun</a> for interest and suggestions (in order of appearance).</p>
+
+<p>This modification is powered by <a href="https://github.com/WeiDUorg/weidu/releases/tag/v249.00">WeiDU v249</a>. You can find this in every mod readme, but it is not exaggeration: thanks Weimer, The Bigg, Wisp and all contributors for creating this tool!</p>
+
+<p>Infinity Engine related resources that was invaluable help in creating this modification:
+- <a href="https://gibberlings3.github.io/iesdp/">IESDP</a>
+- <a href="https://weidu.org/~thebigg/README-WeiDU.html">WeiDU Documentation</a>
+- <a href="https://www.pocketplane.net/tutorials/simscript.html">Complete Scripting Guide</a>
+- Work of other modders, especially <a href="https://www.gibberlings3.net/mods/tweaks/tweaks/">The Tweaks Anthology</a> and <a href="http://www.shsforums.net/files/file/1109-klatu-tweaks-and-fixes/">klatu Tweaks and Fixes</a>
+- <a href="https://www.gibberlings3.net/forums/">The Gibberlings Three Forum</a> and <a href="https://forums.pocketplane.net/index.php">Pocket Plane Group Forum</a></p>
+
+<p>Infinity Engine related tools that was used for creation of this modification: <br />
+- <a href="https://github.com/WeiDUorg/weidu">WeiDU</a>
+- <a href="https://github.com/Argent77/NearInfinity">NearInfinity</a>
+- <a href="https://bgforge.net/mls/">BGforge VS code extension</a></p>
+
+<p>For support visit: <a href="https://github.com/m-architek/Diablofication/issues">GitHub</a></p>
+
+<p>License: <a href="LICENSE">GPL v3</a></p>
+
+<hr />
+
+<h2>Changelog</h2>
+
+<h3>v0.1</h3>
+
+<ul>
+<li>Character Respawn (Alpha) for BG1 EE v2.6 (no SoD support) </li>
+</ul>
