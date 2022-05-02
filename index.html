@@ -11,8 +11,6 @@
 
 <body>
   <div class="container-lg px-3 my-5 markdown-body">
-
-
     <h1 id="diablofication">Diablofication</h1>
 
     <p><strong>Version:</strong> v0.2-SNAPSHOT (<a
@@ -54,16 +52,17 @@
 
     <h2 id="installation">Installation</h2>
 
-    <p>Unpack mod archive in main game directory. Run setup-Diablofication.exe and follow instructions on the screen. To
-      make this mod work properly starting new game is required.</p>
-
-    <p>For deinstallation reverse steps of installation process. Run setup-Diablofication.exe and choose [U]ninstall
-      option. After process finish, you can remove mod files from your game directory. Please note, that after mod
-      deinstallation, using saves made when mod was yet installed can lead to unexpected issues.</p>
+    <p>Unpack mod archive in main game directory. Run setup-Diablofication.exe and follow instructions on the screen.
+      For deinstallation reverse steps of installation process. Run setup-Diablofication.exe and choose [U]ninstall
+      option. After process finish, you can remove mod files from your game directory.</p>
 
     <p>See <a
         href="https://www.gibberlings3.net/forums/topic/33164-a-new-player%E2%80%99s-guide-to-installing-and-playing-mods">here</a>
       for more details about installing and playing Inifnity Engine modifications.</p>
+
+    <p>Some of mod components require starting new game to work properly. This also means that after mod
+      deinstallation, using saves made when those components was yet installed can lead to unexpected issues.
+      For details, see descriptions of particular component.</p>
 
     <h2 id="compatibility">Compatibility</h2>
 
@@ -85,6 +84,13 @@
     <p>Diablofication mod consists of following components. All components are optional and independent from each other.
     </p>
 
+    <ul>
+      <li><a href="#character-respawn">Character Respawn</a></li>
+      <li><a href="#character-view-lock">Character View Lock</a></li>
+    </ul>
+
+    <br />
+
     <h3 id="character-respawn">Character Respawn (Alpha)</h3>
 
     <p>In case of Protagonist death, entire party will be resurrected in nearest temple (or in other sensible place if
@@ -97,8 +103,11 @@
       consequence of your eventual mistake, this component is exactly for you. It can also be useful if you already play
       “no reload” and enjoy it, but you want to make it more casual and open for experiments.</p>
 
-    <p><strong>Compatibility:</strong> This component should be installed after every mod that add new areas, items or
-      spells. Resolving respawn place cannot work perfect in mod-added areas, it is advised to visit closest non-mod
+    <p><strong>Installation:</strong> This component should be installed after every mod that add new areas, items or
+      spells. Starting new game is required for this component to work properly.</p>
+
+    <p><strong>Compatibility:</strong> Resolving respawn place cannot work perfect in mod-added areas, it is advised to
+      visit closest non-mod
       area before traveling there. Sometimes this component can produce strange results together with mods that add
       complex plot (e.g. when you die in mod-added area that is no longer reacheble from nearest temple, what makes
       impossible to finish your quest). In case of such problems, you can always fallback to standard “reload” approach
@@ -109,10 +118,43 @@
         href="https://www.gibberlings3.net/forums/topic/28910-protagonist-can-die/page/2/#comment-280191">Protagonist
         Can Die</a> tweak.</p>
 
-    <p><strong>Tip:</strong> Protagonist doesn't drop eqipment in the moment of death. However, enemies and party members still do.
-      In case that battlefield is unaccessible or far away from respawn point, it can result with loot or equipment lose.</p>
+    <p><strong>Tip:</strong> Protagonist doesn't drop eqipment in the moment of death. However, enemies and party
+      members still do.
+      In case that battlefield is unaccessible or far away from respawn point, it can result with loot or equipment
+      lose.</p>
 
     <p>See <a href="./docs/character_respawn.html">here</a> for more details (this can include spoilers).</p>
+
+    <br />
+
+    <h3 id="character-view-lock">Character View Lock (Experimental)</h3>
+
+    <p>Locks game viewport on Protagonist. Viewport will move automatically with your character movement,
+      keeping character always in center of the events.</p>
+
+    <p><strong>Motivation:</strong> Moving view automatically together with character movement saves you tedious view
+      scrolling, especially when playing solo.
+      It also has its specific flavour by allowng you to experinace game more from your character perspective.</p>
+
+    <p><strong>Installation:</strong> This component should be installed after every mod that add new cutscenes.
+      Starting new game is not required.</p>
+
+    <p><strong>Compatibility:</strong> This component most liely wouldn't be compatible with other mods that change
+      vieport behavour.</p>
+
+    <p><strong>Tip:</strong> Move your character using right click button to avoid group select when view is still in
+      move.</p>
+
+    <p><strong>Tip:</strong> You cannot use map screen to move your view on the other side of the area,
+      but you can still zoom out to travel greater distance with less clicks.</p>
+
+    <p><strong>Tip:</strong> View movement is much smoother on higher framerate. You can adjust framerate by editing
+      "Maximum Frame Rate" option in Baldur.lua config file (you can find it next to your save games).
+      Note that this setting changes overall game speed.</p>
+
+    <p>See <a href="./docs/character_view_lock.html">here</a> for more details.</p>
+
+    <br />
 
     <h2 id="final-notes">Final notes</h2>
 
@@ -175,6 +217,11 @@
     <hr />
 
     <h2 id="changelog">Changelog</h2>
+
+    <h3 id="v02">v0.2</h3>
+    <ul>
+      <li>Character View Lock (Experimental) for BG1 EE v2.6 (no SoD support)</li>
+    </ul>
 
     <h3 id="v01">v0.1</h3>
     <ul>
