@@ -39,10 +39,12 @@
             prison and game will continue from there as you would be normally arrested. Note, that since attacking Iron
             Throne leaders mark you as criminal, you have only one chance to deal with this encounter.</p>
 
-        <p>All possible respawn points are configured in <a href="../config/respawn_points.2da">this 2da table</a>.
+        <p>All possible respawn points are configured in <a href="../config/respawn_points.2da">respawn_points.2da</a>
+            table.
             Configuration includes areas and players positon after respawn. Plot related respawn points are hardcoded
             and always take precedence, however you can configure nearest respawn point for master areas with <a
-                href="../config/respawn_points_nearest.2da">this 2da table</a>. If newly visited master area do not have
+                href="../config/respawn_points_nearest.2da">respawn_points_nearest.2da</a> table. If newly visited
+            master area do not have
             respawn point configured here, the value of previously visited master area would be used. Note that all
             changes to those 2da tables must be performed before component is installed.</p>
 
@@ -59,16 +61,18 @@
             Candlekeep).</p>
 
         <p>Each respawn has consequence in certain penalty of gold and XP. Amount of gold that is taken from the party
-            depends on current party gold and it is configured in <a href="../config/respawn_penalty_gold.2da">this 2da
-                table</a>. XP penalty is applied on each party member separately and it depends on character current XP,
-            it is configured in <a href="../config/respawn_penalty_xp.2da">this 2da table</a>. Note that all changes to
+            depends on current party gold and it is configured in <a
+                href="../config/respawn_penalty_gold.2da">respawn_penalty_gold.2da</a> table.
+            XP penalty is applied on each party member separately and it depends on character current XP,
+            it is configured in <a href="../config/respawn_penalty_xp.2da">respawn_penalty_xp.2da</a> table. Note that
+            all changes to
             those 2da tables must be performed before component is installed. In case you change configuration, you
             should also avoid reducing character's XP below 0, which is not handled properly by the engine. XP penalty
             does not affect character level, it just delays getting next level.</p>
 
         <hr />
 
-        <p><a href="../index.html#character-respawn">&lt; Back to README</a></p>
+        <p><a href="../index.html#character-respawn">&lt; Back to Readme</a></p>
     </div>
 </body>
 
