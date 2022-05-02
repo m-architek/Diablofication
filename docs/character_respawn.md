@@ -20,4 +20,4 @@ Each respawn has consequence in certain penalty of gold and XP. Amount of gold t
 
 ---
 
-[< Back to README](../README.md#character-respawn-alpha)
+[< Back to README](./index.md#character-respawn-alpha)
