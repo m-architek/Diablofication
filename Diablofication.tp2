@@ -21,6 +21,7 @@ ALWAYS
     INCLUDE ~%lib%/eff_v2.tpa~
     INCLUDE ~%lib%/spl.tpa~
     INCLUDE ~%lib%/itm.tpa~
+    INCLUDE ~%lib%/joinable_npc_array.tpa~
 
     INCLUDE ~%resources%/variables.tpa~
     INCLUDE ~%resources%/resref_spl.tpa~
@@ -39,6 +40,15 @@ REQUIRE_PREDICATE NOT MOD_IS_INSTALLED ~Protagonist_Can_Die/Protagonist_Can_Die.
 
 WITH_SCOPE BEGIN
     INCLUDE ~%src%/character_respawn/main.tpa~
+END
+
+
+BEGIN "More HP on level one (Beta)" DESIGNATED 710
+REQUIRE_PREDICATE GAME_IS ~bgee~ ~BG1 EE is required~
+REQUIRE_PREDICATE NOT GAME_INCLUDES ~sod~ ~SoD not supported~
+
+WITH_SCOPE BEGIN
+    INCLUDE ~%src%/level1_hp/main.tpa~
 END
 
 

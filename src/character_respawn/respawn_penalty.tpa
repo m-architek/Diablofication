@@ -50,7 +50,7 @@ END
 DEFINE_ACTION_FUNCTION APPLY_RESPAWN_PENALTY_XP RET check_cutscene_name penalty_cutscene_name BEGIN
     COPY - ~%config%/respawn_penalty_xp.2da~ ~~
         LPF READ_2DA_ROW_NAMES RET_ARRAY respawn_penalty_xp_thresholds = out END
-        PHP_EACH respawn_penalty_xp_thresholds AS _ => respawn_penalty_xp_threshold BEGIN
+        PHP_EACH respawn_penalty_xp_thresholds AS respawn_penalty_xp_threshold => _ BEGIN
             LPF READ_2DA_ROW STR_VAR row_name = ~%respawn_penalty_xp_threshold%~ 
                 RET_ARRAY ~respawn_penalty_xp_threshold_%respawn_penalty_xp_threshold%~ = out END
         END
@@ -107,7 +107,7 @@ END
 DEFINE_ACTION_FUNCTION APPLY_RESPAWN_PENALTY_GOLD RET check_cutscene_name penalty_cutscene_name BEGIN
     COPY - ~%config%/respawn_penalty_gold.2da~ ~~
         LPF READ_2DA_ROW_NAMES RET_ARRAY respawn_penalty_gold_thresholds = out END
-        PHP_EACH respawn_penalty_gold_thresholds AS _ => respawn_penalty_gold_threshold BEGIN
+        PHP_EACH respawn_penalty_gold_thresholds AS respawn_penalty_gold_threshold => _ BEGIN
             LPF READ_2DA_ROW STR_VAR row_name = ~%respawn_penalty_gold_threshold%~ 
                 RET_ARRAY ~respawn_penalty_gold_threshold_%respawn_penalty_gold_threshold%~ = out END
         END

@@ -1,0 +1,79 @@
+DEFINE_ACTION_FUNCTION APPLY_RULES_ADJUSTMENTS 
+    RET_ARRAY kits_hp_tables
+BEGIN
+    COPY_EXISTING - ~hpclass.2da~ ~~
+        LPF READ_2DA_COLUMN STR_VAR column_name = ~TABLE~
+            RET_ARRAY kits_hp_tables = out
+            END
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY hp_tables BEGIN END
+    ACTION_PHP_EACH kits_hp_tables AS _ => table BEGIN
+        ACTION_DEFINE_ASSOCIATIVE_ARRAY hp_tables BEGIN ~%table%~ => ~~ END
+    END
+    ACTION_PHP_EACH hp_tables AS table => _ BEGIN
+        COPY_EXISTING ~%table%.2DA~ ~override~
+            LPF PATCH_HP_TABLE END
+            BUT_ONLY
+    END
+END
+
+DEFINE_PATCH_FUNCTION PATCH_HP_TABLE BEGIN
+    LPF READ_2DA_COLUMN STR_VAR column_name = ~SIDES~
+        RET_ARRAY lvl_sides = out
+        END
+    LPF READ_2DA_COLUMN STR_VAR column_name = ~ROLLS~
+        RET_ARRAY lvl_rolls = out
+        END
+    LPF READ_2DA_COLUMN STR_VAR column_name = ~MODIFIER~
+        RET_ARRAY lvl_modifiers = out
+        END
+
+    SET last_roll_lvl = 0
+    PHP_EACH lvl_rolls AS lvl => rolls BEGIN
+        PATCH_IF (rolls > 0) BEGIN
+            SET last_roll_lvl = lvl
+        END
+    END
+
+    PATCH_IF (last_roll_lvl > 0) BEGIN
+        SET first_static_lvl = last_roll_lvl + 1
+        SET static_increment = $lvl_modifiers(~%first_static_lvl%~)
+
+        SET lvl1_hp = 0
+        FOR (lvl = 1; lvl < first_static_lvl; ++lvl) BEGIN
+            SET lvl_side = $lvl_sides(~%lvl%~)
+            SET lvl_roll = $lvl_rolls(~%lvl%~)
+            SET lvl_modifier = $lvl_modifiers(~%lvl%~)
+            SET lvl_hp = (lvl_side * lvl_roll) + lvl_modifier
+            
+            SET lvl1_hp = lvl1_hp + lvl_hp
+        END
+
+        SET static_increment_based_reduction = (last_roll_lvl - 1) * static_increment
+        SET lvl1_hp = lvl1_hp - static_increment_based_reduction
+        
+        PATCH_IF (lvl1_hp > 0) BEGIN
+            DEFINE_ASSOCIATIVE_ARRAY patches BEGIN END
+
+            DEFINE_ASSOCIATIVE_ARRAY patch_1 BEGIN 
+                ROLLS => 0
+                MODIFIER => ~%lvl1_hp%~
+            END
+            DEFINE_ASSOCIATIVE_ARRAY patches BEGIN 1 => patch_1 END
+
+            FOR (lvl = 2; lvl < first_static_lvl; ++lvl) BEGIN
+                DEFINE_ASSOCIATIVE_ARRAY ~patch_%lvl%~ BEGIN 
+                    ROLLS => 0
+                    MODIFIER => ~%static_increment%~
+                END
+                DEFINE_ASSOCIATIVE_ARRAY patches BEGIN ~%lvl%~ => ~patch_%lvl%~ END
+            END
+
+            LPF PATCH_2DA_TABLE STR_VAR patches_ref = patches END
+        END ELSE BEGIN
+            PATCH_FAIL ~Invalid %SOURCE_FILE%: calculated level one HP %lvl1_hp% <= 0~
+        END
+    END ELSE BEGIN
+        PATCH_FAIL ~Invalid %SOURCE_FILE%: no HP rolls~
+    END
+END
+

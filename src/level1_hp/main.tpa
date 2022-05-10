@@ -1,0 +1,6 @@
+OUTER_SPRINT src ~%src%~ ^ ~/level1_hp~
+INCLUDE ~%src%/rules_adjustments.tpa~
+INCLUDE ~%src%/companions_adjustments.tpa~
+
+LAF APPLY_RULES_ADJUSTMENTS RET_ARRAY kits_hp_tables END
+// LAF APPLY_COMPANIONS_ADJUSTMENTS STR_VAR kits_hp_tables_ref = kits_hp_tables END
