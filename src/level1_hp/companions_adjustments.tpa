@@ -1,0 +1,18 @@
+DEFINE_ACTION_FUNCTION APPLY_COMPANIONS_ADJUSTMENTS
+    STR_VAR kits_hp_tables_ref = 0
+BEGIN
+    LAM JOINABLE_NPC_ARRAY
+    ACTION_PHP_EACH JOINABLE_NPC_ARRAY AS cre => dv BEGIN
+        COPY_EXISTING ~%cre%~ ~override~
+            LPF PATCH_COMPANION_CRE STR_VAR kits_hp_tables_ref END
+            BUT_ONLY
+    END
+END
+
+DEFINE_PATCH_FUNCTION PATCH_COMPANION_CRE 
+    STR_VAR kits_hp_tables_ref = 0
+        class_ids_ref = 0
+        kits_ids_ref = 0
+BEGIN
+    PATCH_PRINT ~Patching %SOURCE_RES%~
+END

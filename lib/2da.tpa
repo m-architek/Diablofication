@@ -12,7 +12,7 @@ BEGIN
     FOR (content_row_index = 0; content_row_index < content_rows_count; ++content_row_index) BEGIN
         SET raw_row_index = content_row_index + 2DA_CONTENT_OFFSET // READ_2DA_ENTRY counts from the begginign of the file
         READ_2DA_ENTRY raw_row_index 0 0 row_name
-        DEFINE_ASSOCIATIVE_ARRAY out BEGIN ~%content_row_index%~ => ~%row_name%~ END
+        DEFINE_ASSOCIATIVE_ARRAY out BEGIN ~%row_name%~ => ~%content_row_index%~ END
     END
 END
 
@@ -25,7 +25,7 @@ BEGIN
     DEFINE_ASSOCIATIVE_ARRAY out BEGIN END
     FOR (content_coulmn_index = 0; content_coulmn_index < content_columns_count; ++content_coulmn_index) BEGIN
         READ_2DA_ENTRY 2DA_CONTENT_HEADER_ROW_INDEX content_coulmn_index 0 column_name
-        DEFINE_ASSOCIATIVE_ARRAY out BEGIN ~%content_coulmn_index%~ => ~%column_name%~ END
+        DEFINE_ASSOCIATIVE_ARRAY out BEGIN ~%column_name%~ => ~%content_coulmn_index%~ END
     END
 END
 
@@ -44,7 +44,7 @@ BEGIN
         READ_2DA_ENTRY raw_row_index 0 0 this_row_name
         
         PATCH_IF (~%this_row_name%~ STRING_EQUAL ~%row_name%~) BEGIN
-            PHP_EACH column_names AS column_index => column_name BEGIN
+            PHP_EACH column_names AS column_name => column_index BEGIN
                 SET raw_column_index = column_index + 1 // First column does not have name
                 READ_2DA_ENTRY raw_row_index raw_column_index 0 column_value
                 DEFINE_ASSOCIATIVE_ARRAY out BEGIN ~%column_name%~ => ~%column_value%~ END
@@ -83,5 +83,25 @@ BEGIN
         READ_2DA_ENTRY raw_row_index raw_column_index 0 column_value
 
         DEFINE_ASSOCIATIVE_ARRAY out BEGIN ~%row_name%~ => ~%column_value%~ END
+    END
+END
+
+DEFINE_PATCH_FUNCTION PATCH_2DA_TABLE
+    STR_VAR patches_ref = 0
+BEGIN
+    LPF READ_2DA_COLUMN_NAMES RET_ARRAY column_names = out END
+    LPF READ_2DA_ROW_NAMES RET_ARRAY row_names = out END
+
+    PHP_EACH ~%patches_ref%~ AS patch_name => patch_ref BEGIN
+        SET content_row_index = $row_names(~%patch_name%~)
+        SET raw_row_index = content_row_index + 2DA_CONTENT_OFFSET // SET_2DA_ENTRY counts from the begginign of the file
+
+        PHP_EACH ~%patch_ref%~ AS column_name => column_value BEGIN
+            SET content_column_index = $column_names(~%column_name%~)
+            SET raw_column_index = content_column_index + 1 // First column does not have name
+
+            PATCH_LOG ~Patching %SOURCE_EXT% %SOURCE_RES% row %patch_name%: %column_name% = %column_value%~
+            SET_2DA_ENTRY raw_row_index raw_column_index 0 ~%column_value%~
+        END
     END
 END

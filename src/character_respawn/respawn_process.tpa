@@ -10,7 +10,7 @@ BEGIN
 
     COPY - ~%config%/respawn_points.2da~ ~~
         LPF READ_2DA_ROW_NAMES RET_ARRAY respawn_point_names = out END
-        PHP_EACH respawn_point_names AS _ => respawn_point_name BEGIN
+        PHP_EACH respawn_point_names AS respawn_point_name => _ BEGIN
             LPF READ_2DA_ROW STR_VAR row_name = ~%respawn_point_name%~ 
                 RET_ARRAY ~respawn_point_%respawn_point_name%~ = out END
         END
