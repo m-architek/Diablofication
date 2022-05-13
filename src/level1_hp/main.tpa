@@ -2,5 +2,11 @@ OUTER_SPRINT src ~%src%~ ^ ~/level1_hp~
 INCLUDE ~%src%/rules_adjustments.tpa~
 INCLUDE ~%src%/companions_adjustments.tpa~
 
-LAF APPLY_RULES_ADJUSTMENTS RET_ARRAY kits_hp_tables END
-// LAF APPLY_COMPANIONS_ADJUSTMENTS STR_VAR kits_hp_tables_ref = kits_hp_tables END
+LAF APPLY_RULES_ADJUSTMENTS RET_ARRAY hpclass_table 
+    hp_lvl1_values 
+    hp_static_increment_values 
+    END
+LAF APPLY_COMPANIONS_ADJUSTMENTS STR_VAR hpclass_table_ref = hpclass_table 
+    hp_lvl1_values_ref = hp_lvl1_values
+    hp_static_increment_values_ref = hp_static_increment_values
+    END
