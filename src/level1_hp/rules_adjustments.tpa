@@ -1,22 +1,33 @@
 DEFINE_ACTION_FUNCTION APPLY_RULES_ADJUSTMENTS 
-    RET_ARRAY kits_hp_tables
+    RET_ARRAY hpclass_table 
+        hp_lvl1_values 
+        hp_static_increment_values 
 BEGIN
     COPY_EXISTING - ~hpclass.2da~ ~~
         LPF READ_2DA_COLUMN STR_VAR column_name = ~TABLE~
-            RET_ARRAY kits_hp_tables = out
+            RET_ARRAY hpclass_table = out
             END
+    
     ACTION_DEFINE_ASSOCIATIVE_ARRAY hp_tables BEGIN END
-    ACTION_PHP_EACH kits_hp_tables AS _ => table BEGIN
+    ACTION_PHP_EACH hpclass_table AS _ => table BEGIN
         ACTION_DEFINE_ASSOCIATIVE_ARRAY hp_tables BEGIN ~%table%~ => ~~ END
     END
-    ACTION_PHP_EACH hp_tables AS table => _ BEGIN
-        COPY_EXISTING ~%table%.2DA~ ~override~
-            LPF PATCH_HP_TABLE END
+    
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY hp_lvl1_values BEGIN END
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY hp_static_increment_values BEGIN END
+    ACTION_PHP_EACH hp_tables AS hp_table => _ BEGIN
+        COPY_EXISTING ~%hp_table%.2DA~ ~override~
+            LPF PATCH_HP_TABLE RET lvl1_hp static_increment END
+            PRETTY_PRINT_2DA
             BUT_ONLY
+        ACTION_DEFINE_ASSOCIATIVE_ARRAY hp_lvl1_values BEGIN ~%hp_table%~ => ~%lvl1_hp%~ END
+        ACTION_DEFINE_ASSOCIATIVE_ARRAY hp_static_increment_values BEGIN ~%hp_table%~ => ~%static_increment%~ END
     END
 END
 
-DEFINE_PATCH_FUNCTION PATCH_HP_TABLE BEGIN
+DEFINE_PATCH_FUNCTION PATCH_HP_TABLE
+    RET lvl1_hp static_increment
+BEGIN
     LPF READ_2DA_COLUMN STR_VAR column_name = ~SIDES~
         RET_ARRAY lvl_sides = out
         END

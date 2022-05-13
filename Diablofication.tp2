@@ -21,6 +21,7 @@ ALWAYS
     INCLUDE ~%lib%/eff_v2.tpa~
     INCLUDE ~%lib%/spl.tpa~
     INCLUDE ~%lib%/itm.tpa~
+    INCLUDE ~%lib%/cre.tpa~
     INCLUDE ~%lib%/joinable_npc_array.tpa~
 
     INCLUDE ~%resources%/variables.tpa~

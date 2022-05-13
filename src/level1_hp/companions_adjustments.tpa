@@ -1,18 +1,46 @@
 DEFINE_ACTION_FUNCTION APPLY_COMPANIONS_ADJUSTMENTS
-    STR_VAR kits_hp_tables_ref = 0
+    STR_VAR hpclass_table_ref = 0 
+        hp_lvl1_values_ref = 0
+        hp_static_increment_values_ref = 0
 BEGIN
     LAM JOINABLE_NPC_ARRAY
     ACTION_PHP_EACH JOINABLE_NPC_ARRAY AS cre => dv BEGIN
         COPY_EXISTING ~%cre%~ ~override~
-            LPF PATCH_COMPANION_CRE STR_VAR kits_hp_tables_ref END
+            LPF PATCH_COMPANION_CRE STR_VAR hpclass_table_ref 
+                hp_lvl1_values_ref 
+                hp_static_increment_values_ref 
+                END
             BUT_ONLY
     END
 END
 
-DEFINE_PATCH_FUNCTION PATCH_COMPANION_CRE 
-    STR_VAR kits_hp_tables_ref = 0
-        class_ids_ref = 0
-        kits_ids_ref = 0
+DEFINE_PATCH_FUNCTION PATCH_COMPANION_CRE   
+    STR_VAR hpclass_table_ref = 0 
+        hp_lvl1_values_ref = 0
+        hp_static_increment_values_ref = 0
 BEGIN
-    PATCH_PRINT ~Patching %SOURCE_RES%~
+    LPF READ_CRE_LEVEL RET level END
+
+    LPF READ_CRE_CLASS RET class_id END
+    LOOKUP_IDS_SYMBOL_OF_INT class_name ~class~ class_id
+
+    LPF READ_CRE_KIT RET kit_id END
+    LOOKUP_IDS_SYMBOL_OF_INT kit_name ~kit~ kit_id
+
+    SPRINT hp_table $~%hpclass_table_ref%~(~%class_name%~)
+    PATCH_IF (
+        kit_id != CRE_KIT_NONE
+        && kit_id != CRE_KIT_TRUE_CLASS
+        && VARIABLE_IS_SET $~%hpclass_table_ref%~(~%kit_name%~)
+    ) BEGIN
+        SPRINT hp_table $~%hpclass_table_ref%~(~%kit_name%~)
+    END
+    SET hp_lvl1 = $~%hp_lvl1_values_ref%~(~%hp_table%~)
+    SET hp_static_increment = $~%hp_static_increment_values_ref%~(~%hp_table%~)
+    SET hp = hp_lvl1 + ((level - 1) * hp_static_increment)
+
+    PATCH_LOG ~%SOURCE_RES%: %hp_table% level %level% => %hp%~
+    LPF PATCH_CRE_HP INT_VAR current_hp = hp 
+        max_hp = hp
+        END
 END
