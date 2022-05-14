@@ -85,15 +85,16 @@
     </p>
 
     <ul>
-      <li><a href="#character-respawn">Character Respawn</a></li>
-      <li><a href="#character-view-lock">Character View Lock</a></li>
+      <li><a href="#character-respawn">Character Respawn (Alpha)</a></li>
+      <li><a href="#level1-hp">More HP on level one (Beta)</a></li>
+      <li><a href="#character-view-lock">Character View Lock (Alpha)</a></li>
     </ul>
 
     <br />
 
     <h3 id="character-respawn">Character Respawn (Alpha)</h3>
 
-    <p>In case of Protagonist death, entire party will be resurrected in nearest temple (or in other sensible place if
+    <p>In case of protagonist death, entire party will be resurrected in nearest temple (or in other sensible place if
       temple is currently unavailable). This will however has consequence in certain amount of gold and experience
       points loss.</p>
 
@@ -113,7 +114,7 @@
       impossible to finish your quest). In case of such problems, you can always fallback to standard “reload” approach
       for this part of the game. In general, taking into account current stage of development, it is advised to save
       game normally, and just not reload it, unless some unpredicted problem occurs. This component is not compatible
-      with mods that make changes related to Protagonist death like “Death Cam” component of <a
+      with mods that make changes related to protagonist death like “Death Cam” component of <a
         href="https://www.gibberlings3.net/mods/tweaks/tweaks/">Tweaks Anthology</a> or <a
         href="https://www.gibberlings3.net/forums/topic/28910-protagonist-can-die/page/2/#comment-280191">Protagonist
         Can Die</a> tweak.</p>
@@ -127,9 +128,30 @@
 
     <br />
 
+    <h3 id="level1-hp">More HP on level one (Beta)</h3>
+
+    <p>Significantly increases HP amount that protagonist and all companions receives on level one.
+      At the same time, amount of HP gained with every level is decreased, so difference between character HP from original rules 
+      and those applied by this component is getting smaller and smaller with every level up.</p>
+
+    <p><strong>Motivation:</strong> This component adds some more hack'n'slash flavoure to early portion of Baldur's Gate.
+      Now you will be able face  in melee combat wolf, or even ogre, with your well prepared fighter character.</p>
+
+    <p><strong>Installation:</strong> This component should be installed after every mod that adds new companions. 
+      Starting new game is required for this component to work properly.</p>
+    
+    <p><strong>Compatibility:</strong> This component will not be compatible with every modification that alters HP progression rules 
+      or HP of companions, like "Max HP at Level One", "Higher HP on Level Up", "Allow HP Rolls Through Level 20 [Angel]", 
+      "Maximum HP Creatures [the bigg]" (in "all" or "party-joinable NPCs" variants) from <a
+      href="https://www.gibberlings3.net/mods/tweaks/tweaks/">Tweaks Anthology</a>.</p>
+
+    <p>See <a href="./docs/level1-hp.html">here</a> for more details.</p>
+
+    <br />
+
     <h3 id="character-view-lock">Character View Lock (Alpha)</h3>
 
-    <p>Locks game viewport on Protagonist. Viewport will move automatically with your character movement,
+    <p>Locks game viewport on protagonist. Viewport will move automatically with your character movement,
       keeping character always in the center of the screen.</p>
 
     <p><strong>Motivation:</strong> Moving view automatically together with character movement saves you tedious view
@@ -185,7 +207,8 @@
         <a href="https://www.gibberlings3.net/profile/5772-endarire/">Endarire</a>,
         <a href="https://www.gibberlings3.net/profile/5820-kijikun/">kijikun</a>,
         <a href="https://www.gibberlings3.net/profile/9169-temnix/">temnix</a>,
-        <a href="https://www.gibberlings3.net/profile/256-jastey/">jastey</a>
+        <a href="https://www.gibberlings3.net/profile/256-jastey/">jastey</a>,
+        <a href="https://www.gibberlings3.net/profile/6074-alen/">AL|EN</a>
         for interest and suggestions (in order of appearance).
       </li>
     </ul>
@@ -199,9 +222,11 @@
       <li><a href="https://gibberlings3.github.io/iesdp/">IESDP</a></li>
       <li><a href="https://weidu.org/~thebigg/README-WeiDU.html">WeiDU Documentation</a></li>
       <li><a href="https://www.pocketplane.net/tutorials/simscript.html">Complete Scripting Guide</a></li>
-      <li>Work of other modders, especially <a href="https://www.gibberlings3.net/mods/tweaks/tweaks/">The Tweaks
-          Anthology</a> and <a href="http://www.shsforums.net/files/file/1109-klatu-tweaks-and-fixes/">klatu Tweaks and
-          Fixes</a></li>
+      <li>Work of other modders, especially
+        <a href="https://www.gibberlings3.net/mods/tweaks/tweaks/">The Tweaks Anthology</a>,
+        <a href="http://www.shsforums.net/files/file/1109-klatu-tweaks-and-fixes/">klatu Tweaks and Fixes</a>,
+        <a href="https://github.com/K4thos/IE-code-repository/">K4thos IE-code-repository</a>.
+      </li>
       <li><a href="https://www.gibberlings3.net/forums/">The Gibberlings Three Forum</a> and <a
           href="https://forums.pocketplane.net/index.php">Pocket Plane Group Forum</a></li>
     </ul>
@@ -220,6 +245,11 @@
     <hr />
 
     <h2 id="changelog">Changelog</h2>
+
+    <h3 id="v03">v0.3</h3>
+    <ul>
+      <li>More HP on level one (Beta) for BG1 EE v2.6 (no SoD support)</li>
+    </ul>
 
     <h3 id="v02">v0.2</h3>
     <ul>
