@@ -17,15 +17,15 @@
             situations when all party members are charmed and some plot related situations (fail to cure Marek's poison
             on time, refusing arrest in Candlekeep).</p>
 
-        <p>Regarding first point, Protagonist is now never really dead. The minimum HP cap of 1 is introduced to prevent
-            real death (maximum HP is also increased by 1 to "give back" occupied point). When Protagonist HP reach
+        <p>Regarding first point, protagonist is now never really dead. The minimum HP cap of 1 is introduced to prevent
+            real death (maximum HP is also increased by 1 to "give back" occupied point). When protagonist HP reach
             value of 1, respawn process is triggered by scripts. As side effect of this approach, effects that
             previously drop target HP to 1 now leaves 2 HP. In case of instant kill effects (like petrification),
-            Protagonist is immune to effect itself, but instead respawn process is triggered.</p>
+            protagonist is immune to effect itself, but instead respawn process is triggered.</p>
 
         <p>Since Infinity Engine provides many ways to kill character, not all of them are properly handled at current
             stage of component development. At this point, all ways that can cause death in non-modded game should be
-            handled properly, with the exception of reducing character stat below 1 (currently Protagonist is simply
+            handled properly, with the exception of reducing character stat below 1 (currently protagonist is simply
             protected aginst it).</p>
 
         <p>"Game over" when entire party is charmed seems to be performed by engine itself, however it can be
@@ -48,13 +48,13 @@
             respawn point configured here, the value of previously visited master area would be used. Note that all
             changes to those 2da tables must be performed before component is installed.</p>
 
-        <p>During respawn process all party members are resurrected and healed. After respawn Protagonist should be in
+        <p>During respawn process all party members are resurrected and healed. After respawn protagonist should be in
             state that would be the case after death and resurrection, although this part was not deeply tested and
             probably not work correctly in some cases. Healing process, that is applied to every party member, include
             all effects of normal heal, restoration and dispel magic. It also makes party fully rest.</p>
 
-        <p>After respawn, Protagonist should have all equipment that was possesed in moment of "death", however
-            equipment of dead companions is still on battlefield (unless it was pickuped meanwhile by Protagonist or
+        <p>After respawn, protagonist should have all equipment that was possesed in moment of "death", however
+            equipment of dead companions is still on battlefield (unless it was pickuped meanwhile by protagonist or
             other party member). Please note, that in case when battlefield is far enough from respawn point, this can
             cause equipment disappear before you will be able to recover it. Some equipment loss can also take place in
             case when you cannot go back to place of party member death (e.g. fight with Iron Throne leaders in
