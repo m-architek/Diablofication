@@ -38,7 +38,7 @@ BEGIN
     OUTER_SPRINT respawn_process_execution_cutscene ~%RESREF_BCS_CR_EXECUTION%~
 
     ACTION_DEFINE_ASSOCIATIVE_ARRAY respawn_points_indicators BEGIN END
-    ACTION_PHP_EACH ~%respawn_point_names_ref%~ AS respawn_point_index => respawn_point_name BEGIN
+    ACTION_PHP_EACH ~%respawn_point_names_ref%~ AS respawn_point_name => respawn_point_index BEGIN
         ACTION_DEFINE_ASSOCIATIVE_ARRAY respawn_points_indicators BEGIN ~%respawn_point_name%~ => ~%respawn_point_index%~ END
     END
 

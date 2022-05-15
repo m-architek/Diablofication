@@ -16,7 +16,7 @@ BEGIN
         END
 
     ACTION_DEFINE_ASSOCIATIVE_ARRAY respawn_cutscenes BEGIN END
-    ACTION_PHP_EACH respawn_point_names AS respawn_point_index => respawn_point_name BEGIN
+    ACTION_PHP_EACH respawn_point_names AS respawn_point_name => respawn_point_index BEGIN
         OUTER_SPRINT respawn_area $~respawn_point_%respawn_point_name%~(AREA)
     
         LAF APPLY_RESPAWN_CUTSCENE INT_VAR respawn_point_index 
