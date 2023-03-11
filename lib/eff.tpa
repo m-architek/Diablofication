@@ -63,75 +63,63 @@ OUTER_SET EFF_EFFECT_PROBABILITY_1_OFFSET = 0x12
 OUTER_SET EFF_EFFECT_PROBABILITY_2_OFFSET = 0x13
 OUTER_SET EFF_EFFECT_RESREF_OFFSET = 0x14
 
-
 DEFINE_PATCH_FUNCTION PATCH_EFF_EFFECT
     INT_VAR offset_shift = ~~
     STR_VAR patches_ref = 0
 BEGIN
-    READ_SHORT (offset_shift + EFF_EFFECT_OPCODE_OFFSET) effect_opcode
-    SET effect_parameter1 = "-1"
-    SET effect_parameter2 = "-1"
+    PATCH_IF (VARIABLE_IS_SET effect_opcode) BEGIN PATCH_FAIL ~Variable 'effect_opcode' leaks from outer scope.~ END
+    PATCH_IF (VARIABLE_IS_SET effect_parameter1) BEGIN PATCH_FAIL ~Variable 'effect_parameter1' leaks from outer scope.~ END
+    PATCH_IF (VARIABLE_IS_SET effect_parameter2) BEGIN PATCH_FAIL ~Variable 'effect_parameter2' leaks from outer scope.~ END
 
     PHP_EACH ~%patches_ref%~ AS patch_name => patch_ref BEGIN
-        SET match_opcode = $~%patch_ref%~(match_opcode)
 
-        PATCH_IF (effect_opcode == match_opcode) BEGIN
-            SET match_parameter1 = "-1"
-            PATCH_IF (VARIABLE_IS_SET $~%patch_ref%~(match_parameter1)) BEGIN
-                SET match_parameter1 = $~%patch_ref%~(match_parameter1)
-            END
+        PATCH_IF (
+            VARIABLE_IS_SET $~%patch_ref%~(match_opcode) AND
+            NOT VARIABLE_IS_SET effect_opcode
+        ) BEGIN
+            READ_SHORT (offset_shift + EFF_EFFECT_OPCODE_OFFSET) effect_opcode
+        END
 
-            SET match_parameter2 = "-1"
-            PATCH_IF (VARIABLE_IS_SET $~%patch_ref%~(match_parameter2)) BEGIN
-                SET match_parameter2 = $~%patch_ref%~(match_parameter2)
-            END
-            
+        PATCH_IF (
+            NOT VARIABLE_IS_SET $~%patch_ref%~(match_opcode) OR effect_opcode == $~%patch_ref%~(match_opcode)
+        ) BEGIN
+
             PATCH_IF (
-                match_parameter1 != "-1"
-                && effect_parameter1 == "-1"
+                VARIABLE_IS_SET $~%patch_ref%~(match_parameter1) AND
+                NOT VARIABLE_IS_SET effect_parameter1
             ) BEGIN
                 READ_LONG (offset_shift + EFF_EFFECT_PARAM_1_OFFSET) effect_parameter1
             END
             PATCH_IF (
-                match_parameter2 != "-1"
-                && effect_parameter2 == "-1"
+                VARIABLE_IS_SET $~%patch_ref%~(match_parameter2) AND
+                NOT VARIABLE_IS_SET effect_parameter2
             ) BEGIN
                 READ_LONG (offset_shift + EFF_EFFECT_PARAM_2_OFFSET) effect_parameter2
             END
 
             PATCH_IF (
-                (match_parameter1 == "-1" || effect_parameter1 == match_parameter1)
-                && (match_parameter2 == "-1" || effect_parameter2 == match_parameter2)
+                (NOT VARIABLE_IS_SET $~%patch_ref%~(match_parameter1) OR effect_parameter1 == $~%patch_ref%~(match_parameter1)) AND
+                (NOT VARIABLE_IS_SET $~%patch_ref%~(match_parameter2) OR effect_parameter2 == $~%patch_ref%~(match_parameter2))
             ) BEGIN
-                SET opcode = effect_opcode
+                PATCH_PRINT ~Patching %SOURCE_EXT% %SOURCE_RES% (%patch_name%)~                
+                
                 PATCH_IF (VARIABLE_IS_SET $~%patch_ref%~(opcode)) BEGIN
-                    SET opcode = $~%patch_ref%~(opcode)
+                    WRITE_SHORT (offset_shift + EFF_EFFECT_OPCODE_OFFSET) $~%patch_ref%~(opcode) 
                 END
                 
-                PATCH_PRINT ~Patching %SOURCE_EXT% %SOURCE_RES% effect: %effect_opcode% => %opcode% (%patch_name%)~
+                PATCH_IF (VARIABLE_IS_SET $~%patch_ref%~(parameter1)) BEGIN
+                    WRITE_LONG (offset_shift + EFF_EFFECT_PARAM_1_OFFSET) $~%patch_ref%~(parameter1)
+                END
                 
-                PATCH_IF (effect_opcode != opcode) BEGIN
-                    WRITE_SHORT (offset_shift + EFF_EFFECT_OPCODE_OFFSET) opcode 
+                PATCH_IF (VARIABLE_IS_SET $~%patch_ref%~(parameter2)) BEGIN
+                    WRITE_LONG (offset_shift + EFF_EFFECT_PARAM_2_OFFSET) $~%patch_ref%~(parameter2)
                 END
-                PATCH_IF (
-                    VARIABLE_IS_SET $~%patch_ref%~(parameter1) 
-                    && effect_parameter1 != $~%patch_ref%~(parameter1)
-                ) BEGIN
-                    SET parameter1 = $~%patch_ref%~(parameter1)
-                    WRITE_LONG (offset_shift + EFF_EFFECT_PARAM_1_OFFSET) parameter1
-                END
-                PATCH_IF (
-                    VARIABLE_IS_SET $~%patch_ref%~(parameter2) 
-                    && effect_parameter2 != $~%patch_ref%~(parameter2)
-                ) BEGIN
-                    SET parameter2 = $~%patch_ref%~(parameter2)
-                    WRITE_LONG (offset_shift + EFF_EFFECT_PARAM_2_OFFSET) parameter2
-                END
+                
                 PATCH_IF (VARIABLE_IS_SET $~%patch_ref%~(resource)) BEGIN
                     SPRINT resource $~%patch_ref%~(resource)
                     WRITE_ASCII (offset_shift + EFF_EFFECT_RESREF_OFFSET) ~%resource%~ #8
                 END
             END
-        END
+        END        
     END
 END
