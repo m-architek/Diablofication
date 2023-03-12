@@ -1,33 +1,33 @@
-DEFINE_ACTION_FUNCTION BUILD_DISINTEGRATE_ADJUSTMENTS
-    RET_ARRAY patch_DISINTEGRATE patch_DISINTEGRATE_IMMUNITY
+DEFINE_ACTION_FUNCTION BUILD_KILL_CREATURE_ADJUSTMENTS
+    RET_ARRAY patch_KILL_CREATURE patch_KILL_CREATURE_IMMUNITY
 BEGIN
-    ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_DISINTEGRATE BEGIN
-        match_opcode => EFF_OPCODE_DISINTEGRATE
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_KILL_CREATURE BEGIN
+        match_opcode => EFF_OPCODE_KILL_CREATURE
         opcode => EFF_OPCODE_USE_EFF_FILE
-        resource => ~%RESREF_EFF_DISINTEGRATION%~
+        resource => ~%RESREF_EFF_KILL_CREATURE%~
     END
-    ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_DISINTEGRATE_IMMUNITY BEGIN
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_KILL_CREATURE_IMMUNITY BEGIN
         match_opcode => EFF_OPCODE_PROTECTION_FROM_OPCODE
-        match_parameter2 => EFF_OPCODE_DISINTEGRATE
+        match_parameter2 => EFF_OPCODE_KILL_CREATURE
         opcode => EFF_OPCODE_PROTECTION_FROM_SPELL
         parameter1 => 0
         parameter2 => 0
-        resource => ~%RESREF_SPL_DISINTEGRATION%~
+        resource => ~%RESREF_SPL_KILL_CREATURE%~
     END
 END
 
-DEFINE_ACTION_FUNCTION APPLY_DISINTEGRATE_EXTENSION BEGIN
-    COPY ~%resources%/blank.eff~ ~override/%RESREF_EFF_DISINTEGRATION%.EFF~
+DEFINE_ACTION_FUNCTION APPLY_KILL_CREATURE_EXTENSION BEGIN
+    COPY ~%resources%/blank.eff~ ~override/%RESREF_EFF_KILL_CREATURE%.EFF~
         LPF ALTER_EFF_V2_EFFECT
             INT_VAR opcode = EFF_OPCODE_APPLY_EFFECTS_LIST
                 parameter1 = 0
                 parameter2 = 0
-            STR_VAR resource = ~%RESREF_SPL_DISINTEGRATION%~
+            STR_VAR resource = ~%RESREF_SPL_KILL_CREATURE%~
             END
-    COPY ~%resources%/blank.spl~ ~override/%RESREF_SPL_DISINTEGRATION%.SPL~
+    COPY ~%resources%/blank.spl~ ~override/%RESREF_SPL_KILL_CREATURE%.SPL~
         LPF ADD_SPL_ABILITY RET ability_index END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_DISINTEGRATE
+            opcode = EFF_OPCODE_KILL_CREATURE
             parameter1 = 0
             parameter2 = 2
             END
