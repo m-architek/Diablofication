@@ -14,27 +14,29 @@ OUTER_SET EFF_V2_VARIABLE_NAME_OFFSET = 0xa8
 
 DEFINE_PATCH_FUNCTION ADD_EFF_V2_EFFECT
     INT_VAR opcode = ~~
-        target_type = ~~
+        target_type = EFF_TARGET_PRESET
         power = 0
-        param_1 = 0
-        param_2 = 0
-        timing_mode = ~~
+        parameter1 = 0
+        parameter2 = 0
+        timing_mode = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
         dispel_resistance = 0
         duration = 0
-        probability_1 = 100
-        probability_2 = 0
-    STR_VAR variable_name = ~~
+        probability1 = 100
+        probability2 = 0
+    STR_VAR resource = ~~
+        variable_name = ~~
 BEGIN
     WRITE_LONG EFF_V2_OPCODE_OFFSET opcode
     WRITE_LONG EFF_V2_TARGET_TYPE_OFFSET target_type
     WRITE_LONG EFF_V2_POWER_OFFSET power
-    WRITE_LONG EFF_V2_PARAM_1_OFFSET param_1
-    WRITE_LONG EFF_V2_PARAM_2_OFFSET param_2
+    WRITE_LONG EFF_V2_PARAM_1_OFFSET parameter1
+    WRITE_LONG EFF_V2_PARAM_2_OFFSET parameter2
     WRITE_SHORT EFF_V2_TIMING_MODE_OFFSET timing_mode
     WRITE_LONG EFF_V2_DURATION_OFFSET duration
-    WRITE_SHORT EFF_V2_PROBABILITY_1_OFFSET probability_1
-    WRITE_SHORT EFF_V2_PROBABILITY_2_OFFSET probability_2
+    WRITE_SHORT EFF_V2_PROBABILITY_1_OFFSET probability1
+    WRITE_SHORT EFF_V2_PROBABILITY_2_OFFSET probability2
     WRITE_LONG EFF_V2_DISPEL_RESISTANCE_OFFSET dispel_resistance
+    WRITE_ASCII EFF_V2_RESREF_OFFSET ~%resource%~ #8
     WRITE_ASCII EFF_V2_VARIABLE_NAME_OFFSET ~%variable_name%~ #32
 END
 

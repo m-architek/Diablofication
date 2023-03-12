@@ -1,97 +1,68 @@
+INCLUDE ~%src%/effects_adjustments/petrification.tpa~
+INCLUDE ~%src%/effects_adjustments/harm_damage.tpa~
+INCLUDE ~%src%/effects_adjustments/disintegrate.tpa~
+
 DEFINE_ACTION_FUNCTION APPLY_EFFECTS_ADJUSTMENTS
-    RET patrification_state_variable instant_death_variable
+    RET instant_death_variable patrification_state_variable
 BEGIN
-    OUTER_SPRINT petrification_extension ~%RESREF_SPL_PETRIFICATION%~
+    OUTER_SPRINT instant_death_variable ~%LOCALS_STATE_INSTANT_DEATH%~
+    OUTER_SPRINT patrification_state_variable ~%LOCALS_STATE_PETRIFICATION%~
 
-    LAF APPLY_EXISTING_EFFECTS_ADJUSTMENTS STR_VAR petrification_extension 
-        RET instant_death_variable
-        END
-    LAF APPLY_EFFECTS_EXTENSIONS STR_VAR petrification_extension 
-        RET patrification_state_variable
-        END
+    LAF APPLY_EXISTING_EFFECTS_ADJUSTMENTS END
+    LAF APPLY_EFFECTS_EXTENSIONS END
 END
 
-
-DEFINE_ACTION_FUNCTION APPLY_EXISTING_EFFECTS_ADJUSTMENTS
-    STR_VAR petrification_extension = 0
-    RET instant_death_variable
-BEGIN
-    LAF APPLY_GENERAL_EXISTING_EFFECTS_ADJUSTMENTS STR_VAR petrification_extension END
-    LAF APPLY_SAREVOK_STRIKE_ADJUSTMENT END
-    LAF APPLY_TANARI_DEATH_GAZE_ADJUSTMENT RET instant_death_variable END
-END
-
-DEFINE_ACTION_FUNCTION APPLY_GENERAL_EXISTING_EFFECTS_ADJUSTMENTS
-    STR_VAR petrification_extension = 0
-BEGIN
+DEFINE_ACTION_FUNCTION APPLY_EXISTING_EFFECTS_ADJUSTMENTS BEGIN
     PRINT ~~
     PRINT ~Adjusting existing effects. This can take a while...~
     PRINT ~~
-    
-    ACTION_DEFINE_ASSOCIATIVE_ARRAY patches BEGIN END
 
+    LAF BUILD_PETRIFICATION_ADJUSTMENTS
+        RET_ARRAY patch_PETRIFICATION patch_PETRIFICATION_IMMUNITY
+        END
 
-    /*
-        Petrification
-    */
-    ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_PETRIFICATION BEGIN
-        match_opcode => EFF_OPCODE_STATE_PETRIFICATION
-        opcode => EFF_OPCODE_APPLY_EFFECTS_LIST
-        parameter1 => 0
-        parameter2 => 0
-        resource => ~%petrification_extension%~
-    END
+    LAF BUILD_HARM_DAMAGE_ADJUSTMENTS
+        RET_ARRAY
+            patch_HARM_DMG_CRUSHING
+            patch_HARM_DMG_ACID
+            patch_HARM_DMG_COLD
+            patch_HARM_DMG_ELECTRICITY
+            patch_HARM_DMG_FIRE
+            patch_HARM_DMG_PIERCING
+            patch_HARM_DMG_POISON
+            patch_HARM_DMG_MAGIC
+            patch_HARM_DMG_MISSILE
+            patch_HARM_DMG_SLASHING
+            patch_HARM_DMG_MAGICFIRE
+            patch_HARM_DMG_MAGICCOLD
+            patch_HARM_DMG_STUNNING
+        END
 
-    ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_PETRIFICATION_IMMUNITY BEGIN
-        match_opcode => EFF_OPCODE_PROTECTION_FROM_OPCODE
-        match_parameter2 => EFF_OPCODE_STATE_PETRIFICATION
-        opcode => EFF_OPCODE_PROTECTION_FROM_SPELL
-        parameter1 => 0
-        parameter2 => 0
-        resource => ~%petrification_extension%~
-    END
+    LAF BUILD_DISINTEGRATE_ADJUSTMENTS
+        RET_ARRAY patch_DISINTEGRATE patch_DISINTEGRATE_IMMUNITY
+        END
+
 
     ACTION_DEFINE_ASSOCIATIVE_ARRAY patches BEGIN 
-        PETRIFICATION => patch_PETRIFICATION
+        PETRIFICATION => patch_PETRIFICATION 
         PETRIFICATION_IMMUNITY => patch_PETRIFICATION_IMMUNITY
+        HARM_DMG_CRUSHING => patch_HARM_DMG_CRUSHING
+        HARM_DMG_ACID => patch_HARM_DMG_ACID
+        HARM_DMG_COLD => patch_HARM_DMG_COLD
+        HARM_DMG_ELECTRICITY => patch_HARM_DMG_ELECTRICITY
+        HARM_DMG_FIRE =>patch_HARM_DMG_FIRE
+        HARM_DMG_PIERCING => patch_HARM_DMG_PIERCING
+        HARM_DMG_POISON => patch_HARM_DMG_POISON
+        HARM_DMG_MAGIC => patch_HARM_DMG_MAGIC
+        HARM_DMG_MISSILE => patch_HARM_DMG_MISSILE
+        HARM_DMG_SLASHING => patch_HARM_DMG_SLASHING
+        HARM_DMG_MAGICFIRE => patch_HARM_DMG_MAGICFIRE
+        HARM_DMG_MAGICCOLD => patch_HARM_DMG_MAGICCOLD
+        HARM_DMG_STUNNING => patch_HARM_DMG_STUNNING
+        DISINTEGRATE => patch_DISINTEGRATE
+        DISINTEGRATE_IMMUNITY => patch_DISINTEGRATE_IMMUNITY
     END
 
-
-    /*
-        Damage: set to 1 HP
-    */
-    ACTION_DEFINE_ASSOCIATIVE_ARRAY set_to_value_damage_types BEGIN
-        CRUSHING =>     0x00000001
-        ACID =>         0x00010001
-        COLD =>         0x00020001
-        ELECTRICITY =>  0x00040001
-        FIRE =>         0x00080001
-        PIERCING =>     0x00100001
-        POISON =>       0x00200001
-        MAGIC =>        0x00400001
-        MISSILE =>      0x00800001
-        SLASHING =>     0x01000001
-        MAGICFIRE =>    0x02000001
-        MAGICCOLD =>    0x04000001
-        STUNNING =>     0x08000001
-    END
-
-    ACTION_PHP_EACH set_to_value_damage_types AS set_to_value_damage_type_name => set_to_value_damage_type_value BEGIN
-        OUTER_SPRINT patch_name ~HARM_DMG_%set_to_value_damage_type_name%~
-        OUTER_SPRINT patch_ref ~patch_%patch_name%~
-        ACTION_DEFINE_ASSOCIATIVE_ARRAY ~%patch_ref%~ BEGIN
-            match_opcode => EFF_OPCODE_HP_DAMAGE
-            match_parameter1 => 1
-            match_parameter2 => ~%set_to_value_damage_type_value%~
-            parameter1 => 2
-        END
-        ACTION_DEFINE_ASSOCIATIVE_ARRAY patches BEGIN ~%patch_name%~ => ~%patch_ref%~ END
-    END
-
-
-    /*
-        Apply patches
-    */
     COPY_EXISTING_REGEXP GLOB ~^.+\.eff$~ ~override~
         LPF PATCH_EFF_V2_EFFECT STR_VAR patches_ref = patches END
         BUT_ONLY
@@ -103,6 +74,9 @@ BEGIN
     COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
         LPF PATCH_ITM_EFFECTS STR_VAR patches_ref = patches END
         BUT_ONLY
+
+    LAF APPLY_SAREVOK_STRIKE_ADJUSTMENT END
+    LAF APPLY_TANARI_DEATH_GAZE_ADJUSTMENT END
 END
 
 
@@ -112,36 +86,19 @@ DEFINE_ACTION_FUNCTION APPLY_SAREVOK_STRIKE_ADJUSTMENT BEGIN
         BUT_ONLY
 END
 
-DEFINE_ACTION_FUNCTION APPLY_TANARI_DEATH_GAZE_ADJUSTMENT 
-        RET instant_death_variable
-BEGIN
-    OUTER_SPRINT instant_death_variable ~%LOCALS_STATE_INSTANT_DEATH%~
-
+DEFINE_ACTION_FUNCTION APPLY_TANARI_DEATH_GAZE_ADJUSTMENT BEGIN
     COPY_EXISTING ~SPIN996.SPL~ ~override~
         LPF CLONE_EFFECT INT_VAR match_opcode = EFF_OPCODE_SUMMON_REPLACE_CREATURE 
             opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
             parameter1 = 1
             parameter2 = 0
-            STR_VAR resource = ~%instant_death_variable%~
+            STR_VAR resource = ~%LOCALS_STATE_INSTANT_DEATH%~
             END
         BUT_ONLY
 END
 
 
-DEFINE_ACTION_FUNCTION APPLY_EFFECTS_EXTENSIONS
-    STR_VAR petrification_extension = 0
-    RET patrification_state_variable
-BEGIN
-    OUTER_SPRINT patrification_state_variable ~%LOCALS_STATE_PETRIFICATION%~
-
-    COPY ~%resources%/blank.spl~ ~override/%petrification_extension%.SPL~
-        LPF ADD_SPL_ABILITY RET ability_index END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_STATE_PETRIFICATION
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
-            parameter1 = 1
-            STR_VAR resource = ~%patrification_state_variable%~
-            END
+DEFINE_ACTION_FUNCTION APPLY_EFFECTS_EXTENSIONS BEGIN
+    LAF APPLY_PETRIFICATION_EXTENSION END
+    LAF APPLY_DISINTEGRATE_EXTENSION END
 END

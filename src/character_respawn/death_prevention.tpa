@@ -32,6 +32,11 @@ DEFINE_ACTION_FUNCTION APPLY_DEATH_PREVENTION_SPL BEGIN
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
             opcode = EFF_OPCODE_PROTECTION_FROM_OPCODE
+            parameter2 = EFF_OPCODE_DISINTEGRATE
+            timing = EFF_TIMING_INSTANT_PERMANENT
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
+            opcode = EFF_OPCODE_PROTECTION_FROM_OPCODE
             parameter2 = EFF_OPCODE_SUMMON_REPLACE_CREATURE
             timing = EFF_TIMING_INSTANT_PERMANENT
             END
