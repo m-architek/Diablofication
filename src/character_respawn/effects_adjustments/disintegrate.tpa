@@ -18,7 +18,7 @@ END
 
 DEFINE_ACTION_FUNCTION APPLY_DISINTEGRATE_EXTENSION BEGIN
     COPY ~%resources%/blank.eff~ ~override/%RESREF_EFF_DISINTEGRATION%.EFF~
-        LPF ADD_EFF_V2_EFFECT
+        LPF ALTER_EFF_V2_EFFECT
             INT_VAR opcode = EFF_OPCODE_APPLY_EFFECTS_LIST
                 parameter1 = 0
                 parameter2 = 0
