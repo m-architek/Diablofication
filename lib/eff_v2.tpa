@@ -47,6 +47,7 @@ BEGIN
     PATCH_IF (VARIABLE_IS_SET effect_opcode) BEGIN PATCH_FAIL ~Variable 'effect_opcode' leaks from outer scope.~ END
     PATCH_IF (VARIABLE_IS_SET effect_parameter1) BEGIN PATCH_FAIL ~Variable 'effect_parameter1' leaks from outer scope.~ END
     PATCH_IF (VARIABLE_IS_SET effect_parameter2) BEGIN PATCH_FAIL ~Variable 'effect_parameter2' leaks from outer scope.~ END
+    PATCH_IF (VARIABLE_IS_SET effect_dispel_resistance) BEGIN PATCH_FAIL ~Variable 'effect_dispel_resistance' leaks from outer scope.~ END
 
     PHP_EACH ~%patches_ref%~ AS patch_name => patch_ref BEGIN
 
@@ -73,10 +74,17 @@ BEGIN
             ) BEGIN
                 READ_LONG EFF_V2_PARAM_2_OFFSET effect_parameter2
             END
+            PATCH_IF (
+                VARIABLE_IS_SET $~%patch_ref%~(match_dispel_resistance) AND
+                NOT VARIABLE_IS_SET effect_dispel_resistance
+            ) BEGIN
+                READ_LONG EFF_V2_DISPEL_RESISTANCE_OFFSET effect_dispel_resistance
+            END
 
             PATCH_IF (
                 (NOT VARIABLE_IS_SET $~%patch_ref%~(match_parameter1) OR effect_parameter1 == $~%patch_ref%~(match_parameter1)) AND
-                (NOT VARIABLE_IS_SET $~%patch_ref%~(match_parameter2) OR effect_parameter2 == $~%patch_ref%~(match_parameter2))
+                (NOT VARIABLE_IS_SET $~%patch_ref%~(match_parameter2) OR effect_parameter2 == $~%patch_ref%~(match_parameter2)) AND
+                (NOT VARIABLE_IS_SET $~%patch_ref%~(match_dispel_resistance) OR effect_dispel_resistance == $~%patch_ref%~(match_dispel_resistance))
             ) BEGIN
                 PATCH_PRINT ~Patching %SOURCE_EXT% %SOURCE_RES% (%patch_name%)~                
                 
@@ -90,6 +98,10 @@ BEGIN
                 
                 PATCH_IF (VARIABLE_IS_SET $~%patch_ref%~(parameter2)) BEGIN
                     WRITE_LONG EFF_V2_PARAM_2_OFFSET $~%patch_ref%~(parameter2)
+                END
+                
+                PATCH_IF (VARIABLE_IS_SET $~%patch_ref%~(dispel_resistance)) BEGIN
+                    WRITE_LONG EFF_V2_DISPEL_RESISTANCE_OFFSET $~%patch_ref%~(dispel_resistance)
                 END
                 
                 PATCH_IF (VARIABLE_IS_SET $~%patch_ref%~(resource)) BEGIN

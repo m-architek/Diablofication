@@ -3,7 +3,7 @@ IF
 THEN
     RESPONSE #100
         CutSceneId(Player1)
-        SmallWait(15)
+        SmallWait(60)
         FadeToColor([15.0], 0)
         SmallWait(15)
 
@@ -61,14 +61,7 @@ IF
 THEN
     RESPONSE #100
         CutSceneId(Player1)
-
-        ApplySpellRES("%heal_spl%", Player1)
-        ApplySpellRES("%heal_spl%", Player2)
-        ApplySpellRES("%heal_spl%", Player3)
-        ApplySpellRES("%heal_spl%", Player4)
-        ApplySpellRES("%heal_spl%", Player5)
-        ApplySpellRES("%heal_spl%", Player6)
-
+        
         LeaveAreaLUAPanic("%area%", "", %p1_pos%, %face%)
         LeaveAreaLUA("%area%", "", %p1_pos%, %face%)
         ActionOverride(Player2, LeaveAreaLUA("%area%", "", %p2_pos%, %face%))
@@ -76,18 +69,18 @@ THEN
         ActionOverride(Player4, LeaveAreaLUA("%area%", "", %p4_pos%, %face%))
         ActionOverride(Player5, LeaveAreaLUA("%area%", "", %p5_pos%, %face%))
         ActionOverride(Player6, LeaveAreaLUA("%area%", "", %p6_pos%, %face%))
-
+        
         SetMasterArea("%master_area%")
         MultiPlayerSync()
+        
+        ApplySpellRES("%heal_spl%", Player1)
+        ApplySpellRES("%heal_spl%", Player2)
+        ApplySpellRES("%heal_spl%", Player3)
+        ApplySpellRES("%heal_spl%", Player4)
+        ApplySpellRES("%heal_spl%", Player5)
+        ApplySpellRES("%heal_spl%", Player6)
 
-        CreateVisualEffectObject("%visual_effect%", Player1)
-        CreateVisualEffectObject("%visual_effect%", Player2)
-        CreateVisualEffectObject("%visual_effect%", Player3)
-        CreateVisualEffectObject("%visual_effect%", Player4)
-        CreateVisualEffectObject("%visual_effect%", Player5)
-        CreateVisualEffectObject("%visual_effect%", Player6)
-
-        SmallWait(15)
+        SmallWait(30)
         FadeFromColor([15.0], 0)
         SmallWait(15)
         StartCutSceneEx("%next_cutscene_name%", TRUE)

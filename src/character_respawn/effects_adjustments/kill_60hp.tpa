@@ -7,7 +7,7 @@ BEGIN
         parameter1 => 0
         parameter2 => 0
         resource => ~%RESREF_SPL_KILL_60HP%~
-        END
+    END
 
     ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_KILL_60HP_IMMUNITY BEGIN
         match_opcode => EFF_OPCODE_PROTECTION_FROM_OPCODE
@@ -16,7 +16,7 @@ BEGIN
         parameter1 => 0
         parameter2 => 0
         resource => ~%RESREF_SPL_KILL_60HP%~
-        END
+    END
 END
 
 DEFINE_ACTION_FUNCTION APPLY_KILL_60HP_EXTENSION BEGIN
