@@ -69,125 +69,42 @@ BEGIN
             opcode = EFF_OPCODE_CURE_INVISIBILITY
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_HP_CURRENT
-            parameter1 = 100
-            parameter2 = 2 // % mode
+            opcode = EFF_OPCODE_REMOVE_OPCODE
+            parameter1 = "-1"
+            parameter2 = EFF_OPCODE_CHARM
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_DISPLAY_STRING
-            parameter1 = 25810 // Healed
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_CURE_DRUNKENESS
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_REMOVE_ICON
-            parameter2 = 5 // Intoxicated (Drunkeness)
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_CURE_POISON
+            opcode = EFF_OPCODE_REMOVE_OPCODE
+            parameter1 = "-1"
+            parameter2 = EFF_OPCODE_CHARM_CREATURE
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_REMOVE_ICON
-            parameter2 = 6 // Poisoned
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_CURE_DISEASE
+            parameter2 = 1 // Charm
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_REMOVE_ICON
-            parameter2 = 7 // Diseased
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_CURE_BLINDENESS
+            parameter2 = 2 // Dire Charm
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_REMOVE_ICON
-            parameter2 = 8 // Blind
+            parameter2 = 43 // Domination
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_CURE_DEAFNESS
+            opcode = EFF_OPCODE_APPLY_EFFECTS_LIST
+            STR_VAR resource = ~SPPR607~ // Heal
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_REMOVE_ICON
-            parameter2 = 112 // Deaf
+            opcode = EFF_OPCODE_APPLY_EFFECTS_LIST
+            STR_VAR resource = ~SPPR404~ // Neutralize Poison
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_CURE_SILENCE
+            opcode = EFF_OPCODE_APPLY_EFFECTS_LIST
+            STR_VAR resource = ~SPPR713~ // Greater Restoration
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_REMOVE_ICON
-            parameter2 = 34 // Silenced
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_CURE_FEEBLEMINDEDNESS
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_REMOVE_ICON
-            parameter2 = 48 // Feebleminded
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_CURE_LEVEL_DRAIN
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_REMOVE_ICON
-            parameter2 = 59 // Drain
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_CURE_HORROR
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_STAT_MORALE
-            parameter1 = 10 // Default morale
-            parameter2 = 1 // Set to value
-            special = 1 // BG1 mode
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_REMOVE_ICON
-            parameter2 = 36 // Panic
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_CURE_CONFUSION
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_REMOVE_ICON
-            parameter2 = 2 // Rigid Thinking
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_REMOVE_ICON
-            parameter2 = 3 // Confused
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_REMOVE_ICON
-            parameter2 = 47 // Chaos
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_CURE_SLEEP
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_REMOVE_ICON
-            parameter2 = 14 // Sleep
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_CURE_BERSERK
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_REMOVE_ICON
-            parameter2 = 4 // Berserk
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_CURE_STUN
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_REMOVE_ICON
-            parameter2 = 55 // Stun
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_CURE_HOLD
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_REMOVE_ICON
-            parameter2 = 13 // Held
+            opcode = EFF_OPCODE_APPLY_EFFECTS_LIST
+            STR_VAR resource = ~SPPR307~ // Remove Curse
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_DISPEL_MAGIC
@@ -227,7 +144,6 @@ BEGIN
         SPRINT p5_pos $~%respawn_point_ref%~(PLAYER5_POS)
         SPRINT p6_pos $~%respawn_point_ref%~(PLAYER6_POS)
         SPRINT face $~%respawn_point_ref%~(FACE)
-        SPRINT visual_effect ~%VVC_RESREF_RESTORATION%~
         EVALUATE_BUFFER
         COMPILE_BAF_TO_BCS
 END
