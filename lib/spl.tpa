@@ -57,7 +57,7 @@ DEFINE_PATCH_FUNCTION ADD_SPL_ABILITY_EFFECT
         parameter1 = 0
         parameter2 = 0
         timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
-        resist_dispel = 0
+        resist_dispel = EFF_NATURAL_NONMAGICAL
         duration = 0
         probability1 = 100
         probability2 = 0
