@@ -3,6 +3,7 @@ INCLUDE ~%src%/effects_adjustments/harm_damage.tpa~
 INCLUDE ~%src%/effects_adjustments/disintegrate.tpa~
 INCLUDE ~%src%/effects_adjustments/kill_creature.tpa~
 INCLUDE ~%src%/effects_adjustments/kill_60hp.tpa~
+INCLUDE ~%src%/effects_adjustments/level_drain.tpa~
 
 DEFINE_ACTION_FUNCTION APPLY_EFFECTS_ADJUSTMENTS
     RET instant_death_variable patrification_state_variable
@@ -80,6 +81,8 @@ DEFINE_ACTION_FUNCTION APPLY_EXISTING_EFFECTS_ADJUSTMENTS BEGIN
         KILL_60HP_IMMUNITY => patch_KILL_60HP_IMMUNITY
     END
 
+    LAM BUILD_LEVEL_DRAIN_PATCHES
+
     COPY_EXISTING_REGEXP GLOB ~^.+\.eff$~ ~override~
         LPF PATCH_EFF_V2_EFFECT STR_VAR patches_ref = patches END
         BUT_ONLY
@@ -98,6 +101,7 @@ DEFINE_ACTION_FUNCTION APPLY_EFFECTS_EXTENSIONS BEGIN
     LAF APPLY_DISINTEGRATE_EXTENSION END
     LAF APPLY_KILL_CREATURE_EXTENSION END
     LAF APPLY_KILL_60HP_EXTENSION END
+    LAF APPLY_LEVEL_DRAIN_EXTENSION END
 END
 
 

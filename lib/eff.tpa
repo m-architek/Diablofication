@@ -32,6 +32,7 @@ OUTER_SET EFF_OPCODE_PROTECTION_FROM_SPELL = 206
 OUTER_SET EFF_OPCODE_HP_MINIMUM = 208
 OUTER_SET EFF_OPCODE_KILL_60HP = 209
 OUTER_SET EFF_OPCODE_GRPAHICS_PLAY_EFFECT = 215
+OUTER_SET EFF_OPCODE_LEVEL_DRAIN = 216
 OUTER_SET EFF_OPCODE_CURE_LEVEL_DRAIN = 224
 OUTER_SET EFF_OPCODE_DISINTEGRATE = 238
 OUTER_SET EFF_OPCODE_REMOVE_ICON = 240
@@ -86,19 +87,16 @@ BEGIN
     PATCH_IF (VARIABLE_IS_SET effect_parameter1) BEGIN PATCH_FAIL ~Variable 'effect_parameter1' leaks from outer scope.~ END
     PATCH_IF (VARIABLE_IS_SET effect_parameter2) BEGIN PATCH_FAIL ~Variable 'effect_parameter2' leaks from outer scope.~ END
     PATCH_IF (VARIABLE_IS_SET effect_dispel_resistance) BEGIN PATCH_FAIL ~Variable 'effect_dispel_resistance' leaks from outer scope.~ END
+    PATCH_IF (VARIABLE_IS_SET effect_min_level) BEGIN PATCH_FAIL ~Variable 'effect_min_level' leaks from outer scope.~ END
 
     PHP_EACH ~%patches_ref%~ AS patch_name => patch_ref BEGIN
+        PATCH_IF (NOT VARIABLE_IS_SET $~%patch_ref%~(match_opcode)) BEGIN PATCH_FAIL ~Variable 'match_opcode' missing for patch %patch_name%.~ END
 
-        PATCH_IF (
-            VARIABLE_IS_SET $~%patch_ref%~(match_opcode) AND
-            NOT VARIABLE_IS_SET effect_opcode
-        ) BEGIN
+        PATCH_IF (NOT VARIABLE_IS_SET effect_opcode) BEGIN
             READ_SHORT (offset_shift + EFF_EFFECT_OPCODE_OFFSET) effect_opcode
         END
 
-        PATCH_IF (
-            NOT VARIABLE_IS_SET $~%patch_ref%~(match_opcode) OR effect_opcode == $~%patch_ref%~(match_opcode)
-        ) BEGIN
+        PATCH_IF (effect_opcode == $~%patch_ref%~(match_opcode)) BEGIN
 
             PATCH_IF (
                 VARIABLE_IS_SET $~%patch_ref%~(match_parameter1) AND
@@ -118,11 +116,18 @@ BEGIN
             ) BEGIN
                 READ_BYTE (offset_shift + EFF_EFFECT_DISPEL_RESISTANCE_OFFSET) effect_dispel_resistance
             END
+            PATCH_IF (
+                VARIABLE_IS_SET $~%patch_ref%~(match_min_level) AND
+                NOT VARIABLE_IS_SET effect_min_level
+            ) BEGIN
+                READ_LONG (offset_shift + EFF_EFFECT_MIN_LVL_OFFSET) effect_min_level
+            END
 
             PATCH_IF (
                 (NOT VARIABLE_IS_SET $~%patch_ref%~(match_parameter1) OR effect_parameter1 == $~%patch_ref%~(match_parameter1)) AND
                 (NOT VARIABLE_IS_SET $~%patch_ref%~(match_parameter2) OR effect_parameter2 == $~%patch_ref%~(match_parameter2)) AND
-                (NOT VARIABLE_IS_SET $~%patch_ref%~(match_dispel_resistance) OR effect_dispel_resistance == $~%patch_ref%~(match_dispel_resistance))
+                (NOT VARIABLE_IS_SET $~%patch_ref%~(match_dispel_resistance) OR effect_dispel_resistance == $~%patch_ref%~(match_dispel_resistance)) AND
+                (NOT VARIABLE_IS_SET $~%patch_ref%~(match_min_level) OR effect_min_level == $~%patch_ref%~(match_min_level))
             ) BEGIN
                 PATCH_PRINT ~Patching %SOURCE_EXT% %SOURCE_RES% (%patch_name%)~                
                 
@@ -140,6 +145,14 @@ BEGIN
                 
                 PATCH_IF (VARIABLE_IS_SET $~%patch_ref%~(dispel_resistance)) BEGIN
                     WRITE_BYTE (offset_shift + EFF_EFFECT_DISPEL_RESISTANCE_OFFSET) $~%patch_ref%~(dispel_resistance)
+                END
+
+                PATCH_IF (VARIABLE_IS_SET $~%patch_ref%~(max_level)) BEGIN
+                    WRITE_LONG (offset_shift + EFF_EFFECT_MAX_LVL_OFFSET) $~%patch_ref%~(max_level)
+                END
+                
+                PATCH_IF (VARIABLE_IS_SET $~%patch_ref%~(min_level)) BEGIN
+                    WRITE_LONG (offset_shift + EFF_EFFECT_MIN_LVL_OFFSET) $~%patch_ref%~(min_level)
                 END
                 
                 PATCH_IF (VARIABLE_IS_SET $~%patch_ref%~(resource)) BEGIN

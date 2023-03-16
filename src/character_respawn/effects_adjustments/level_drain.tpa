@@ -1,0 +1,62 @@
+OUTER_SET LEVEL_DRAIN_MAX_LVL = 9
+
+DEFINE_ACTION_MACRO BUILD_LEVEL_DRAIN_PATCHES BEGIN
+    OUTER_FOR (drain_amount = 1; drain_amount <= LEVEL_DRAIN_MAX_LVL; ++drain_amount) BEGIN
+        OUTER_SPRINT extension_resource_name ~%RESREF_SPL_LEVEL_DRAIN_PREFIX%%drain_amount%~
+        
+        ACTION_DEFINE_ASSOCIATIVE_ARRAY ~patch_LEVEL_DRAIN_%drain_amount%~ BEGIN
+            match_opcode => EFF_OPCODE_LEVEL_DRAIN
+            match_parameter1 => ~%drain_amount%~
+            match_min_level => 0
+            opcode => EFF_OPCODE_APPLY_EFFECTS_LIST
+            parameter1 => 0
+            parameter2 => 0
+            resource => ~%extension_resource_name%~
+        END
+
+        ACTION_DEFINE_ASSOCIATIVE_ARRAY patches BEGIN 
+            ~LEVEL_DRAIN_%drain_amount%~ => ~patch_LEVEL_DRAIN_%drain_amount%~
+        END
+    END
+END
+
+DEFINE_ACTION_FUNCTION APPLY_LEVEL_DRAIN_EXTENSION BEGIN
+    OUTER_FOR (drain_amount = 1; drain_amount <= LEVEL_DRAIN_MAX_LVL; ++drain_amount) BEGIN
+        OUTER_SPRINT extension_resource_name ~%RESREF_SPL_LEVEL_DRAIN_PREFIX%%drain_amount%~
+        OUTER_SPRINT amount_resource_name ~%RESREF_SPL_LEVEL_DRAIN_AMOUNT_PREFIX%%drain_amount%~
+
+        COPY ~%resources%/blank.spl~ ~override/%extension_resource_name%.SPL~
+            LPF ADD_SPL_ABILITY RET ability_index END
+            FOR (local_drain_amount = 1; local_drain_amount < drain_amount; ++local_drain_amount) BEGIN
+                SPRINT local_amount_resource_name ~%RESREF_SPL_LEVEL_DRAIN_AMOUNT_PREFIX%%local_drain_amount%~
+                LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+                    opcode = EFF_OPCODE_APPLY_EFFECTS_LIST
+                    parameter1 = 2 // PC
+                    parameter2 = 102 // 102_EA=n
+                    max_level = local_drain_amount + 1
+                    min_level = local_drain_amount + 1
+                    STR_VAR resource = ~%local_amount_resource_name%~
+                    END
+            END
+            LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+                opcode = EFF_OPCODE_APPLY_EFFECTS_LIST
+                parameter1 = 2 // PC
+                parameter2 = 102 // 102_EA=n
+                min_level = drain_amount + 1
+                STR_VAR resource = ~%amount_resource_name%~
+                END
+            LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+                opcode = EFF_OPCODE_APPLY_EFFECTS_LIST
+                parameter1 = 2 // PC
+                parameter2 = 112 // 112_EA!=n
+                STR_VAR resource = ~%amount_resource_name%~
+                END
+
+        COPY ~%resources%/blank.spl~ ~override/%amount_resource_name%.SPL~
+            LPF ADD_SPL_ABILITY RET ability_index END
+            LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+                opcode = EFF_OPCODE_LEVEL_DRAIN
+                parameter1 = drain_amount
+                END
+    END
+END
