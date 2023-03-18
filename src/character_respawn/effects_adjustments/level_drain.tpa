@@ -21,42 +21,33 @@ DEFINE_ACTION_MACRO BUILD_LEVEL_DRAIN_PATCHES BEGIN
 END
 
 DEFINE_ACTION_FUNCTION APPLY_LEVEL_DRAIN_EXTENSION BEGIN
+    COPY ~%resources%/blank.spl~ ~override/%RESREF_SPL_LEVEL_DRAIN_KILL%.SPL~
+        LPF ADD_SPL_ABILITY RET ability_index END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_INSTANT_DEATH
+            parameter1 = 1 // Show message
+            parameter2 = 64 // Exploding stoned death/Level Drain death
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
+            parameter1 = 1
+            STR_VAR resource = ~%LOCALS_STATE_INSTANT_DEATH%~
+            END
+
     OUTER_FOR (drain_amount = 1; drain_amount <= LEVEL_DRAIN_MAX_LVL; ++drain_amount) BEGIN
         OUTER_SPRINT extension_resource_name ~%RESREF_SPL_LEVEL_DRAIN_PREFIX%%drain_amount%~
-        OUTER_SPRINT amount_resource_name ~%RESREF_SPL_LEVEL_DRAIN_AMOUNT_PREFIX%%drain_amount%~
 
         COPY ~%resources%/blank.spl~ ~override/%extension_resource_name%.SPL~
             LPF ADD_SPL_ABILITY RET ability_index END
-            FOR (local_drain_amount = 1; local_drain_amount < drain_amount; ++local_drain_amount) BEGIN
-                SPRINT local_amount_resource_name ~%RESREF_SPL_LEVEL_DRAIN_AMOUNT_PREFIX%%local_drain_amount%~
-                LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-                    opcode = EFF_OPCODE_APPLY_EFFECTS_LIST
-                    parameter1 = 2 // PC
-                    parameter2 = 102 // 102_EA=n
-                    max_level = local_drain_amount + 1
-                    min_level = local_drain_amount + 1
-                    STR_VAR resource = ~%local_amount_resource_name%~
-                    END
-            END
             LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
                 opcode = EFF_OPCODE_APPLY_EFFECTS_LIST
-                parameter1 = 2 // PC
-                parameter2 = 102 // 102_EA=n
-                min_level = drain_amount + 1
-                STR_VAR resource = ~%amount_resource_name%~
+                max_level = drain_amount
+                STR_VAR resource = ~%RESREF_SPL_LEVEL_DRAIN_KILL%~
                 END
-            LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-                opcode = EFF_OPCODE_APPLY_EFFECTS_LIST
-                parameter1 = 2 // PC
-                parameter2 = 112 // 112_EA!=n
-                STR_VAR resource = ~%amount_resource_name%~
-                END
-
-        COPY ~%resources%/blank.spl~ ~override/%amount_resource_name%.SPL~
-            LPF ADD_SPL_ABILITY RET ability_index END
             LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
                 opcode = EFF_OPCODE_LEVEL_DRAIN
                 parameter1 = drain_amount
+                min_level = drain_amount + 1
                 END
     END
 END
