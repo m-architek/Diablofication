@@ -44,6 +44,8 @@ BEGIN
 
             LPF PATCH_EFF_EFFECT INT_VAR offset_shift = ability_effect_offset
                 STR_VAR patches_ref = ~%patches_ref%~
+                    eff_read_strategy_ref = ~EFF_V1_READ_STRATEGY~
+                    eff_write_strategy_ref = ~EFF_V1_WRITE_STRATEGY~
                 END
         END
     END
@@ -57,6 +59,8 @@ BEGIN
 
         LPF PATCH_EFF_EFFECT INT_VAR offset_shift = equipped_effect_offset
             STR_VAR patches_ref = ~%patches_ref%~
+                eff_read_strategy_ref = ~EFF_V1_READ_STRATEGY~
+                eff_write_strategy_ref = ~EFF_V1_WRITE_STRATEGY~
             END
     END
 END
