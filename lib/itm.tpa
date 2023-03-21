@@ -1,41 +1,11 @@
-OUTER_SET ITM_ABILITIES_OFFSET = 0x64
-OUTER_SET ITM_ABILITIES_COUNT = 0x68
 OUTER_SET ITM_ABILITY_SIZE = 56
-
-OUTER_SET ITM_EFFECTS_OFFSET = 0x6a
-
-OUTER_SET ITM_ABILITY_EFFECTS_COUNT = 0x1e
-OUTER_SET ITM_ABILITY_EFFECTS_INDEX_OFFSET = 0x20
-
-OUTER_SET ITM_EQUIPPED_EFFECTS_INDEX_OFFSET = 0x6e
-OUTER_SET ITM_EQUIPPED_EFFECTS_COUNT = 0x70
 
 
 DEFINE_PATCH_FUNCTION PATCH_ITM_EFFECTS
     STR_VAR patches_ref = 0
 BEGIN
-    READ_LONG ITM_EFFECTS_OFFSET effects_offset
-
-    READ_LONG ITM_ABILITIES_OFFSET abilities_offset
-    READ_SHORT ITM_ABILITIES_COUNT abilities_count
-
-    FOR (ability_index = 0; ability_index < abilities_count; ++ability_index) BEGIN
-        SET ability_offset = abilities_offset + (ability_index * ITM_ABILITY_SIZE)
-
-        READ_SHORT (ability_offset + ITM_ABILITY_EFFECTS_COUNT) ability_effects_count
-        READ_SHORT (ability_offset + ITM_ABILITY_EFFECTS_INDEX_OFFSET) ability_effects_index_offset
-        SET ability_effects_offset = effects_offset + (ability_effects_index_offset * EFF_V1_SIZE)
-
-        LPF PATCH_EFF_EFFECT_LIST INT_VAR offset_shift = ability_effects_offset effects_count = ability_effects_count
-            STR_VAR patches_ref eff_strategy_ref = ~EFF_V1_STRATEGY~
-            END
-    END
-
-    READ_SHORT ITM_EQUIPPED_EFFECTS_INDEX_OFFSET equipped_effects_index_offset
-    READ_SHORT ITM_EQUIPPED_EFFECTS_COUNT equipped_effects_count
-    SET equipped_effects_offset = effects_offset + (equipped_effects_index_offset * EFF_V1_SIZE)
-
-    LPF PATCH_EFF_EFFECT_LIST INT_VAR offset_shift = equipped_effects_offset effects_count = equipped_effects_count
-        STR_VAR patches_ref eff_strategy_ref = ~EFF_V1_STRATEGY~
+    LPF PATCH_ITM_SPL_EFFECTS
+        INT_VAR ability_size = ITM_ABILITY_SIZE
+        STR_VAR patches_ref
         END
 END

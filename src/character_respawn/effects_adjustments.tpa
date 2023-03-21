@@ -84,8 +84,14 @@ DEFINE_ACTION_FUNCTION APPLY_EXISTING_EFFECTS_ADJUSTMENTS BEGIN
     LAM BUILD_LEVEL_DRAIN_PATCHES
 
     COPY_EXISTING_REGEXP GLOB ~^.+\.eff$~ ~override~
-        LPF PATCH_EFF_V2_EFFECT STR_VAR patches_ref = patches END
+        LPF PATCH_EFF_V2_EFFECT STR_VAR patches_ref = patches 
+            RET_ARRAY created_eff_resources
+            END
         BUT_ONLY
+
+    ACTION_PHP_EACH created_eff_resources AS key => value BEGIN 
+        PRINT ~ CLONED EFF %key_0% -> %key_1% (%value%)~
+    END
     
     COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
         LPF PATCH_SPL_EFFECTS STR_VAR patches_ref = patches END
