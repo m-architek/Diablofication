@@ -113,34 +113,22 @@ BEGIN
     READ_SHORT SPL_ABILITIES_COUNT abilities_count
 
     FOR (ability_index = 0; ability_index < abilities_count; ++ability_index) BEGIN
-        SET ability_offset = abilities_offset + ability_index * SPL_ABILITY_SIZE
+        SET ability_offset = abilities_offset + (ability_index * SPL_ABILITY_SIZE)
 
         READ_SHORT (ability_offset + SPL_ABILITY_EFFECTS_COUNT) ability_effects_count
         READ_SHORT (ability_offset + SPL_ABILITY_EFFECTS_INDEX_OFFSET) ability_effects_index_offset
+        SET ability_effects_offset = effects_offset + (ability_effects_index_offset * EFF_V1_SIZE)
 
-        FOR (ability_effect_index = 0; ability_effect_index < ability_effects_count; ++ability_effect_index) BEGIN
-            SET ability_effect_offset = effects_offset +
-                (ability_effects_index_offset + ability_effect_index) * SPL_EFFECT_SIZE
-
-            LPF PATCH_EFF_EFFECT INT_VAR offset_shift = ability_effect_offset
-                STR_VAR patches_ref = ~%patches_ref%~
-                    eff_read_strategy_ref = ~EFF_V1_READ_STRATEGY~
-                    eff_write_strategy_ref = ~EFF_V1_WRITE_STRATEGY~
-                END
-        END
+        LPF PATCH_EFF_EFFECT_LIST INT_VAR offset_shift = ability_effects_offset effects_count = ability_effects_count
+            STR_VAR patches_ref eff_strategy_ref = ~EFF_V1_STRATEGY~
+            END
     END
 
     READ_SHORT SPL_CASTING_EFFECTS_INDEX_OFFSET casting_effects_index_offset
     READ_SHORT SPL_CASTING_EFFECTS_COUNT casting_effects_count
+    SET casting_effects_offset = effects_offset + (casting_effects_index_offset * EFF_V1_SIZE)
 
-    FOR (casting_effect_index = 0; casting_effect_index < casting_effects_count; ++casting_effect_index) BEGIN
-        SET casting_effect_offset = effects_offset + 
-            (casting_effects_index_offset + casting_effect_index) * SPL_EFFECT_SIZE       
-
-        LPF PATCH_EFF_EFFECT INT_VAR offset_shift = casting_effect_offset
-            STR_VAR patches_ref = ~%patches_ref%~
-                eff_read_strategy_ref = ~EFF_V1_READ_STRATEGY~
-                eff_write_strategy_ref = ~EFF_V1_WRITE_STRATEGY~
-            END
-    END
+    LPF PATCH_EFF_EFFECT_LIST INT_VAR offset_shift = casting_effects_offset effects_count = casting_effects_count
+        STR_VAR patches_ref eff_strategy_ref = ~EFF_V1_STRATEGY~
+        END
 END

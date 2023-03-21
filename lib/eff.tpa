@@ -63,6 +63,25 @@ OUTER_SET EFF_UNDISPELLABLE_UNBLOCKABLE = 2
 OUTER_SET EFF_DISPELLABLE_UNBLOCKABLE = 3
 
 
+DEFINE_PATCH_FUNCTION PATCH_EFF_EFFECT_LIST
+    INT_VAR offset_shift = ~~ 
+        effects_count = ~~
+    STR_VAR patches_ref = 0
+        eff_strategy_ref = 0
+BEGIN 
+    SET eff_size = $~%eff_strategy_ref%~(size)
+    SPRINT eff_read_strategy_ref $~%eff_strategy_ref%~(read_strategy) 
+    SPRINT eff_write_strategy_ref $~%eff_strategy_ref%~(write_strategy) 
+
+    FOR (effect_index = 0; effect_index < effects_count; ++effect_index) BEGIN
+        SET effect_offset = offset_shift + (effect_index * eff_size)
+
+        LPF PATCH_EFF_EFFECT INT_VAR offset_shift = effect_offset
+            STR_VAR patches_ref eff_read_strategy_ref eff_write_strategy_ref
+            END
+    END
+END
+
 DEFINE_PATCH_FUNCTION PATCH_EFF_EFFECT
     INT_VAR offset_shift = ~~
     STR_VAR patches_ref = 0
@@ -75,42 +94,9 @@ BEGIN
         END
 
     PHP_EACH applicable_patches AS patch_name => patch_ref BEGIN
-        PATCH_PRINT ~Patching %SOURCE_EXT% %SOURCE_RES% (%patch_name%)~                
-        
-        PATCH_IF (VARIABLE_IS_SET $~%patch_ref%~(opcode)) BEGIN
-            SPRINT write_opcode_fn $~%eff_write_strategy_ref%~(opcode)
-            LPF ~%write_opcode_fn%~ INT_VAR offset_shift opcode = $~%patch_ref%~(opcode) END
-        END
-        
-        PATCH_IF (VARIABLE_IS_SET $~%patch_ref%~(parameter1)) BEGIN
-            SPRINT write_parameter1 $~%eff_write_strategy_ref%~(parameter1)
-            LPF ~%write_parameter1%~ INT_VAR offset_shift parameter1 = $~%patch_ref%~(parameter1) END
-        END
-        
-        PATCH_IF (VARIABLE_IS_SET $~%patch_ref%~(parameter2)) BEGIN
-            SPRINT write_parameter2_fn $~%eff_write_strategy_ref%~(parameter2)
-            LPF ~%write_parameter2_fn%~ INT_VAR offset_shift parameter2 = $~%patch_ref%~(parameter2) END
-        END
-        
-        PATCH_IF (VARIABLE_IS_SET $~%patch_ref%~(dispel_resistance)) BEGIN
-            SPRINT write_dispel_resistance_fn $~%eff_write_strategy_ref%~(dispel_resistance)
-            LPF ~%write_dispel_resistance_fn%~ INT_VAR offset_shift dispel_resistance = $~%patch_ref%~(dispel_resistance) END
-        END
-
-        PATCH_IF (VARIABLE_IS_SET $~%patch_ref%~(max_level)) BEGIN
-            SPRINT write_max_level_fn $~%eff_write_strategy_ref%~(max_level)
-            LPF ~%write_max_level_fn%~ INT_VAR offset_shift max_level = $~%patch_ref%~(max_level) END
-        END
-        
-        PATCH_IF (VARIABLE_IS_SET $~%patch_ref%~(min_level)) BEGIN
-            SPRINT write_min_level_fn $~%eff_write_strategy_ref%~(min_level)
-            LPF ~%write_min_level_fn%~ INT_VAR offset_shift min_level = $~%patch_ref%~(min_level) END
-        END
-        
-        PATCH_IF (VARIABLE_IS_SET $~%patch_ref%~(resource)) BEGIN
-            SPRINT write_resource_fn $~%eff_write_strategy_ref%~(resource)
-            LPF ~%write_resource_fn%~ INT_VAR offset_shift STR_VAR resource = $~%patch_ref%~(resource) END
-        END       
+        LPF PATCH_EFF_EFFECT_APPLY_PATCH INT_VAR offset_shift
+            STR_VAR patch_ref eff_write_strategy_ref
+            END
     END
 END
 
@@ -178,4 +164,46 @@ BEGIN
             END
         END        
     END
+END
+
+DEFINE_PATCH_FUNCTION PATCH_EFF_EFFECT_APPLY_PATCH
+    INT_VAR offset_shift = ~~
+    STR_VAR patch_ref = 0 eff_write_strategy_ref = 0
+BEGIN 
+    PATCH_PRINT ~Patching %SOURCE_EXT% %SOURCE_RES% (%patch_name%)~                
+        
+    PATCH_IF (VARIABLE_IS_SET $~%patch_ref%~(opcode)) BEGIN
+        SPRINT write_opcode_fn $~%eff_write_strategy_ref%~(opcode)
+        LPF ~%write_opcode_fn%~ INT_VAR offset_shift opcode = $~%patch_ref%~(opcode) END
+    END
+    
+    PATCH_IF (VARIABLE_IS_SET $~%patch_ref%~(parameter1)) BEGIN
+        SPRINT write_parameter1 $~%eff_write_strategy_ref%~(parameter1)
+        LPF ~%write_parameter1%~ INT_VAR offset_shift parameter1 = $~%patch_ref%~(parameter1) END
+    END
+    
+    PATCH_IF (VARIABLE_IS_SET $~%patch_ref%~(parameter2)) BEGIN
+        SPRINT write_parameter2_fn $~%eff_write_strategy_ref%~(parameter2)
+        LPF ~%write_parameter2_fn%~ INT_VAR offset_shift parameter2 = $~%patch_ref%~(parameter2) END
+    END
+    
+    PATCH_IF (VARIABLE_IS_SET $~%patch_ref%~(dispel_resistance)) BEGIN
+        SPRINT write_dispel_resistance_fn $~%eff_write_strategy_ref%~(dispel_resistance)
+        LPF ~%write_dispel_resistance_fn%~ INT_VAR offset_shift dispel_resistance = $~%patch_ref%~(dispel_resistance) END
+    END
+
+    PATCH_IF (VARIABLE_IS_SET $~%patch_ref%~(max_level)) BEGIN
+        SPRINT write_max_level_fn $~%eff_write_strategy_ref%~(max_level)
+        LPF ~%write_max_level_fn%~ INT_VAR offset_shift max_level = $~%patch_ref%~(max_level) END
+    END
+    
+    PATCH_IF (VARIABLE_IS_SET $~%patch_ref%~(min_level)) BEGIN
+        SPRINT write_min_level_fn $~%eff_write_strategy_ref%~(min_level)
+        LPF ~%write_min_level_fn%~ INT_VAR offset_shift min_level = $~%patch_ref%~(min_level) END
+    END
+    
+    PATCH_IF (VARIABLE_IS_SET $~%patch_ref%~(resource)) BEGIN
+        SPRINT write_resource_fn $~%eff_write_strategy_ref%~(resource)
+        LPF ~%write_resource_fn%~ INT_VAR offset_shift STR_VAR resource = $~%patch_ref%~(resource) END
+    END  
 END
