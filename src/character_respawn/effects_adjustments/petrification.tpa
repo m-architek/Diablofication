@@ -2,32 +2,32 @@ DEFINE_ACTION_FUNCTION BUILD_PETRIFICATION_ADJUSTMENTS
     RET_ARRAY patch_PETRIFICATION patch_PETRIFICATION_IMMUNITY
 BEGIN
     ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_PETRIFICATION BEGIN
+        patch_type => ~CLONE~
         match_opcode => EFF_OPCODE_STATE_PETRIFICATION
-        opcode => EFF_OPCODE_APPLY_EFFECTS_LIST
-        parameter1 => 0
-        parameter2 => 0
-        resource => ~%RESREF_SPL_PETRIFICATION%~
+        opcode => EFF_OPCODE_USE_EFF_FILE
+        parameter1 => 2 // PC
+        parameter2 => 2 // EA
+        resource => ~%RESREF_EFF_PETRIFICATION%~
     END
 
     ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_PETRIFICATION_IMMUNITY BEGIN
+        patch_type => ~CLONE~
         match_opcode => EFF_OPCODE_PROTECTION_FROM_OPCODE
         match_parameter2 => EFF_OPCODE_STATE_PETRIFICATION
         opcode => EFF_OPCODE_PROTECTION_FROM_SPELL
         parameter1 => 0
         parameter2 => 0
-        resource => ~%RESREF_SPL_PETRIFICATION%~
+        resource => ~%RESREF_EFF_PETRIFICATION%~
     END
 END
 
 DEFINE_ACTION_FUNCTION APPLY_PETRIFICATION_EXTENSION BEGIN
-    COPY ~%resources%/blank.spl~ ~override/%RESREF_SPL_PETRIFICATION%.SPL~
-        LPF ADD_SPL_ABILITY RET ability_index END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_STATE_PETRIFICATION
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
-            parameter1 = 1
+    COPY ~%resources%/blank.eff~ ~override/%RESREF_EFF_PETRIFICATION%.EFF~
+        LPF ALTER_EFF_V2_EFFECT
+            INT_VAR opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
+                parameter1 = 1
+                parent_resource_type = EFF_V2_PARENT_RESOURCE_TYPE_SPELL
             STR_VAR resource = ~%LOCALS_STATE_PETRIFICATION%~
+                parent_resource = ~%RESREF_EFF_PETRIFICATION%~
             END
 END

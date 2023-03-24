@@ -27,9 +27,7 @@ ALWAYS
     INCLUDE ~%lib%/joinable_npc_array.tpa~
 
     INCLUDE ~%resources%/variables.tpa~
-    INCLUDE ~%resources%/resref_eff.tpa~
-    INCLUDE ~%resources%/resref_spl.tpa~
-    INCLUDE ~%resources%/resref_bcs.tpa~
+    INCLUDE ~%resources%/resources.tpa~
 END
 
 
