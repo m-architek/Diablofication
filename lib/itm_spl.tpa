@@ -76,7 +76,6 @@ DEFINE_PATCH_FUNCTION ADJUST_ITM_SPL_AFTER_ABILITY_EFFECTS_COUNT_CHANGE
     RET abilities_offset global_effects_index
 BEGIN 
     PATCH_IF (effects_count_diff != 0) BEGIN 
-        PATCH_PRINT ~ !! ADJUST_ITM_SPL_AFTER_ABILITY_EFFECTS_COUNT_CHANGE %SOURCE_EXT% %SOURCE_RES% effects_count_diff: %effects_count_diff%~
 
         PATCH_IF (are_abilities_after_effects) BEGIN 
             SET abilities_offset = abilities_offset + (effects_count_diff * EFF_V1_SIZE)
@@ -107,7 +106,6 @@ DEFINE_PATCH_FUNCTION ADJUST_ITM_SPL_AFTER_GLOBAL_EFFECTS_COUNT_CHANGE
     RET abilities_offset
 BEGIN 
     PATCH_IF (effects_count_diff != 0) BEGIN 
-        PATCH_PRINT ~ !! ADJUST_ITM_SPL_AFTER_GLOBAL_EFFECTS_COUNT_CHANGE %SOURCE_EXT% %SOURCE_RES% effects_count_diff: %effects_count_diff%~
 
         PATCH_IF (are_abilities_after_effects) BEGIN 
             SET abilities_offset = abilities_offset + (effects_count_diff * EFF_V1_SIZE)
