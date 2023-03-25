@@ -140,7 +140,7 @@ END
 
 DEFINE_ACTION_FUNCTION PATCH_EFF_V2_EFFECT_RECURSIVE 
     INT_VAR iteration = 1
-    STR_VAR glob = 0 patches_ref = 0
+    STR_VAR glob = ~^.+\.eff$~ patches_ref = 0
     RET_ARRAY created_eff_resources
 BEGIN
     ACTION_CLEAR_ARRAY created_eff_resources

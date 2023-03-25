@@ -1,22 +1,64 @@
-OUTER_SET LEVEL_DRAIN_MAX_LVL = 9
+DEFINE_PATCH_FUNCTION LEVEL_DRAIN_KILL_PATCH_FUNCTION 
+    INT_VAR offset_shift = ~~
+    STR_VAR eff_strategy_ref = 0
+BEGIN 
+    SPRINT eff_read_strategy_ref $~%eff_strategy_ref%~(read_strategy) 
+    SPRINT eff_write_strategy_ref $~%eff_strategy_ref%~(write_strategy)
+
+    SPRINT read_parameter1_fn $~%eff_read_strategy_ref%~(parameter1) 
+    LPF ~%read_parameter1_fn%~ INT_VAR offset_shift RET effect_parameter1 = parameter1 END
+
+    SPRINT write_max_level_fn $~%eff_write_strategy_ref%~(max_level)
+    LPF ~%write_max_level_fn%~ INT_VAR offset_shift max_level = effect_parameter1 END
+END
+
+DEFINE_PATCH_FUNCTION LEVEL_DRAIN_PATCH_FUNCTION 
+    INT_VAR offset_shift = ~~
+    STR_VAR eff_strategy_ref = 0
+BEGIN 
+    SPRINT eff_read_strategy_ref $~%eff_strategy_ref%~(read_strategy) 
+    SPRINT eff_write_strategy_ref $~%eff_strategy_ref%~(write_strategy)
+
+    SPRINT read_parameter1_fn $~%eff_read_strategy_ref%~(parameter1) 
+    LPF ~%read_parameter1_fn%~ INT_VAR offset_shift RET effect_parameter1 = parameter1 END
+
+    SPRINT write_min_level_fn $~%eff_write_strategy_ref%~(min_level)
+    LPF ~%write_min_level_fn%~ INT_VAR offset_shift min_level = (effect_parameter1 + 1) END
+END
 
 DEFINE_ACTION_MACRO BUILD_LEVEL_DRAIN_PATCHES BEGIN
-    OUTER_FOR (drain_amount = 1; drain_amount <= LEVEL_DRAIN_MAX_LVL; ++drain_amount) BEGIN
-        OUTER_SPRINT extension_resource_name ~%RESREF_SPL_LEVEL_DRAIN_PREFIX%%drain_amount%~
-        
-        ACTION_DEFINE_ASSOCIATIVE_ARRAY ~patch_LEVEL_DRAIN_%drain_amount%~ BEGIN
-            match_opcode => EFF_OPCODE_LEVEL_DRAIN
-            match_parameter1 => ~%drain_amount%~
-            match_min_level => 0
-            opcode => EFF_OPCODE_APPLY_EFFECTS_LIST
-            parameter1 => 0
-            parameter2 => 0
-            resource => ~%extension_resource_name%~
-        END
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_LEVEL_DRAIN_KILL BEGIN
+        patch_type => ~CLONE~
+        patch_function => ~LEVEL_DRAIN_KILL_PATCH_FUNCTION~
+        match_opcode => EFF_OPCODE_LEVEL_DRAIN
+        match_min_level => 0
+        opcode => EFF_OPCODE_CAST_SPELL
+        parameter1 => 0 // Casting Level
+        parameter2 => 1 // Cast Instantly at caster level
+        resource => ~%RESREF_SPL_LEVEL_DRAIN_KILL%~
+    END
 
-        ACTION_DEFINE_ASSOCIATIVE_ARRAY patches BEGIN 
-            ~LEVEL_DRAIN_%drain_amount%~ => ~patch_LEVEL_DRAIN_%drain_amount%~
-        END
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_LEVEL_DRAIN BEGIN
+        patch_type => ~ALTER~
+        patch_function => ~LEVEL_DRAIN_PATCH_FUNCTION~
+        match_opcode => EFF_OPCODE_LEVEL_DRAIN
+        match_min_level => 0
+    END
+
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_LEVEL_DRAIN_IMMUNITY BEGIN
+        patch_type => ~CLONE~
+        match_opcode => EFF_OPCODE_PROTECTION_FROM_OPCODE
+        match_parameter2 => EFF_OPCODE_LEVEL_DRAIN
+        opcode => EFF_OPCODE_PROTECTION_FROM_SPELL
+        parameter1 => 0 // Message
+        parameter2 => 0 // Irrelevant
+        resource => ~%RESREF_SPL_LEVEL_DRAIN_KILL%~
+    END
+
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY patches BEGIN 
+        LEVEL_DRAIN_KILL => patch_LEVEL_DRAIN_KILL
+        LEVEL_DRAIN => patch_LEVEL_DRAIN
+        LEVEL_DRAIN_IMMUNITY => patch_LEVEL_DRAIN_IMMUNITY
     END
 END
 
@@ -33,21 +75,4 @@ DEFINE_ACTION_FUNCTION APPLY_LEVEL_DRAIN_EXTENSION BEGIN
             parameter1 = 1
             STR_VAR resource = ~%LOCALS_STATE_INSTANT_DEATH%~
             END
-
-    OUTER_FOR (drain_amount = 1; drain_amount <= LEVEL_DRAIN_MAX_LVL; ++drain_amount) BEGIN
-        OUTER_SPRINT extension_resource_name ~%RESREF_SPL_LEVEL_DRAIN_PREFIX%%drain_amount%~
-
-        COPY ~%resources%/blank.spl~ ~override/%extension_resource_name%.SPL~
-            LPF ADD_SPL_ABILITY RET ability_index END
-            LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-                opcode = EFF_OPCODE_APPLY_EFFECTS_LIST
-                max_level = drain_amount
-                STR_VAR resource = ~%RESREF_SPL_LEVEL_DRAIN_KILL%~
-                END
-            LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-                opcode = EFF_OPCODE_LEVEL_DRAIN
-                parameter1 = drain_amount
-                min_level = drain_amount + 1
-                END
-    END
 END

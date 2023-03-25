@@ -5,7 +5,7 @@ BEGIN
         patch_type => ~CLONE~
         match_opcode => EFF_OPCODE_KILL_60HP
         opcode => EFF_OPCODE_CAST_SPELL
-        parameter1 => 0
+        parameter1 => 0 // Casting Level
         parameter2 => 1 // Cast Instantly at caster level
         resource => ~%RESREF_SPL_KILL_60HP%~
     END
