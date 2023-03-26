@@ -12,22 +12,23 @@ ALWAYS
 
     OUTER_SPRINT config ~%MOD_FOLDER%/config~
     OUTER_SPRINT lib ~%MOD_FOLDER%/lib~
-    OUTER_SPRINT src ~%MOD_FOLDER%/src~
     OUTER_SPRINT resources ~%MOD_FOLDER%/resources~
+    OUTER_SPRINT src ~%MOD_FOLDER%/src~
 
     INCLUDE ~%lib%/2da.tpa~
-    INCLUDE ~%lib%/vvc.tpa~
+    INCLUDE ~%lib%/box_array.tpa~
+    INCLUDE ~%lib%/cre.tpa~
     INCLUDE ~%lib%/eff.tpa~
     INCLUDE ~%lib%/eff_v1.tpa~
     INCLUDE ~%lib%/eff_v2.tpa~
-    INCLUDE ~%lib%/spl.tpa~
     INCLUDE ~%lib%/itm.tpa~
     INCLUDE ~%lib%/itm_spl.tpa~
-    INCLUDE ~%lib%/cre.tpa~
     INCLUDE ~%lib%/joinable_npc_array.tpa~
+    INCLUDE ~%lib%/spl.tpa~
+    INCLUDE ~%lib%/vvc.tpa~
 
-    INCLUDE ~%resources%/variables.tpa~
     INCLUDE ~%resources%/resources.tpa~
+    INCLUDE ~%resources%/variables.tpa~
 END
 
 

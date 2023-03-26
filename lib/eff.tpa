@@ -200,9 +200,7 @@ BEGIN
                     END
 
                     PATCH_IF (NOT VARIABLE_IS_SET $~%patch_ref%~(match_function) OR match_result) BEGIN
-                        DEFINE_ASSOCIATIVE_ARRAY applicable_patches BEGIN
-                            ~%patch_name%~ => ~%patch_ref%~
-                        END
+                        SPRINT $applicable_patches(~%patch_name%~) ~%patch_ref%~
                     END
                 END
             END
@@ -246,7 +244,8 @@ BEGIN
     PATCH_MATCH ~%SOURCE_EXT%~ WITH
         ~EFF~ BEGIN
             INNER_ACTION BEGIN
-                LAF GET_UNIQUE_FILE_NAME STR_VAR extension = ~%SOURCE_EXT%~
+                LAF GET_UNIQUE_FILE_NAME STR_VAR extension = ~%SOURCE_EXT%~ 
+                        base = ~%RESREF_PREFIX%#%patch_name%_EFF_CLONE#%SOURCE_RES%~
                     RET filename
                     END
                 
@@ -258,10 +257,7 @@ BEGIN
                         END
             END
 
-            DEFINE_ASSOCIATIVE_ARRAY ~%created_eff_resources_ref%~ BEGIN 
-                ~%SOURCE_RES%~, ~%filename%~ => ~%patch_name%~
-            END
-
+            SPRINT $~%created_eff_resources_ref%~(~%SOURCE_RES%~ ~%filename%~) ~%patch_name%~
             SET effects_count_diff = 0
         END
         DEFAULT

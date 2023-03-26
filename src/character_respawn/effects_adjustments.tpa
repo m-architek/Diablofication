@@ -61,28 +61,11 @@ DEFINE_ACTION_FUNCTION APPLY_EXISTING_EFFECTS_ADJUSTMENTS BEGIN
     LAM BUILD_LEVEL_DRAIN_PATCHES
 
     LAF PATCH_EFF_V2_EFFECT_RECURSIVE STR_VAR patches_ref = patches
-        RET_ARRAY created_eff_resources
+        RET_ARRAY patches_box
         END
 
-    ACTION_PHP_EACH created_eff_resources AS key => value BEGIN 
-        OUTER_SPRINT source_resource ~%key_0%~
-        OUTER_SPRINT target_resource ~%key_1%~
-        OUTER_SPRINT patch_name ~%source_resource%_%target_resource%~
-        OUTER_SPRINT patch_ref ~patch_%patch_name%~
-
-        ACTION_DEFINE_ASSOCIATIVE_ARRAY ~%patch_ref%~ BEGIN 
-            patch_type => ~CLONE~
-            match_resource => ~%source_resource%~
-            resource => ~%target_resource%~
-        END
-        ACTION_DEFINE_ASSOCIATIVE_ARRAY patches BEGIN 
-            ~%patch_name%~ => ~%patch_ref%~ 
-        END
-    END
-
-    ACTION_PHP_EACH patches AS key => value BEGIN 
-        PRINT ~ Patch -> %key%~
-    END
+    OUTER_SPRINT UNBOX_ARRAY patches
+    LAM UNBOX_ARRAY
     
     COPY_EXISTING_REGEXP GLOB ~^.+\.spl$~ ~override~
         LPF PATCH_SPL_EFFECTS STR_VAR patches_ref = patches END
