@@ -7,6 +7,8 @@ INCLUDE ~%src%/respawn_execution.tpa~
 INCLUDE ~%src%/respawn_process.tpa~
 INCLUDE ~%src%/respawn_penalty.tpa~
 
+OUTER_SPRINT RESREF_PREFIX ~%RESREF_PREFIX_CR%~
+
 
 LAF APPLY_EFFECTS_ADJUSTMENTS RET patrification_state_variable instant_death_variable END
 

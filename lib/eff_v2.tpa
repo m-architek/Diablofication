@@ -141,9 +141,8 @@ END
 DEFINE_ACTION_FUNCTION PATCH_EFF_V2_EFFECT_RECURSIVE 
     INT_VAR iteration = 1
     STR_VAR glob = ~^.+\.eff$~ patches_ref = 0
-    RET_ARRAY created_eff_resources
+    RET_ARRAY ~%patches_ref%_box~
 BEGIN
-    ACTION_CLEAR_ARRAY created_eff_resources
     ACTION_IF (iteration < 10) BEGIN 
         LOG ~PATCH_EFF_V2_EFFECT_RECURSIVE: start iteration %iteration%~
 
@@ -152,36 +151,28 @@ BEGIN
         OUTER_SET next_patches_length = 0
 
         COPY_EXISTING_REGEXP GLOB ~%glob%~ ~override~
-            CLEAR_ARRAY patch_created_eff_resources
+            CLEAR_ARRAY created_eff_resources
 
             LPF PATCH_EFF_V2_EFFECT STR_VAR patches_ref
-                RET_ARRAY patch_created_eff_resources = created_eff_resources
+                RET_ARRAY created_eff_resources
                 END
 
-            PHP_EACH patch_created_eff_resources AS key => value BEGIN             
+            PHP_EACH created_eff_resources AS key => value BEGIN             
                 SPRINT source_resource ~%key_0%~
                 SPRINT target_resource ~%key_1%~
-                SPRINT patch_name ~%source_resource%_%target_resource%~
-                SPRINT patch_ref ~patch_%patch_name%~
+                SPRINT next_patch_name ~%value%_%source_resource%_%target_resource%~
+                SPRINT next_patch_ref ~patch_%next_patch_name%~
 
-                PATCH_LOG ~PATCH_EFF_V2_EFFECT_RECURSIVE iteration %iteration%: append next patch %patch_name%~
-                CLEAR_ARRAY ~%patch_ref%~
+                PATCH_LOG ~PATCH_EFF_V2_EFFECT_RECURSIVE iteration %iteration%: append next patch %next_patch_name%~
+                CLEAR_ARRAY ~%next_patch_ref%~
 
-                DEFINE_ASSOCIATIVE_ARRAY ~%patch_ref%~ BEGIN 
+                DEFINE_ASSOCIATIVE_ARRAY ~%next_patch_ref%~ BEGIN 
                     patch_type => ~CLONE~
                     match_resource => ~%source_resource%~
                     resource => ~%target_resource%~
                 END
-                DEFINE_ASSOCIATIVE_ARRAY ~%next_patches_ref%~ BEGIN 
-                    ~%patch_name%~ => ~%patch_ref%~ 
-                END
+                SPRINT $~%next_patches_ref%~(~%next_patch_name%~) ~%next_patch_ref%~ 
                 SET next_patches_length = next_patches_length + 1
-            END
-
-            PHP_EACH patch_created_eff_resources AS key => value BEGIN             
-                DEFINE_ASSOCIATIVE_ARRAY created_eff_resources BEGIN 
-                    ~%key_0%~, ~%key_1%~ => ~%value%~
-                END
             END
             BUT_ONLY
 
@@ -189,15 +180,17 @@ BEGIN
         ACTION_IF (next_patches_length) BEGIN 
             LAF PATCH_EFF_V2_EFFECT_RECURSIVE INT_VAR iteration = iteration + 1
                 STR_VAR glob patches_ref = ~%next_patches_ref%~
-                RET_ARRAY next_created_eff_resources = created_eff_resources
+                RET_ARRAY ~%next_patches_ref%_box~
                 END
+            OUTER_SPRINT UNBOX_ARRAY ~%next_patches_ref%~
+            LAM UNBOX_ARRAY
         END
 
-        ACTION_PHP_EACH next_created_eff_resources AS key => value BEGIN 
-            ACTION_DEFINE_ASSOCIATIVE_ARRAY created_eff_resources BEGIN 
-                ~%key_0%~, ~%key_1%~ => ~%value%~
-            END
+        ACTION_PHP_EACH ~%next_patches_ref%~ AS patch_name => patch_ref BEGIN 
+            OUTER_SPRINT $~%patches_ref%~(~%patch_name%~) ~%patch_ref%~
         END
+        OUTER_SPRINT BOX_ARRAY ~%patches_ref%~
+        LAM BOX_ARRAY
     END ELSE BEGIN 
         WARN ~Recursive eff patching reached %iteration% iterations. Circular EFF dependency?~
     END

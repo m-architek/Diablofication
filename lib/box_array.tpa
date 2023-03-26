@@ -1,0 +1,31 @@
+DEFINE_ACTION_MACRO BOX_ARRAY BEGIN 
+    ACTION_CLEAR_ARRAY ~%BOX_ARRAY%_box~
+    ACTION_PHP_EACH ~%BOX_ARRAY%~ AS key_0 => value_0 BEGIN
+        ACTION_IF (VARIABLE_IS_SET key_0_1) BEGIN 
+            FAIL ~Array '%BOX_ARRAY%' contains composite key at path %key_0%.~ 
+        END
+
+        ACTION_PHP_EACH ~%value_0%~ AS key_1 => value_1 BEGIN 
+            ACTION_IF (VARIABLE_IS_SET key_1_1) BEGIN 
+                FAIL ~Array '%BOX_ARRAY%' contains array with composite key at patch %key_0%.%key_1%.~ 
+            END
+
+            ACTION_DEFINE_ASSOCIATIVE_ARRAY ~%BOX_ARRAY%_box~ BEGIN 
+                ~%key_0%~, ~%value_0%~, ~%key_1%~ => ~%value_1%~
+            END
+        END
+    END
+END
+
+DEFINE_ACTION_MACRO UNBOX_ARRAY BEGIN 
+    ACTION_CLEAR_ARRAY ~%UNBOX_ARRAY%~
+    ACTION_PHP_EACH ~%UNBOX_ARRAY%_box~ AS key => _ BEGIN 
+        ACTION_CLEAR_ARRAY ~%key_1%~
+        ACTION_DEFINE_ASSOCIATIVE_ARRAY ~%UNBOX_ARRAY%~ BEGIN 
+            ~%key_0%~ => ~%key_1%~
+        END
+    END
+    ACTION_PHP_EACH ~%UNBOX_ARRAY%_box~ AS key => value BEGIN 
+        OUTER_SPRINT $~%key_1%~(~%key_2%~) ~%value%~
+    END
+END
