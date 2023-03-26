@@ -1,5 +1,6 @@
-DEFINE_ACTION_FUNCTION BUILD_DISINTEGRATE_ADJUSTMENTS
-    RET_ARRAY patch_DISINTEGRATE patch_DISINTEGRATE_IMMUNITY
+DEFINE_ACTION_FUNCTION APPLY_DISINTEGRATE_PATCHES
+    STR_VAR patches_ref = 0
+    RET_ARRAY ~%patches_ref%~ patch_DISINTEGRATE patch_DISINTEGRATE_IMMUNITY
 BEGIN
     ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_DISINTEGRATE BEGIN
         patch_type => ~CLONE~
@@ -7,6 +8,7 @@ BEGIN
         opcode => EFF_OPCODE_USE_EFF_FILE
         resource => ~%RESREF_EFF_CR_DISINTEGRATION%~
     END
+
     ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_DISINTEGRATE_IMMUNITY BEGIN
         patch_type => ~CLONE~
         match_opcode => EFF_OPCODE_PROTECTION_FROM_OPCODE
@@ -16,15 +18,22 @@ BEGIN
         parameter2 => 0
         resource => ~%RESREF_EFF_CR_DISINTEGRATION%~
     END
+
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY ~%patches_ref%~ BEGIN 
+        DISINTEGRATE => patch_DISINTEGRATE
+        DISINTEGRATE_IMMUNITY => patch_DISINTEGRATE_IMMUNITY
+    END
 END
 
-DEFINE_ACTION_FUNCTION APPLY_DISINTEGRATE_EXTENSION BEGIN
+DEFINE_ACTION_FUNCTION APPLY_DISINTEGRATE_RESOURCES 
+    STR_VAR instant_death_variable = 0
+BEGIN
     COPY ~%resources%/blank.eff~ ~override/%RESREF_EFF_CR_DISINTEGRATION%.EFF~
         LPF ALTER_EFF_V2_EFFECT
             INT_VAR opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
                 parameter1 = 1
                 parent_resource_type = EFF_V2_PARENT_RESOURCE_TYPE_SPELL
-            STR_VAR resource = ~%LOCALS_STATE_INSTANT_DEATH%~
+            STR_VAR resource = ~%instant_death_variable%~
                 parent_resource = ~%RESREF_EFF_CR_DISINTEGRATION%~
             END
 END

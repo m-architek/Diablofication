@@ -24,6 +24,7 @@ ALWAYS
     INCLUDE ~%lib%/itm.tpa~
     INCLUDE ~%lib%/itm_spl.tpa~
     INCLUDE ~%lib%/joinable_npc_array.tpa~
+    INCLUDE ~%lib%/patch_all_effects.tpa~
     INCLUDE ~%lib%/spl.tpa~
     INCLUDE ~%lib%/vvc.tpa~
 
@@ -40,7 +41,9 @@ REQUIRE_PREDICATE GAME_IS ~bgee~ ~BG1 EE is required~
 REQUIRE_PREDICATE NOT GAME_INCLUDES ~sod~ ~SoD not supported~
 
 WITH_SCOPE BEGIN
-    INCLUDE ~%src%/character_respawn/main.tpa~
+    ACTION_TIME "character_respawn" BEGIN 
+        INCLUDE ~%src%/character_respawn/main.tpa~
+    END
 END
 
 
