@@ -1,3 +1,20 @@
+DEFINE_ACTION_FUNCTION APPLY_HARM_DAMAGE_PATCHES
+    STR_VAR patches_ref = 0
+    RET_ARRAY ~%patches_ref%~ patch_HARM_DMG
+BEGIN
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_HARM_DMG BEGIN
+        patch_type => ~ALTER~
+        match_opcode => EFF_OPCODE_HP_DAMAGE
+        match_parameter1 => 1
+        match_function => ~HARM_DAMAGE_MATCH_FUNCTION~
+        parameter1 => 2
+    END
+
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY ~%patches_ref%~ BEGIN 
+        HARM_DMG => patch_HARM_DMG
+    END
+END
+
 DEFINE_PATCH_FUNCTION HARM_DAMAGE_MATCH_FUNCTION 
     INT_VAR offset_shift = ~~
     STR_VAR eff_read_strategy_ref = 0
@@ -7,16 +24,4 @@ BEGIN
     LPF ~%read_parameter2_fn%~ INT_VAR offset_shift RET effect_parameter2 = parameter2 END
 
     SET match_result = (effect_parameter2 & 3) == 1 // Mode Set to Value
-END
-
-DEFINE_ACTION_FUNCTION BUILD_HARM_DAMAGE_ADJUSTMENTS
-    RET_ARRAY patch_HARM_DMG
-BEGIN
-    ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_HARM_DMG BEGIN
-        patch_type => ~ALTER~
-        match_opcode => EFF_OPCODE_HP_DAMAGE
-        match_parameter1 => 1
-        match_function => ~HARM_DAMAGE_MATCH_FUNCTION~
-        parameter1 => 2
-    END
 END

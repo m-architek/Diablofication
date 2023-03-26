@@ -1,0 +1,18 @@
+DEFINE_ACTION_FUNCTION PATCH_ALL_EFFECTS 
+    STR_VAR resource_pattern = ~.+~ patches_ref = 0
+BEGIN 
+    LAF PATCH_EFF_V2_EFFECT_RECURSIVE STR_VAR glob = ~^%resource_pattern%\.eff$~ patches_ref
+        RET_ARRAY ~%patches_ref%_box~
+        END
+
+    OUTER_SPRINT UNBOX_ARRAY ~%patches_ref%~
+    LAM UNBOX_ARRAY
+    
+    COPY_EXISTING_REGEXP GLOB ~^%resource_pattern%\.spl$~ ~override~
+        LPF PATCH_SPL_EFFECTS STR_VAR patches_ref END
+        BUT_ONLY
+
+    COPY_EXISTING_REGEXP GLOB ~^%resource_pattern%\.itm$~ ~override~
+        LPF PATCH_ITM_EFFECTS STR_VAR patches_ref END
+        BUT_ONLY
+END

@@ -244,6 +244,8 @@ BEGIN
     PATCH_MATCH ~%SOURCE_EXT%~ WITH
         ~EFF~ BEGIN
             INNER_ACTION BEGIN
+                ACTION_IF (NOT VARIABLE_IS_SET RESREF_PREFIX) BEGIN FAIL ~Action variable RESREF_PREFIX need to be defined.~ END
+
                 LAF GET_UNIQUE_FILE_NAME STR_VAR extension = ~%SOURCE_EXT%~ 
                         base = ~%RESREF_PREFIX%#%patch_name%_EFF_CLONE#%SOURCE_RES%~
                     RET filename
