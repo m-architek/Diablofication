@@ -1,0 +1,88 @@
+OUTER_SPRINT RESREF_2DA_DRAIN_KILL_RESOURCES ~%RESREF_PREFIX_CR%_DRAIN_KILL_RESOURCES~
+
+DEFINE_ACTION_FUNCTION APPLY_STAT_DRAIN_PATCHES 
+    STR_VAR patches_ref = 0
+    RET_ARRAY ~%patches_ref%~ patch_INT_DRAIN
+BEGIN
+    COPY ~%resources%/blank~ ~override/%RESREF_2DA_DRAIN_KILL_RESOURCES%.2DA~
+
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_INT_DRAIN BEGIN 
+        patch_type => ~CLONE~
+        patch_function => ~INT_DRAIN_PATCH_FUNCTION~
+        match_opcode => EFF_OPCODE_INT_MOD 
+        match_parameter2 => 0 // Cumulative Modifier
+        match_function => ~STAT_DRAIN_MATCH_FUNCTION~
+        opcode => EFF_OPCODE_CAST_SPELL
+        parameter1 => 0 // Casting Level
+        parameter2 => 1 // Cast Instantly at caster level
+    END
+
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY ~%patches_ref%~ BEGIN 
+        INT_DRAIN => patch_INT_DRAIN
+    END
+END
+
+DEFINE_PATCH_FUNCTION STAT_DRAIN_MATCH_FUNCTION 
+    INT_VAR offset_shift = ~~
+    STR_VAR eff_read_strategy_ref = 0
+    RET match_result
+BEGIN 
+    SPRINT read_parameter1_fn $~%eff_read_strategy_ref%~(parameter1) 
+    LPF ~%read_parameter1_fn%~ INT_VAR offset_shift RET effect_parameter1 = parameter1 END
+
+    SET match_result = effect_parameter1 < 0
+END
+
+DEFINE_PATCH_FUNCTION INT_DRAIN_PATCH_FUNCTION 
+    INT_VAR offset_shift = ~~
+    STR_VAR eff_strategy_ref = 0
+BEGIN 
+    SPRINT eff_read_strategy_ref $~%eff_strategy_ref%~(read_strategy) 
+    SPRINT eff_write_strategy_ref $~%eff_strategy_ref%~(write_strategy)
+
+    SPRINT read_parameter1_fn $~%eff_read_strategy_ref%~(parameter1) 
+    LPF ~%read_parameter1_fn%~ INT_VAR offset_shift RET effect_parameter1 = parameter1 END
+
+    SET stat_amount = ABS effect_parameter1
+    SPRINT drain_kill_resource ~%RESREF_SPL_CR_INT_DRAIN_KILL_PREFIX%%stat_amount%~
+
+    INNER_ACTION BEGIN 
+        COPY_EXISTING ~%RESREF_2DA_DRAIN_KILL_RESOURCES%.2DA~ ~override~
+            INSERT_2DA_ROW 0 0 ~%drain_kill_resource% INT %stat_amount%~
+            BUT_ONLY
+    END
+
+    SPRINT write_resource_fn $~%eff_write_strategy_ref%~(resource)
+    LPF ~%write_resource_fn%~ INT_VAR offset_shift STR_VAR resource = ~%drain_kill_resource%~ END
+END
+
+DEFINE_ACTION_FUNCTION APPLY_STAT_DRAIN_RESOURCES 
+    STR_VAR instant_death_variable = 0
+BEGIN
+    COPY_EXISTING - ~%RESREF_2DA_DRAIN_KILL_RESOURCES%.2DA~ ~~
+        READ_2DA_ENTRIES_NOW drain_kill_resources 1
+        BUT_ONLY
+
+    OUTER_FOR (row = 0; row < drain_kill_resources; ++row) BEGIN 
+        OUTER_SPRINT drain_kill_resource $drain_kill_resources(~%row%~ 0)
+        OUTER_SPRINT stat $drain_kill_resources(~%row%~ 1)
+        OUTER_SPRINT stat_amount $drain_kill_resources(~%row%~ 2)
+
+        ACTION_IF (NOT FILE_EXISTS ~override/%drain_kill_resource%.SPL~) BEGIN 
+            COPY ~%resources%/blank.spl~ ~override/%drain_kill_resource%.SPL~
+                LPF ADD_SPL_ABILITY RET ability_index END
+                LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+                    opcode = EFF_OPCODE_PROTECTION_FROM_RESOURCE
+                    parameter1 = (stat_amount + 1)
+                    parameter2 = 128 // 128_STAT(INT)>=n
+                    STR_VAR resource = ~%drain_kill_resource%~
+                    END
+                LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+                    opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
+                    parameter1 = 1
+                    STR_VAR resource = ~%instant_death_variable%~
+                    END
+                BUT_ONLY
+        END
+    END
+END
