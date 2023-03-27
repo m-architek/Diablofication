@@ -47,14 +47,16 @@ BEGIN
 
     LAF APPLY_STAT_DRAIN_PATCHES 
         STR_VAR patches_ref = patches
-        RET_ARRAY patches patch_INT_DRAIN
+        RET_ARRAY patches_box
         END
+    OUTER_SPRINT UNBOX_ARRAY patches
+    LAM UNBOX_ARRAY
 
     LAF PATCH_ALL_EFFECTS STR_VAR patches_ref = patches END
 
 
-    OUTER_SPRINT instant_death_variable ~%LOCALS_STATE_INSTANT_DEATH%~
-    OUTER_SPRINT patrification_state_variable ~%LOCALS_STATE_PETRIFICATION%~
+    OUTER_SPRINT instant_death_variable ~%LOCALS_CR_STATE_INSTANT_DEATH%~
+    OUTER_SPRINT patrification_state_variable ~%LOCALS_CR_STATE_PETRIFICATION%~
 
     LAF APPLY_PETRIFICATION_RESOURCES STR_VAR patrification_state_variable END
     LAF APPLY_DISINTEGRATE_RESOURCES STR_VAR instant_death_variable END

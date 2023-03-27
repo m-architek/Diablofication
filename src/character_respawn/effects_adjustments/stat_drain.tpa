@@ -1,25 +1,39 @@
-OUTER_SPRINT RESREF_2DA_DRAIN_KILL_RESOURCES ~%RESREF_PREFIX_CR%_DRAIN_KILL_RESOURCES~
+OUTER_SPRINT RESREF_2DA_STAT_DRAIN_KILL_RESOURCES ~%RESREF_PREFIX_CR%_STAT_DRAIN_KILL_RESOURCES~
 
 DEFINE_ACTION_FUNCTION APPLY_STAT_DRAIN_PATCHES 
     STR_VAR patches_ref = 0
-    RET_ARRAY ~%patches_ref%~ patch_INT_DRAIN
+    RET_ARRAY ~%patches_ref%_box~
 BEGIN
-    COPY ~%resources%/blank~ ~override/%RESREF_2DA_DRAIN_KILL_RESOURCES%.2DA~
+    COPY ~%resources%/blank~ ~override/%RESREF_2DA_STAT_DRAIN_KILL_RESOURCES%.2DA~
 
-    ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_INT_DRAIN BEGIN 
-        patch_type => ~CLONE~
-        patch_function => ~INT_DRAIN_PATCH_FUNCTION~
-        match_opcode => EFF_OPCODE_INT_MOD 
-        match_parameter2 => 0 // Cumulative Modifier
-        match_function => ~STAT_DRAIN_MATCH_FUNCTION~
-        opcode => EFF_OPCODE_CAST_SPELL
-        parameter1 => 0 // Casting Level
-        parameter2 => 1 // Cast Instantly at caster level
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY stat_drains_opcodes BEGIN 
+        STR_DRAIN => EFF_OPCODE_STR_MOD
+        DEX_DRAIN => EFF_OPCODE_DEX_MOD
+        CON_DRAIN => EFF_OPCODE_CON_MOD
+        INT_DRAIN => EFF_OPCODE_INT_MOD
+        WIS_DRAIN => EFF_OPCODE_WIS_MOD
+        CHR_DRAIN => EFF_OPCODE_CHR_MOD
     END
 
-    ACTION_DEFINE_ASSOCIATIVE_ARRAY ~%patches_ref%~ BEGIN 
-        INT_DRAIN => patch_INT_DRAIN
+    ACTION_PHP_EACH stat_drains_opcodes AS patch_name => opcode BEGIN 
+        OUTER_SPRINT patch_ref ~patch_%patch_name%~
+
+        ACTION_DEFINE_ASSOCIATIVE_ARRAY ~%patch_ref%~ BEGIN 
+            patch_type => ~CLONE~
+            patch_function => ~%patch_name%_PATCH_FUNCTION~
+            match_opcode => ~%opcode%~ 
+            match_parameter2 => 0 // Cumulative Modifier
+            match_function => ~STAT_DRAIN_MATCH_FUNCTION~
+            opcode => EFF_OPCODE_CAST_SPELL
+            parameter1 => 0 // Casting Level
+            parameter2 => 1 // Cast Instantly at caster level
+        END
+
+        OUTER_SPRINT $~%patches_ref%~(~%patch_name%~) ~%patch_ref%~
     END
+
+    OUTER_SPRINT BOX_ARRAY ~%patches_ref%~
+    LAM BOX_ARRAY
 END
 
 DEFINE_PATCH_FUNCTION STAT_DRAIN_MATCH_FUNCTION 
@@ -33,9 +47,63 @@ BEGIN
     SET match_result = effect_parameter1 < 0
 END
 
+DEFINE_PATCH_FUNCTION STR_DRAIN_PATCH_FUNCTION 
+    INT_VAR offset_shift = ~~
+    STR_VAR eff_strategy_ref = 0
+BEGIN 
+    LPF STAT_DRAIN_PATCH_FUNCTION INT_VAR offset_shift
+        STR_VAR eff_strategy_ref stat = ~STR~ prefix = ~%RESREF_SPL_CR_STR_DRAIN_KILL_PREFIX%~
+        END
+END
+
+DEFINE_PATCH_FUNCTION DEX_DRAIN_PATCH_FUNCTION 
+    INT_VAR offset_shift = ~~
+    STR_VAR eff_strategy_ref = 0
+BEGIN 
+    LPF STAT_DRAIN_PATCH_FUNCTION INT_VAR offset_shift
+        STR_VAR eff_strategy_ref stat = ~DEX~ prefix = ~%RESREF_SPL_CR_DEX_DRAIN_KILL_PREFIX%~
+        END
+END
+
+DEFINE_PATCH_FUNCTION CON_DRAIN_PATCH_FUNCTION 
+    INT_VAR offset_shift = ~~
+    STR_VAR eff_strategy_ref = 0
+BEGIN 
+    LPF STAT_DRAIN_PATCH_FUNCTION INT_VAR offset_shift
+        STR_VAR eff_strategy_ref stat = ~CON~ prefix = ~%RESREF_SPL_CR_CON_DRAIN_KILL_PREFIX%~
+        END
+END
+
 DEFINE_PATCH_FUNCTION INT_DRAIN_PATCH_FUNCTION 
     INT_VAR offset_shift = ~~
     STR_VAR eff_strategy_ref = 0
+BEGIN 
+    LPF STAT_DRAIN_PATCH_FUNCTION INT_VAR offset_shift
+        STR_VAR eff_strategy_ref stat = ~INT~ prefix = ~%RESREF_SPL_CR_INT_DRAIN_KILL_PREFIX%~
+        END
+END
+
+DEFINE_PATCH_FUNCTION WIS_DRAIN_PATCH_FUNCTION 
+    INT_VAR offset_shift = ~~
+    STR_VAR eff_strategy_ref = 0
+BEGIN 
+    LPF STAT_DRAIN_PATCH_FUNCTION INT_VAR offset_shift
+        STR_VAR eff_strategy_ref stat = ~WIS~ prefix = ~%RESREF_SPL_CR_WIS_DRAIN_KILL_PREFIX%~
+        END
+END
+
+DEFINE_PATCH_FUNCTION CHR_DRAIN_PATCH_FUNCTION 
+    INT_VAR offset_shift = ~~
+    STR_VAR eff_strategy_ref = 0
+BEGIN 
+    LPF STAT_DRAIN_PATCH_FUNCTION INT_VAR offset_shift
+        STR_VAR eff_strategy_ref stat = ~CHR~ prefix = ~%RESREF_SPL_CR_CHR_DRAIN_KILL_PREFIX%~
+        END
+END
+
+DEFINE_PATCH_FUNCTION STAT_DRAIN_PATCH_FUNCTION 
+    INT_VAR offset_shift = ~~
+    STR_VAR eff_strategy_ref = 0 stat = 0 prefix = 0
 BEGIN 
     SPRINT eff_read_strategy_ref $~%eff_strategy_ref%~(read_strategy) 
     SPRINT eff_write_strategy_ref $~%eff_strategy_ref%~(write_strategy)
@@ -44,11 +112,11 @@ BEGIN
     LPF ~%read_parameter1_fn%~ INT_VAR offset_shift RET effect_parameter1 = parameter1 END
 
     SET stat_amount = ABS effect_parameter1
-    SPRINT drain_kill_resource ~%RESREF_SPL_CR_INT_DRAIN_KILL_PREFIX%%stat_amount%~
+    SPRINT drain_kill_resource ~%prefix%%stat_amount%~
 
     INNER_ACTION BEGIN 
-        COPY_EXISTING ~%RESREF_2DA_DRAIN_KILL_RESOURCES%.2DA~ ~override~
-            INSERT_2DA_ROW 0 0 ~%drain_kill_resource% INT %stat_amount%~
+        COPY_EXISTING ~%RESREF_2DA_STAT_DRAIN_KILL_RESOURCES%.2DA~ ~override~
+            INSERT_2DA_ROW 0 0 ~%drain_kill_resource% %stat% %stat_amount%~
             BUT_ONLY
     END
 
@@ -59,7 +127,16 @@ END
 DEFINE_ACTION_FUNCTION APPLY_STAT_DRAIN_RESOURCES 
     STR_VAR instant_death_variable = 0
 BEGIN
-    COPY_EXISTING - ~%RESREF_2DA_DRAIN_KILL_RESOURCES%.2DA~ ~~
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY stats_conditions BEGIN 
+        ~STR~ => 124 // 124_STAT(STR)>=n
+        ~DEX~ => 122 // 122_STAT(DEX)>=n
+        ~CON~ => 126 // 126_STAT(CON)>=n
+        ~INT~ => 128 // 128_STAT(INT)>=n
+        ~WIS~ => 130 // 130_STAT(WIS)>=n
+        ~CHR~ => 132 // 132_STAT(CHR)>=n
+    END
+
+    COPY_EXISTING - ~%RESREF_2DA_STAT_DRAIN_KILL_RESOURCES%.2DA~ ~~
         READ_2DA_ENTRIES_NOW drain_kill_resources 1
         BUT_ONLY
 
@@ -74,7 +151,7 @@ BEGIN
                 LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
                     opcode = EFF_OPCODE_PROTECTION_FROM_RESOURCE
                     parameter1 = (stat_amount + 1)
-                    parameter2 = 128 // 128_STAT(INT)>=n
+                    parameter2 = $stats_conditions(~%stat%~)
                     STR_VAR resource = ~%drain_kill_resource%~
                     END
                 LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
