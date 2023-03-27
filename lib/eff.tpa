@@ -303,9 +303,19 @@ BEGIN
         LPF ~%write_parameter2_fn%~ INT_VAR offset_shift parameter2 = $~%patch_ref%~(parameter2) END
     END
     
+    PATCH_IF (VARIABLE_IS_SET $~%patch_ref%~(timing_mode)) BEGIN
+        SPRINT write_timing_mode_fn $~%eff_write_strategy_ref%~(timing_mode)
+        LPF ~%write_timing_mode_fn%~ INT_VAR offset_shift timing_mode = $~%patch_ref%~(timing_mode) END
+    END
+    
     PATCH_IF (VARIABLE_IS_SET $~%patch_ref%~(dispel_resistance)) BEGIN
         SPRINT write_dispel_resistance_fn $~%eff_write_strategy_ref%~(dispel_resistance)
         LPF ~%write_dispel_resistance_fn%~ INT_VAR offset_shift dispel_resistance = $~%patch_ref%~(dispel_resistance) END
+    END
+    
+    PATCH_IF (VARIABLE_IS_SET $~%patch_ref%~(duration)) BEGIN
+        SPRINT write_duration_fn $~%eff_write_strategy_ref%~(duration)
+        LPF ~%write_duration_fn%~ INT_VAR offset_shift duration = $~%patch_ref%~(duration) END
     END
 
     PATCH_IF (VARIABLE_IS_SET $~%patch_ref%~(max_level)) BEGIN

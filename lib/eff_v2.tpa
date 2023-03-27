@@ -60,6 +60,8 @@ ACTION_DEFINE_ASSOCIATIVE_ARRAY EFF_V2_WRITE_STRATEGY BEGIN
     opcode => ~WRITE_EFF_V2_OPCODE~
     parameter1 => ~WRITE_EFF_V2_PARAMETER1~
     parameter2 => ~WRITE_EFF_V2_PARAMETER2~
+    timing_mode => ~WRITE_EFF_V2_TIMING_MODE~
+    duration => ~WRITE_EFF_V2_DURATION~
     dispel_resistance => ~WRITE_EFF_V2_DISPEL_RESISTANCE~
     max_level => ~WRITE_EFF_V2_MAX_LEVEL~
     min_level => ~WRITE_EFF_V2_MIN_LEVEL~
@@ -74,6 +76,12 @@ BEGIN WRITE_LONG (offset_shift + EFF_V2_PARAM_1_OFFSET) parameter1 END
 
 DEFINE_PATCH_FUNCTION WRITE_EFF_V2_PARAMETER2 INT_VAR offset_shift = ~~ parameter2 = ~~
 BEGIN WRITE_LONG (offset_shift + EFF_V2_PARAM_2_OFFSET) parameter2 END
+
+DEFINE_PATCH_FUNCTION WRITE_EFF_V2_TIMING_MODE INT_VAR offset_shift = ~~ timing_mode = ~~
+BEGIN WRITE_SHORT (offset_shift + EFF_V2_TIMING_MODE_OFFSET) timing_mode END
+
+DEFINE_PATCH_FUNCTION WRITE_EFF_V2_DURATION INT_VAR offset_shift = ~~ duration = ~~
+BEGIN WRITE_LONG (offset_shift + EFF_V2_DURATION_OFFSET) duration END
 
 DEFINE_PATCH_FUNCTION WRITE_EFF_V2_DISPEL_RESISTANCE INT_VAR offset_shift = ~~ dispel_resistance = ~~
 BEGIN WRITE_LONG (offset_shift + EFF_V2_DISPEL_RESISTANCE_OFFSET) dispel_resistance END

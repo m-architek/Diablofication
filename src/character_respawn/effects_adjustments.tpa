@@ -4,6 +4,7 @@ INCLUDE ~%src%/effects_adjustments/disintegrate.tpa~
 INCLUDE ~%src%/effects_adjustments/kill_creature.tpa~
 INCLUDE ~%src%/effects_adjustments/kill_60hp.tpa~
 INCLUDE ~%src%/effects_adjustments/level_drain.tpa~
+INCLUDE ~%src%/effects_adjustments/stat_drain.tpa~
 
 DEFINE_ACTION_FUNCTION APPLY_EFFECTS_ADJUSTMENTS
     RET instant_death_variable patrification_state_variable
@@ -44,6 +45,11 @@ BEGIN
         RET_ARRAY patches patch_LEVEL_DRAIN_KILL patch_LEVEL_DRAIN patch_LEVEL_DRAIN_IMMUNITY
         END
 
+    LAF APPLY_STAT_DRAIN_PATCHES 
+        STR_VAR patches_ref = patches
+        RET_ARRAY patches patch_INT_DRAIN
+        END
+
     LAF PATCH_ALL_EFFECTS STR_VAR patches_ref = patches END
 
 
@@ -55,10 +61,10 @@ BEGIN
     LAF APPLY_KILL_CREATURE_RESOURCES STR_VAR instant_death_variable END
     LAF APPLY_KILL_60HP_RESOURCES STR_VAR instant_death_variable END
     LAF APPLY_LEVEL_DRAIN_RESOURCES STR_VAR instant_death_variable END
+    LAF APPLY_STAT_DRAIN_RESOURCES STR_VAR instant_death_variable END
 
     LAF APPLY_SAREVOK_STRIKE_ADJUSTMENT END
     LAF APPLY_TANARI_DEATH_GAZE_ADJUSTMENT STR_VAR instant_death_variable END
-    LAF APPLY_MIND_FLAYER_INT_DRAIN_ADJUSTMENT STR_VAR instant_death_variable END
 END
 
 DEFINE_ACTION_FUNCTION APPLY_SAREVOK_STRIKE_ADJUSTMENT BEGIN
@@ -78,24 +84,4 @@ BEGIN
             STR_VAR resource = ~%instant_death_variable%~
             END
         BUT_ONLY
-END
-
-DEFINE_ACTION_FUNCTION APPLY_MIND_FLAYER_INT_DRAIN_ADJUSTMENT 
-    STR_VAR instant_death_variable = 0
-BEGIN
-    COPY_EXISTING ~MINDFLAY.ITM~ ~override~
-        LPF CLONE_EFFECT INT_VAR match_opcode = EFF_OPCODE_INT_MOD 
-            opcode = EFF_OPCODE_APPLY_EFFECTS_LIST
-            parameter1 = 6
-            parameter2 = 129 // 129_STAT(INT)<n
-            STR_VAR resource = ~%RESREF_SPL_CR_INT_DRAIN_KILL%~
-            END
-        BUT_ONLY
-    COPY ~%resources%/blank.spl~ ~override/%RESREF_SPL_CR_INT_DRAIN_KILL%.SPL~
-        LPF ADD_SPL_ABILITY RET ability_index END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
-            parameter1 = 1
-            STR_VAR resource = ~%instant_death_variable%~
-            END
 END
