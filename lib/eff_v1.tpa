@@ -67,6 +67,12 @@ END
 DEFINE_PATCH_FUNCTION WRITE_EFF_V1_OPCODE INT_VAR offset_shift = ~~ opcode = ~~
 BEGIN WRITE_SHORT (offset_shift + EFF_V1_OPCODE_OFFSET) opcode END
 
+DEFINE_PATCH_FUNCTION WRITE_EFF_V1_TARGET INT_VAR offset_shift = ~~ target = ~~
+BEGIN WRITE_BYTE (offset_shift + EFF_V1_TARGET_TYPE_OFFSET) target END
+
+DEFINE_PATCH_FUNCTION WRITE_EFF_V1_POWER INT_VAR offset_shift = ~~ power = ~~
+BEGIN WRITE_BYTE (offset_shift + EFF_V1_POWER_OFFSET) power END
+
 DEFINE_PATCH_FUNCTION WRITE_EFF_V1_PARAMETER1 INT_VAR offset_shift = ~~ parameter1 = ~~
 BEGIN WRITE_LONG (offset_shift + EFF_V1_PARAM_1_OFFSET) parameter1 END
 
@@ -81,6 +87,12 @@ BEGIN WRITE_BYTE (offset_shift + EFF_V1_DISPEL_RESISTANCE_OFFSET) dispel_resista
 
 DEFINE_PATCH_FUNCTION WRITE_EFF_V1_DURATION INT_VAR offset_shift = ~~ duration = ~~
 BEGIN WRITE_LONG (offset_shift + EFF_V1_DURATION_OFFSET) duration END
+
+DEFINE_PATCH_FUNCTION WRITE_EFF_V1_PROBABILITY1 INT_VAR offset_shift = ~~ probability1 = ~~
+BEGIN WRITE_BYTE (offset_shift + EFF_V1_PROBABILITY_1_OFFSET) probability1 END
+
+DEFINE_PATCH_FUNCTION WRITE_EFF_V1_PROBABILITY2 INT_VAR offset_shift = ~~ probability2 = ~~
+BEGIN WRITE_BYTE (offset_shift + EFF_V1_PROBABILITY_2_OFFSET) probability2 END
 
 DEFINE_PATCH_FUNCTION WRITE_EFF_V1_MAX_LEVEL INT_VAR offset_shift = ~~ max_level = ~~
 BEGIN WRITE_LONG (offset_shift + EFF_V1_MAX_LVL_OFFSET) max_level END

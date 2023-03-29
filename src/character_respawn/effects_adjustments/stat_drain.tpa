@@ -21,9 +21,10 @@ BEGIN
         ACTION_DEFINE_ASSOCIATIVE_ARRAY ~%patch_ref%~ BEGIN 
             patch_type => ~CLONE~
             patch_function => ~%patch_name%_PATCH_FUNCTION~
+            match_effect_category_not => ~ITM_GLOBAL~
             match_opcode => ~%opcode%~ 
+            match_parameter1_lte => "-1"
             match_parameter2 => 0 // Cumulative Modifier
-            match_function => ~STAT_DRAIN_MATCH_FUNCTION~
             opcode => EFF_OPCODE_CAST_SPELL
             parameter1 => 0 // Casting Level
             parameter2 => 1 // Cast Instantly at caster level
@@ -34,17 +35,6 @@ BEGIN
 
     OUTER_SPRINT BOX_ARRAY ~%patches_ref%~
     LAM BOX_ARRAY
-END
-
-DEFINE_PATCH_FUNCTION STAT_DRAIN_MATCH_FUNCTION 
-    INT_VAR offset_shift = ~~
-    STR_VAR eff_read_strategy_ref = 0
-    RET match_result
-BEGIN 
-    SPRINT read_parameter1_fn $~%eff_read_strategy_ref%~(parameter1) 
-    LPF ~%read_parameter1_fn%~ INT_VAR offset_shift RET effect_parameter1 = parameter1 END
-
-    SET match_result = effect_parameter1 < 0
 END
 
 DEFINE_PATCH_FUNCTION STR_DRAIN_PATCH_FUNCTION 

@@ -27,7 +27,7 @@ BEGIN
         SET ability_effects_offset = effects_offset + (ability_effects_index * EFF_V1_SIZE)
 
         LPF PATCH_EFF_EFFECT_LIST INT_VAR offset_shift = ability_effects_offset effects_count = ability_effects_count
-            STR_VAR patches_ref eff_strategy_ref = ~EFF_V1_STRATEGY~
+            STR_VAR patches_ref eff_strategy_ref = ~EFF_V1_STRATEGY~ effect_category = ~%SOURCE_EXT%_ABILITY~
             RET effects_count_diff
             END
 
@@ -48,7 +48,7 @@ BEGIN
     SET global_effects_offset = effects_offset + (global_effects_index * EFF_V1_SIZE)
 
     LPF PATCH_EFF_EFFECT_LIST INT_VAR offset_shift = global_effects_offset effects_count = global_effects_count
-        STR_VAR patches_ref eff_strategy_ref = ~EFF_V1_STRATEGY~
+        STR_VAR patches_ref eff_strategy_ref = ~EFF_V1_STRATEGY~ effect_category = ~%SOURCE_EXT%_GLOBAL~
         RET effects_count_diff
         END
 
@@ -109,7 +109,7 @@ BEGIN
 
         PATCH_IF (are_abilities_after_effects) BEGIN 
             SET abilities_offset = abilities_offset + (effects_count_diff * EFF_V1_SIZE)
-            WRITE_LONG SPL_ABILITIES_OFFSET abilities_offset
+            WRITE_LONG ITM_SPL_ABILITIES_OFFSET abilities_offset
         END
 
         PATCH_IF (NOT are_global_effects_after_ability_effects) BEGIN 
