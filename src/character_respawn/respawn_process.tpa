@@ -78,23 +78,19 @@ BEGIN
             parameter1 = "-1"
             parameter2 = EFF_OPCODE_ALTERNATIVE_CHARM
             END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
             opcode = EFF_OPCODE_APPLY_EFFECTS_LIST
             STR_VAR resource = ~SPPR607~ // Heal
             END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
             opcode = EFF_OPCODE_APPLY_EFFECTS_LIST
             STR_VAR resource = ~SPPR404~ // Neutralize Poison
             END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
             opcode = EFF_OPCODE_APPLY_EFFECTS_LIST
             STR_VAR resource = ~SPPR713~ // Greater Restoration
             END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_APPLY_EFFECTS_LIST
-            STR_VAR resource = ~SPPR307~ // Remove Curse
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
             opcode = EFF_OPCODE_APPLY_EFFECTS_LIST
             STR_VAR resource = ~SPPR350~ // Spiritual Clarity
             END

@@ -140,7 +140,7 @@ BEGIN
     CLEAR_ARRAY created_eff_resources
 
     LPF PATCH_EFF_EFFECT INT_VAR offset_shift = 0
-        STR_VAR patches_ref eff_strategy_ref = ~EFF_V2_STRATEGY~
+        STR_VAR patches_ref eff_strategy_ref = ~EFF_V2_STRATEGY~ effect_category = ~EXTERNAL~
         RET_ARRAY created_eff_resources
         END
 END
@@ -176,6 +176,7 @@ BEGIN
 
                 DEFINE_ASSOCIATIVE_ARRAY ~%next_patch_ref%~ BEGIN 
                     patch_type => ~CLONE~
+                    match_effect_category_not => $$~%patches_ref%~(~%value%~)(match_effect_category_not)
                     match_resource => ~%source_resource%~
                     resource => ~%target_resource%~
                 END
