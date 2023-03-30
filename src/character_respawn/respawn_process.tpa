@@ -78,6 +78,16 @@ BEGIN
             parameter1 = "-1"
             parameter2 = EFF_OPCODE_ALTERNATIVE_CHARM
             END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_POLYMORPH // Empty resource = Natural form
+            parameter1 = 0 // Irrelevant
+            parameter2 = 0 // Gain Resistances/statistics
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_ENABLE_BUTTON
+            parameter1 = 0 // Irrelevant
+            parameter2 = 7 // Button: Talk
+            END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
             opcode = EFF_OPCODE_APPLY_EFFECTS_LIST
             STR_VAR resource = ~SPPR607~ // Heal

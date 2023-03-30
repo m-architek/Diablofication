@@ -32,6 +32,16 @@ DEFINE_ACTION_FUNCTION APPLY_DEATH_PREVENTION_SPL BEGIN
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
             opcode = EFF_OPCODE_PROTECTION_FROM_OPCODE
+            parameter2 = EFF_OPCODE_INSTANT_DEATH
+            timing = EFF_TIMING_INSTANT_PERMANENT
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
+            opcode = EFF_OPCODE_PROTECTION_FROM_OPCODE
+            parameter2 = EFF_OPCODE_IMPRISONMENT
+            timing = EFF_TIMING_INSTANT_PERMANENT
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
+            opcode = EFF_OPCODE_PROTECTION_FROM_OPCODE
             parameter2 = EFF_OPCODE_STATE_PETRIFICATION
             timing = EFF_TIMING_INSTANT_PERMANENT
             END

@@ -1,0 +1,41 @@
+DEFINE_ACTION_FUNCTION APPLY_INSTANT_DEATH_PATCHES
+    STR_VAR patches_ref = 0
+    RET_ARRAY ~%patches_ref%~ patch_INSTANT_DEATH patch_INSTANT_DEATH_IMMUNITY
+BEGIN
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_INSTANT_DEATH BEGIN
+        patch_type => ~CLONE~
+        match_opcode => EFF_OPCODE_INSTANT_DEATH
+        opcode => EFF_OPCODE_USE_EFF_FILE
+        parameter1 => 2 // PC
+        parameter2 => 2 // EA
+        resource => ~%RESREF_EFF_CR_INSTANT_DEATH%~
+    END
+
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_INSTANT_DEATH_IMMUNITY BEGIN
+        patch_type => ~CLONE~
+        match_opcode => EFF_OPCODE_PROTECTION_FROM_OPCODE
+        match_parameter2 => EFF_OPCODE_INSTANT_DEATH
+        opcode => EFF_OPCODE_PROTECTION_FROM_SPELL
+        parameter1 => 0 // Message
+        parameter2 => 0 // Irrelevant
+        resource => ~%RESREF_EFF_CR_INSTANT_DEATH%~
+    END
+
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY ~%patches_ref%~ BEGIN 
+        INSTANT_DEATH => patch_INSTANT_DEATH
+        INSTANT_DEATH_IMMUNITY => patch_INSTANT_DEATH_IMMUNITY
+    END
+END
+
+DEFINE_ACTION_FUNCTION APPLY_INSTANT_DEATH_RESOURCES 
+    STR_VAR instant_death_variable = 0
+BEGIN
+    COPY ~%resources%/blank.eff~ ~override/%RESREF_EFF_CR_INSTANT_DEATH%.EFF~
+        LPF ALTER_EFF_V2_EFFECT
+            INT_VAR opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
+                parameter1 = 1
+                parent_resource_type = EFF_V2_PARENT_RESOURCE_TYPE_SPELL
+            STR_VAR resource = ~%instant_death_variable%~
+                parent_resource = ~%RESREF_EFF_CR_INSTANT_DEATH%~
+            END
+END
