@@ -176,9 +176,11 @@ BEGIN
 
                 DEFINE_ASSOCIATIVE_ARRAY ~%next_patch_ref%~ BEGIN 
                     patch_type => ~CLONE~
-                    match_effect_category_not => $$~%patches_ref%~(~%value%~)(match_effect_category_not)
                     match_resource => ~%source_resource%~
                     resource => ~%target_resource%~
+                END
+                PATCH_IF (VARIABLE_IS_SET $$~%patches_ref%~(~%value%~)(match_effect_category_not)) BEGIN 
+                    SPRINT $~%next_patch_ref%~(match_effect_category_not) $$~%patches_ref%~(~%value%~)(match_effect_category_not)
                 END
                 SPRINT $~%next_patches_ref%~(~%next_patch_name%~) ~%next_patch_ref%~ 
                 SET next_patches_length = next_patches_length + 1
@@ -198,9 +200,10 @@ BEGIN
         ACTION_PHP_EACH ~%next_patches_ref%~ AS patch_name => patch_ref BEGIN 
             OUTER_SPRINT $~%patches_ref%~(~%patch_name%~) ~%patch_ref%~
         END
-        OUTER_SPRINT BOX_ARRAY ~%patches_ref%~
-        LAM BOX_ARRAY
     END ELSE BEGIN 
         WARN ~Recursive eff patching reached %iteration% iterations. Circular EFF dependency?~
     END
+
+    OUTER_SPRINT BOX_ARRAY ~%patches_ref%~
+    LAM BOX_ARRAY
 END

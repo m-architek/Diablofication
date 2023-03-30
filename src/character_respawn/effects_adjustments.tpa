@@ -5,6 +5,7 @@ INCLUDE ~%src%/effects_adjustments/kill_creature.tpa~
 INCLUDE ~%src%/effects_adjustments/kill_60hp.tpa~
 INCLUDE ~%src%/effects_adjustments/level_drain.tpa~
 INCLUDE ~%src%/effects_adjustments/stat_drain.tpa~
+INCLUDE ~%src%/effects_adjustments/replace_creature.tpa~
 
 DEFINE_ACTION_FUNCTION APPLY_EFFECTS_ADJUSTMENTS
     RET instant_death_variable patrification_state_variable
@@ -52,6 +53,11 @@ BEGIN
     OUTER_SPRINT UNBOX_ARRAY patches
     LAM UNBOX_ARRAY
 
+    LAF APPLY_REPLACE_CREATURE_PATCHES 
+        STR_VAR patches_ref = patches
+        RET_ARRAY patches patch_REPLACE_CREATURE_1 patch_REPLACE_CREATURE_2 patch_REPLACE_CREATURE_IMMUNITY
+        END
+
     LAF PATCH_ALL_EFFECTS STR_VAR patches_ref = patches END
 
 
@@ -64,26 +70,13 @@ BEGIN
     LAF APPLY_KILL_60HP_RESOURCES STR_VAR instant_death_variable END
     LAF APPLY_LEVEL_DRAIN_RESOURCES STR_VAR instant_death_variable END
     LAF APPLY_STAT_DRAIN_RESOURCES STR_VAR instant_death_variable END
+    LAF APPLY_REPLACE_CREATURE_RESOURCES STR_VAR instant_death_variable END
 
     LAF APPLY_SAREVOK_STRIKE_ADJUSTMENT END
-    LAF APPLY_TANARI_DEATH_GAZE_ADJUSTMENT STR_VAR instant_death_variable END
 END
 
 DEFINE_ACTION_FUNCTION APPLY_SAREVOK_STRIKE_ADJUSTMENT BEGIN
     COPY_EXISTING ~SPWI979.SPL~ ~override~
         LPF DELETE_SPELL_EFFECT INT_VAR opcode_to_delete = EFF_OPCODE_GRAPHICS_REMOVE_SELECTION_CIRCLE END
-        BUT_ONLY
-END
-
-DEFINE_ACTION_FUNCTION APPLY_TANARI_DEATH_GAZE_ADJUSTMENT 
-    STR_VAR instant_death_variable = 0
-BEGIN
-    COPY_EXISTING ~SPIN996.SPL~ ~override~
-        LPF CLONE_EFFECT INT_VAR match_opcode = EFF_OPCODE_SUMMON_REPLACE_CREATURE 
-            opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
-            parameter1 = 1
-            parameter2 = 0
-            STR_VAR resource = ~%instant_death_variable%~
-            END
         BUT_ONLY
 END

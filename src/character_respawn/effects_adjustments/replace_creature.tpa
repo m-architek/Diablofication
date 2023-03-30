@@ -1,0 +1,53 @@
+DEFINE_ACTION_FUNCTION APPLY_REPLACE_CREATURE_PATCHES 
+    STR_VAR patches_ref = 0
+    RET_ARRAY ~%patches_ref%~ patch_REPLACE_CREATURE_1 patch_REPLACE_CREATURE_2 patch_REPLACE_CREATURE_IMMUNITY
+BEGIN
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_REPLACE_CREATURE_1 BEGIN
+        patch_type => ~CLONE~
+        match_opcode => EFF_OPCODE_SUMMON_REPLACE_CREATURE
+        match_parameter2 => 1 // Chunking death
+        opcode => EFF_OPCODE_USE_EFF_FILE
+        parameter1 => 2 // PC
+        parameter2 => 2 // EA
+        resource => ~%RESREF_EFF_CR_REPLACE_CREATURE%~
+    END
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_REPLACE_CREATURE_2 BEGIN
+        patch_type => ~CLONE~
+        match_opcode => EFF_OPCODE_SUMMON_REPLACE_CREATURE
+        match_parameter2 => 2 // Normal death
+        opcode => EFF_OPCODE_USE_EFF_FILE
+        parameter1 => 2 // PC
+        parameter2 => 2 // EA
+        resource => ~%RESREF_EFF_CR_REPLACE_CREATURE%~
+    END
+
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_REPLACE_CREATURE_IMMUNITY BEGIN
+        patch_type => ~CLONE~
+        match_opcode => EFF_OPCODE_PROTECTION_FROM_OPCODE
+        match_parameter2 => EFF_OPCODE_SUMMON_REPLACE_CREATURE
+        opcode => EFF_OPCODE_PROTECTION_FROM_SPELL
+        parameter1 => 0 // Message
+        parameter2 => 0 // Irrelevant
+        resource => ~%RESREF_EFF_CR_REPLACE_CREATURE%~
+    END
+
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY ~%patches_ref%~ BEGIN 
+        REPLACE_CREATURE_1 => patch_REPLACE_CREATURE_1
+        REPLACE_CREATURE_2 => patch_REPLACE_CREATURE_2
+        REPLACE_CREATURE_IMMUNITY => patch_REPLACE_CREATURE_IMMUNITY
+    END
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_REPLACE_CREATURE_RESOURCES 
+    STR_VAR instant_death_variable = 0
+BEGIN
+    COPY ~%resources%/blank.eff~ ~override/%RESREF_EFF_CR_REPLACE_CREATURE%.EFF~
+        LPF ALTER_EFF_V2_EFFECT
+            INT_VAR opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
+                parameter1 = 1
+                parent_resource_type = EFF_V2_PARENT_RESOURCE_TYPE_SPELL
+            STR_VAR resource = ~%instant_death_variable%~
+                parent_resource = ~%RESREF_EFF_CR_REPLACE_CREATURE%~
+            END
+END
