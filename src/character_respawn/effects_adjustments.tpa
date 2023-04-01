@@ -8,9 +8,10 @@ INCLUDE ~%src%/effects_adjustments/stat_drain.tpa~
 INCLUDE ~%src%/effects_adjustments/replace_creature.tpa~
 INCLUDE ~%src%/effects_adjustments/instant_death.tpa~
 INCLUDE ~%src%/effects_adjustments/imprisonment.tpa~
+INCLUDE ~%src%/effects_adjustments/maze.tpa~
 
 DEFINE_ACTION_FUNCTION APPLY_EFFECTS_ADJUSTMENTS
-    RET instant_death_variable patrification_state_variable
+    RET instant_death_variable patrification_state_variable maze_state_variable
 BEGIN
     PRINT ~~
     PRINT ~Adjusting existing effects. This can take a while...~
@@ -70,11 +71,18 @@ BEGIN
         RET_ARRAY patches patch_IMPRISONMENT patch_IMPRISONMENT_IMMUNITY
         END
 
+    LAF APPLY_MAZE_PATCHES
+        STR_VAR patches_ref = patches
+        RET_ARRAY patches patch_MAZE_START patch_MAZE_END patch_MAZE_FIXED_START patch_MAZE_FIXED_END
+            patch_MAZE_START_IMMUNITY patch_MAZE_END_IMMUNITY
+        END
+
     LAF PATCH_ALL_EFFECTS STR_VAR patches_ref = patches END
 
 
     OUTER_SPRINT instant_death_variable ~%LOCALS_CR_STATE_INSTANT_DEATH%~
     OUTER_SPRINT patrification_state_variable ~%LOCALS_CR_STATE_PETRIFICATION%~
+    OUTER_SPRINT maze_state_variable ~%LOCALS_CR_STATE_MAZE%~
 
     LAF APPLY_PETRIFICATION_RESOURCES STR_VAR patrification_state_variable END
     LAF APPLY_DISINTEGRATE_RESOURCES STR_VAR instant_death_variable END
@@ -85,6 +93,7 @@ BEGIN
     LAF APPLY_REPLACE_CREATURE_RESOURCES STR_VAR instant_death_variable END
     LAF APPLY_INSTANT_DEATH_RESOURCES STR_VAR instant_death_variable END
     LAF APPLY_IMPRISONMENT_RESOURCES STR_VAR instant_death_variable END
+    LAF APPLY_MAZE_RESOURCES STR_VAR maze_state_variable END
 
     LAF APPLY_SAREVOK_STRIKE_ADJUSTMENT END
 END
