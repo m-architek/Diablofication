@@ -183,8 +183,8 @@ BEGIN
                     match_resource => ~%source_resource%~
                     resource => ~%target_resource%~
                 END
-                PATCH_IF (VARIABLE_IS_SET $$~%patches_ref%~(~%value%~)(match_effect_category_not)) BEGIN 
-                    SPRINT $~%next_patch_ref%~(match_effect_category_not) $$~%patches_ref%~(~%value%~)(match_effect_category_not)
+                PATCH_IF (VARIABLE_IS_SET $$~%patches_ref%~(~%value%~)(exclude_category)) BEGIN 
+                    SPRINT $~%next_patch_ref%~(exclude_category) $$~%patches_ref%~(~%value%~)(exclude_category)
                 END
                 SPRINT $~%next_patches_ref%~(~%next_patch_name%~) ~%next_patch_ref%~ 
                 SET next_patches_length = next_patches_length + 1

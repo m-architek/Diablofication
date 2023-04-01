@@ -4,9 +4,9 @@ DEFINE_ACTION_FUNCTION APPLY_LEVEL_DRAIN_PATCHES
 BEGIN
     ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_LEVEL_DRAIN_KILL BEGIN
         patch_type => ~CLONE~
-        patch_function => ~LEVEL_DRAIN_KILL_PATCH_FUNCTION~
         match_opcode => EFF_OPCODE_LEVEL_DRAIN
-        match_min_level => 0
+        match_function => ~LEVEL_DRAIN_KILL_MATCH_FUNCTION~
+        patch_function => ~LEVEL_DRAIN_KILL_PATCH_FUNCTION~
         opcode => EFF_OPCODE_CAST_SPELL
         parameter1 => 0 // Casting Level
         parameter2 => 1 // Cast Instantly at caster level
@@ -15,9 +15,9 @@ BEGIN
 
     ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_LEVEL_DRAIN BEGIN
         patch_type => ~ALTER~
-        patch_function => ~LEVEL_DRAIN_PATCH_FUNCTION~
         match_opcode => EFF_OPCODE_LEVEL_DRAIN
-        match_min_level => 0
+        match_function => ~LEVEL_DRAIN_KILL_MATCH_FUNCTION~
+        patch_function => ~LEVEL_DRAIN_PATCH_FUNCTION~
     END
 
     ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_LEVEL_DRAIN_IMMUNITY BEGIN
@@ -35,6 +35,17 @@ BEGIN
         LEVEL_DRAIN => patch_LEVEL_DRAIN
         LEVEL_DRAIN_IMMUNITY => patch_LEVEL_DRAIN_IMMUNITY
     END
+END
+
+DEFINE_PATCH_FUNCTION LEVEL_DRAIN_KILL_MATCH_FUNCTION 
+    INT_VAR offset_shift = ~~
+    STR_VAR eff_read_strategy_ref = 0
+    RET match_result
+BEGIN 
+    SPRINT read_min_level_fn $~%eff_read_strategy_ref%~(min_level)
+    LPF ~%read_min_level_fn%~ INT_VAR offset_shift RET effect_min_level = min_level END
+
+    SET match_result = effect_min_level == 0
 END
 
 DEFINE_PATCH_FUNCTION LEVEL_DRAIN_KILL_PATCH_FUNCTION 
