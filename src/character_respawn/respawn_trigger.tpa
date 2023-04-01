@@ -3,6 +3,7 @@ DEFINE_ACTION_FUNCTION APPLY_RESPAWN_TRIGGER
         patrification_state_variable = 0
         instant_death_variable = 0
         kill_player1_variable = 0
+        maze_state_variable = 0
 BEGIN
     <<<<<<<< .../respawn_trigger.baf
     IF
@@ -26,37 +27,28 @@ BEGIN
         RESPONSE #100
             ClearAllActions()
             StartCutSceneMode()
-            ActionOverride(Player1, SetSequence(SEQ_SLEEP))
-            ActionOverride(Player1, VerbalConstant(Player1, DYING))
+            %Player1_death_animation%
             StartCutSceneEx("%respawn_execution_cutscene%", TRUE)
     END
 
+
     IF
-        StateCheck(Player1, STATE_CHARMED)
-        OR(3)
-            !Exists(Player2)
-            StateCheck(Player2, STATE_REALLY_DEAD)
-            StateCheck(Player2, STATE_CHARMED)
-        OR(3)
-            !Exists(Player3)
-            StateCheck(Player3, STATE_REALLY_DEAD)
-            StateCheck(Player3, STATE_CHARMED)
-        OR(3)
-            !Exists(Player4)
-            StateCheck(Player4, STATE_REALLY_DEAD)
-            StateCheck(Player4, STATE_CHARMED)
-        OR(3)
-            !Exists(Player5)
-            StateCheck(Player5, STATE_REALLY_DEAD)
-            StateCheck(Player5, STATE_CHARMED)
-        OR(3)
-            !Exists(Player6)
-            StateCheck(Player6, STATE_REALLY_DEAD)
-            StateCheck(Player6, STATE_CHARMED)
+        %OR_Player1_unavailable%
+        %OR_Player2_unavailable%
+        %OR_Player3_unavailable%
+        %OR_Player4_unavailable%
+        %OR_Player5_unavailable%
+        %OR_Player6_unavailable%
     THEN
         RESPONSE #100
             ClearAllActions()
             StartCutSceneMode()
+            %Player1_death_animation%
+            %Player2_death_animation%
+            %Player3_death_animation%
+            %Player4_death_animation%
+            %Player5_death_animation%
+            %Player6_death_animation%
             StartCutSceneEx("%respawn_execution_cutscene%", TRUE)
     END
 
@@ -71,6 +63,25 @@ BEGIN
     END
     >>>>>>>>
 
+    ACTION_DEFINE_ARRAY players BEGIN Player1 Player2 Player3 Player4 Player5 Player6 END
+
     EXTEND_BOTTOM ~baldur.bcs~ ~.../respawn_trigger.baf~ 
+        PHP_EACH players AS _ => player BEGIN
+            SPRINT ~%player%_death_animation~ ~~~~~
+                ActionOverride(%player%, SetSequence(SEQ_SLEEP))
+                ActionOverride(%player%, VerbalConstant(%player%, DYING))
+            ~~~~~
+
+            // Note TriggerOverride + OR bug
+            // https://www.gibberlings3.net/forums/topic/31891-nexttriggerobject-documentation-not-accurate/#comment-287192
+            SPRINT ~OR_%player%_unavailable~ ~~~~~
+                OR(5)
+                    !Exists(%player%)
+                    StateCheck(%player%, STATE_REALLY_DEAD)
+                    StateCheck(%player%, STATE_CHARMED)
+                    TriggerOverride(%player%, Global("%maze_state_variable%", "LOCALS", 1))
+                    TriggerOverride(Player1, False())
+            ~~~~~
+        END
         EVALUATE_BUFFER
 END

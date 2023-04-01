@@ -39,6 +39,7 @@ OUTER_SET EFF_OPCODE_PROTECTION_FROM_SPELL = 206
 OUTER_SET EFF_OPCODE_HP_MINIMUM = 208
 OUTER_SET EFF_OPCODE_KILL_60HP = 209
 OUTER_SET EFF_OPCODE_IMPRISONMENT = 211
+OUTER_SET EFF_OPCODE_FREEDOM = 212
 OUTER_SET EFF_OPCODE_MAZE = 213
 OUTER_SET EFF_OPCODE_GRPAHICS_PLAY_EFFECT = 215
 OUTER_SET EFF_OPCODE_LEVEL_DRAIN = 216
@@ -57,6 +58,7 @@ OUTER_SET EFF_OPCODE_PROTECTION_FROM_RESOURCE = 318
 OUTER_SET EFF_OPCODE_REMOVE_EFFECTS_BY_RESOURCE = 321
 OUTER_SET EFF_OPCODE_PROTECTION_FROM_RESOURCE_AND_MESSAGE = 324
 OUTER_SET EFF_OPCODE_APPLY_EFFECTS_LIST = 326
+OUTER_SET EFF_OPCODE_SET_STATE = 328
 OUTER_SET EFF_OPCODE_REMOVE_OPCODE = 337
 OUTER_SET EFF_OPCODE_MINIMUM_BASE_STATS = 367
 
@@ -65,7 +67,15 @@ OUTER_SET EFF_TARGET_PRESET = 2
 
 OUTER_SET EFF_TIMING_INSTANT_LIMITED = 0
 OUTER_SET EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH = 1
+OUTER_SET EFF_TIMING_INSTANT_WHILE_EQUIPPED = 2
+OUTER_SET EFF_TIMING_DELAY_LIMITED = 3
+OUTER_SET EFF_TIMING_DELAY_PERMANENT_UNTIL_DEATH = 4
+OUTER_SET EFF_TIMING_DELAY_WHILE_EQUIPPED = 5
+OUTER_SET EFF_TIMING_DELAY_LIMITED_IN_TICKS = 6
+OUTER_SET EFF_TIMING_DELAY_PERMANENT_UNTIL_DEATH_IN_TICKS = 7
+OUTER_SET EFF_TIMING_DELAY_WHILE_EQUIPPED_IN_TICKS = 8
 OUTER_SET EFF_TIMING_INSTANT_PERMANENT = 9
+OUTER_SET EFF_TIMING_INSTANT_LIMITED_IN_TICKS  = 10
 
 OUTER_SET EFF_NATURAL_NONMAGICAL = 0
 OUTER_SET EFF_DISPELLABLE_BLOCKABLE = 1
@@ -144,81 +154,77 @@ BEGIN
     PHP_EACH ~%patches_ref%~ AS patch_name => patch_ref BEGIN
 
         PATCH_IF (
-            NOT VARIABLE_IS_SET $~%patch_ref%~(match_effect_category_not) OR NOT ~%effect_category%~ STR_EQ $~%patch_ref%~(match_effect_category_not)
-        ) BEGIN 
+            NOT VARIABLE_IS_SET effect_opcode AND
+            VARIABLE_IS_SET $~%patch_ref%~(match_opcode)
+        ) BEGIN
+            SPRINT read_opcode_fn $~%eff_read_strategy_ref%~(opcode)
+            LPF ~%read_opcode_fn%~ INT_VAR offset_shift RET effect_opcode = opcode END
+        END
+
+        PATCH_IF (
+            NOT VARIABLE_IS_SET effect_resource AND
+            VARIABLE_IS_SET $~%patch_ref%~(match_resource)
+        ) BEGIN
+            SPRINT read_resource_fn $~%eff_read_strategy_ref%~(resource)
+            LPF ~%read_resource_fn%~ INT_VAR offset_shift RET effect_resource = resource END
+        END
+
+        PATCH_IF (
+            (NOT VARIABLE_IS_SET $~%patch_ref%~(match_opcode) OR effect_opcode == $~%patch_ref%~(match_opcode)) AND
+            (NOT VARIABLE_IS_SET $~%patch_ref%~(match_resource) OR ~%effect_resource%~ STR_EQ $~%patch_ref%~(match_resource))
+        ) BEGIN
 
             PATCH_IF (
-                VARIABLE_IS_SET $~%patch_ref%~(match_opcode) AND
-                NOT VARIABLE_IS_SET effect_opcode
+                NOT VARIABLE_IS_SET effect_parameter1 AND
+                (
+                    VARIABLE_IS_SET $~%patch_ref%~(match_parameter1) OR
+                    VARIABLE_IS_SET $~%patch_ref%~(match_parameter1_lte)
+                )
             ) BEGIN
-                SPRINT read_opcode_fn $~%eff_read_strategy_ref%~(opcode)
-                LPF ~%read_opcode_fn%~ INT_VAR offset_shift RET effect_opcode = opcode END
+                SPRINT read_parameter1_fn $~%eff_read_strategy_ref%~(parameter1) 
+                LPF ~%read_parameter1_fn%~ INT_VAR offset_shift RET effect_parameter1 = parameter1 END
+            END
+            PATCH_IF (
+                NOT VARIABLE_IS_SET effect_parameter2 AND
+                VARIABLE_IS_SET $~%patch_ref%~(match_parameter2)
+            ) BEGIN
+                SPRINT read_parameter2_fn $~%eff_read_strategy_ref%~(parameter2)
+                LPF ~%read_parameter2_fn%~ INT_VAR offset_shift RET effect_parameter2 = parameter2 END
+            END
+            PATCH_IF (
+                NOT VARIABLE_IS_SET effect_dispel_resistance AND
+                VARIABLE_IS_SET $~%patch_ref%~(match_dispel_resistance)
+            ) BEGIN
+                SPRINT read_dispel_resistance_fn $~%eff_read_strategy_ref%~(dispel_resistance)
+                LPF ~%read_dispel_resistance_fn%~ INT_VAR offset_shift RET effect_dispel_resistance = dispel_resistance END
+            END
+            PATCH_IF (
+                NOT VARIABLE_IS_SET effect_min_level AND
+                VARIABLE_IS_SET $~%patch_ref%~(match_min_level)
+            ) BEGIN
+                SPRINT read_min_level_fn $~%eff_read_strategy_ref%~(min_level)
+                LPF ~%read_min_level_fn%~ INT_VAR offset_shift RET effect_min_level = min_level END
             END
 
-            PATCH_IF (NOT VARIABLE_IS_SET $~%patch_ref%~(match_opcode) OR effect_opcode == $~%patch_ref%~(match_opcode)) BEGIN
+            PATCH_IF (
+                (NOT VARIABLE_IS_SET $~%patch_ref%~(match_effect_category_not) OR NOT ~%effect_category%~ STR_EQ $~%patch_ref%~(match_effect_category_not)) AND
+                (NOT VARIABLE_IS_SET $~%patch_ref%~(match_parameter1) OR effect_parameter1 == $~%patch_ref%~(match_parameter1)) AND
+                (NOT VARIABLE_IS_SET $~%patch_ref%~(match_parameter1_lte) OR effect_parameter1 <= $~%patch_ref%~(match_parameter1_lte)) AND
+                (NOT VARIABLE_IS_SET $~%patch_ref%~(match_parameter2) OR effect_parameter2 == $~%patch_ref%~(match_parameter2)) AND
+                (NOT VARIABLE_IS_SET $~%patch_ref%~(match_dispel_resistance) OR effect_dispel_resistance == $~%patch_ref%~(match_dispel_resistance)) AND
+                (NOT VARIABLE_IS_SET $~%patch_ref%~(match_min_level) OR effect_min_level == $~%patch_ref%~(match_min_level))
+            ) BEGIN
 
-                PATCH_IF (
-                    VARIABLE_IS_SET $~%patch_ref%~(match_resource) AND
-                    NOT VARIABLE_IS_SET effect_resource
-                ) BEGIN
-                    SPRINT read_resource_fn $~%eff_read_strategy_ref%~(resource)
-                    LPF ~%read_resource_fn%~ INT_VAR offset_shift RET effect_resource = resource END
+                PATCH_IF (VARIABLE_IS_SET $~%patch_ref%~(match_function)) BEGIN
+                    SPRINT match_function $~%patch_ref%~(match_function)
+                    LPF ~%match_function%~ INT_VAR offset_shift STR_VAR eff_read_strategy_ref RET match_result END
                 END
 
-                PATCH_IF (NOT VARIABLE_IS_SET $~%patch_ref%~(match_resource) OR ~%effect_resource%~ STR_EQ $~%patch_ref%~(match_resource)) BEGIN
-
-                    PATCH_IF (
-                        (
-                            VARIABLE_IS_SET $~%patch_ref%~(match_parameter1) OR
-                            VARIABLE_IS_SET $~%patch_ref%~(match_parameter1_lte)
-                        ) AND
-                        NOT VARIABLE_IS_SET effect_parameter1
-                    ) BEGIN
-                        SPRINT read_parameter1_fn $~%eff_read_strategy_ref%~(parameter1) 
-                        LPF ~%read_parameter1_fn%~ INT_VAR offset_shift RET effect_parameter1 = parameter1 END
-                    END
-                    PATCH_IF (
-                        VARIABLE_IS_SET $~%patch_ref%~(match_parameter2) AND
-                        NOT VARIABLE_IS_SET effect_parameter2
-                    ) BEGIN
-                        SPRINT read_parameter2_fn $~%eff_read_strategy_ref%~(parameter2)
-                        LPF ~%read_parameter2_fn%~ INT_VAR offset_shift RET effect_parameter2 = parameter2 END
-                    END
-                    PATCH_IF (
-                        VARIABLE_IS_SET $~%patch_ref%~(match_dispel_resistance) AND
-                        NOT VARIABLE_IS_SET effect_dispel_resistance
-                    ) BEGIN
-                        SPRINT read_dispel_resistance_fn $~%eff_read_strategy_ref%~(dispel_resistance)
-                        LPF ~%read_dispel_resistance_fn%~ INT_VAR offset_shift RET effect_dispel_resistance = dispel_resistance END
-                    END
-                    PATCH_IF (
-                        VARIABLE_IS_SET $~%patch_ref%~(match_min_level) AND
-                        NOT VARIABLE_IS_SET effect_min_level
-                    ) BEGIN
-                        SPRINT read_min_level_fn $~%eff_read_strategy_ref%~(min_level)
-                        LPF ~%read_min_level_fn%~ INT_VAR offset_shift RET effect_min_level = min_level END
-                    END
-
-                    PATCH_IF (
-                        (NOT VARIABLE_IS_SET $~%patch_ref%~(match_parameter1) OR effect_parameter1 == $~%patch_ref%~(match_parameter1)) AND
-                        (NOT VARIABLE_IS_SET $~%patch_ref%~(match_parameter1_lte) OR effect_parameter1 <= $~%patch_ref%~(match_parameter1_lte)) AND
-                        (NOT VARIABLE_IS_SET $~%patch_ref%~(match_parameter2) OR effect_parameter2 == $~%patch_ref%~(match_parameter2)) AND
-                        (NOT VARIABLE_IS_SET $~%patch_ref%~(match_dispel_resistance) OR effect_dispel_resistance == $~%patch_ref%~(match_dispel_resistance)) AND
-                        (NOT VARIABLE_IS_SET $~%patch_ref%~(match_min_level) OR effect_min_level == $~%patch_ref%~(match_min_level))
-                    ) BEGIN
-
-                        PATCH_IF (VARIABLE_IS_SET $~%patch_ref%~(match_function)) BEGIN
-                            SPRINT match_function $~%patch_ref%~(match_function)
-                            LPF ~%match_function%~ INT_VAR offset_shift STR_VAR eff_read_strategy_ref RET match_result END
-                        END
-
-                        PATCH_IF (NOT VARIABLE_IS_SET $~%patch_ref%~(match_function) OR match_result) BEGIN
-                            SPRINT $applicable_patches(~%patch_name%~) ~%patch_ref%~
-                        END
-                    END
+                PATCH_IF (NOT VARIABLE_IS_SET $~%patch_ref%~(match_function) OR match_result) BEGIN
+                    SPRINT $applicable_patches(~%patch_name%~) ~%patch_ref%~
                 END
-            END  
-        END      
+            END
+        END
     END
 END
 

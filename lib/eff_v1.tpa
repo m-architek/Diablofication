@@ -29,6 +29,7 @@ ACTION_DEFINE_ASSOCIATIVE_ARRAY EFF_V1_READ_STRATEGY BEGIN
     parameter1 => ~READ_EFF_V1_PARAMETER1~
     parameter2 => ~READ_EFF_V1_PARAMETER2~
     dispel_resistance => ~READ_EFF_V1_DISPEL_RESISTANCE~
+    duration => ~READ_EFF_V1_DURATION~
     min_level => ~READ_EFF_V1_MIN_LEVEL~
     resource => ~READ_EFF_V1_RESOURCE~
 END
@@ -44,6 +45,9 @@ BEGIN READ_LONG (offset_shift + EFF_V1_PARAM_2_OFFSET) parameter2 END
 
 DEFINE_PATCH_FUNCTION READ_EFF_V1_DISPEL_RESISTANCE INT_VAR offset_shift = ~~ RET dispel_resistance
 BEGIN READ_BYTE (offset_shift + EFF_V1_DISPEL_RESISTANCE_OFFSET) dispel_resistance END
+
+DEFINE_PATCH_FUNCTION READ_EFF_V1_DURATION INT_VAR offset_shift = ~~ RET duration
+BEGIN READ_LONG (offset_shift + EFF_V1_DURATION_OFFSET) duration END
 
 DEFINE_PATCH_FUNCTION READ_EFF_V1_MIN_LEVEL INT_VAR offset_shift = ~~ RET min_level
 BEGIN READ_LONG (offset_shift + EFF_V1_MIN_LVL_OFFSET) min_level END

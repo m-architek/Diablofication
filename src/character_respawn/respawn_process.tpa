@@ -3,6 +3,7 @@ DEFINE_ACTION_FUNCTION APPLY_RESPAWN_PROCESS
         patrification_state_variable = 0
         instant_death_variable = 0
         kill_player1_variable = 0
+        maze_state_variable = 0
     RET_ARRAY respawn_point_names respawn_cutscenes
 BEGIN
     LAF APPLY_RESPAWN_RESSURECTION RET resurrection_spl END
@@ -26,6 +27,7 @@ BEGIN
                 patrification_state_variable = ~%patrification_state_variable%~
                 instant_death_variable = ~%instant_death_variable%~
                 kill_player1_variable = ~%kill_player1_variable%~
+                maze_state_variable = ~%maze_state_variable%~
                 next_cutscene_name = ~%penalty_cutscene_name%~
             RET respawn_cutscene_name
             END
@@ -71,12 +73,20 @@ BEGIN
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_REMOVE_OPCODE
             parameter1 = "-1"
+            parameter2 = EFF_OPCODE_FREEDOM
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_REMOVE_OPCODE
+            parameter1 = "-1"
             parameter2 = EFF_OPCODE_CHARM
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_REMOVE_OPCODE
             parameter1 = "-1"
             parameter2 = EFF_OPCODE_ALTERNATIVE_CHARM
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_FREEDOM
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_POLYMORPH // Empty resource = Natural form
@@ -127,6 +137,7 @@ DEFINE_ACTION_FUNCTION APPLY_RESPAWN_CUTSCENE
         patrification_state_variable = 0
         instant_death_variable = 0
         kill_player1_variable = 0
+        maze_state_variable = 0
         next_cutscene_name = 0
     RET respawn_cutscene_name
 BEGIN
