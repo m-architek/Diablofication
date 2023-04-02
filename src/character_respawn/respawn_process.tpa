@@ -60,6 +60,23 @@ END
 DEFINE_ACTION_FUNCTION APPLY_RESPAWN_HEAL 
     RET heal_spl
 BEGIN
+    COPY_EXISTING ~SPPR607.SPL~ ~override/%RESREF_SPL_CR_HEAL_HEAL%.SPL~ 
+        WRITE_LONG NAME1 0
+        LPF DELETE_SPELL_EFFECT INT_VAR opcode_to_delete = EFF_OPCODE_FATIGUE_MODIFIER END
+        BUT_ONLY
+    COPY_EXISTING ~SPPR404.SPL~ ~override/%RESREF_SPL_CR_HEAL_CURE%.SPL~
+        WRITE_LONG NAME1 0
+        LPF DELETE_SPELL_EFFECT INT_VAR opcode_to_delete = EFF_OPCODE_FATIGUE_MODIFIER END
+        BUT_ONLY
+    COPY_EXISTING ~SPPR713.SPL~ ~override/%RESREF_SPL_CR_HEAL_RESTORATION%.SPL~
+        WRITE_LONG NAME1 0
+        LPF DELETE_SPELL_EFFECT INT_VAR opcode_to_delete = EFF_OPCODE_FATIGUE_MODIFIER END
+        BUT_ONLY
+    COPY_EXISTING ~SPPR350.SPL~ ~override/%RESREF_SPL_CR_HEAL_CLARITY%.SPL~
+        WRITE_LONG NAME1 0
+        LPF DELETE_SPELL_EFFECT INT_VAR opcode_to_delete = EFF_OPCODE_FATIGUE_MODIFIER END
+        BUT_ONLY
+
     OUTER_SPRINT heal_spl ~%RESREF_SPL_CR_HEAL%~
 
     COPY ~%resources%/blank.spl~ ~override/%heal_spl%.SPL~
@@ -100,19 +117,19 @@ BEGIN
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
             opcode = EFF_OPCODE_APPLY_EFFECTS_LIST
-            STR_VAR resource = ~SPPR607~ // Heal
+            STR_VAR resource = ~%RESREF_SPL_CR_HEAL_HEAL%~
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
             opcode = EFF_OPCODE_APPLY_EFFECTS_LIST
-            STR_VAR resource = ~SPPR404~ // Neutralize Poison
+            STR_VAR resource = ~%RESREF_SPL_CR_HEAL_CURE%~
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
             opcode = EFF_OPCODE_APPLY_EFFECTS_LIST
-            STR_VAR resource = ~SPPR713~ // Greater Restoration
+            STR_VAR resource = ~%RESREF_SPL_CR_HEAL_RESTORATION%~
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
             opcode = EFF_OPCODE_APPLY_EFFECTS_LIST
-            STR_VAR resource = ~SPPR350~ // Spiritual Clarity
+            STR_VAR resource = ~%RESREF_SPL_CR_HEAL_CLARITY%~
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_DISPEL_MAGIC
@@ -126,6 +143,7 @@ BEGIN
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_SPELL_MAGICAL_REST
             END 
+        BUT_ONLY
 END
 
 

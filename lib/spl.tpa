@@ -39,7 +39,7 @@ DEFINE_PATCH_FUNCTION ADD_SPL_ABILITY_EFFECT
         parameter1 = 0
         parameter2 = 0
         timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
-        resist_dispel = EFF_NATURAL_NONMAGICAL
+        dispel_resistance = EFF_NATURAL_NONMAGICAL
         duration = 0
         probability1 = 100
         probability2 = 0
@@ -70,7 +70,7 @@ BEGIN
     LPF WRITE_EFF_V1_PARAMETER1 INT_VAR offset_shift = ability_effect_offset parameter1 END
     LPF WRITE_EFF_V1_PARAMETER2 INT_VAR offset_shift = ability_effect_offset parameter2 END
     LPF WRITE_EFF_V1_TIMING_MODE INT_VAR offset_shift = ability_effect_offset timing_mode = timing END
-    LPF WRITE_EFF_V1_DISPEL_RESISTANCE INT_VAR offset_shift = ability_effect_offset dispel_resistance = resist_dispel END
+    LPF WRITE_EFF_V1_DISPEL_RESISTANCE INT_VAR offset_shift = ability_effect_offset dispel_resistance END
     LPF WRITE_EFF_V1_DURATION INT_VAR offset_shift = ability_effect_offset duration END
     LPF WRITE_EFF_V1_PROBABILITY1 INT_VAR offset_shift = ability_effect_offset probability1 END
     LPF WRITE_EFF_V1_PROBABILITY2 INT_VAR offset_shift = ability_effect_offset probability2 END

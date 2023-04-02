@@ -70,6 +70,7 @@ DEFINE_ACTION_FUNCTION APPLY_DEATH_PREVENTION_SPL BEGIN
             parameter2 = 1
             timing = EFF_TIMING_INSTANT_PERMANENT
             END
+        BUT_ONLY
 
     <<<<<<<< .../enable_death_prevention.baf
     IF
