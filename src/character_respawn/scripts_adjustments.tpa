@@ -14,6 +14,8 @@ BEGIN
             LPF PATCH_KILL_PLAYER1_ACTIONS STR_VAR kill_player1_variable END
         END
         BUT_ONLY
+
+    LAF APPLY_PALACE_ESCORT_MISSION_ADJUSTMENTS END
 END
 
 DEFINE_PATCH_FUNCTION PATCH_KILL_PLAYER1_ACTIONS 
@@ -27,4 +29,24 @@ BEGIN
     REPLACE_TEXTUALLY EXACT_MATCH ~Kill(Player1)~ ~%kill_player1_action%~
     REPLACE_TEXTUALLY EXACT_MATCH ~Kill(Protagonist)~ ~%kill_player1_action%~
     REPLACE_TEXTUALLY EXACT_MATCH ~GameOver(19377)~ ~%kill_player1_action%~
+END
+
+DEFINE_ACTION_FUNCTION APPLY_PALACE_ESCORT_MISSION_ADJUSTMENTS BEGIN 
+
+    COPY_EXISTING ~BELT.CRE~ ~override~
+        ADD_CRE_ITEM ~MINHP1~ #0 #0 #0 ~NONE~ ~AMULET~
+        BUT_ONLY
+
+    COPY_EXISTING ~LIIA.CRE~ ~override~
+        ADD_CRE_ITEM ~MINHP1~ #0 #0 #0 ~NONE~ ~AMULET~
+        BUT_ONLY
+    
+    COPY_EXISTING ~SARDOPP.BCS~ ~override~
+        DECOMPILE_AND_PATCH BEGIN
+            REPLACE_TEXTUALLY EXACT_MATCH ~AttackReevaluate("Liia"~ ~AttackReevaluate(Player1~
+            REPLACE_TEXTUALLY EXACT_MATCH ~AttackReevaluate("Belt"~ ~AttackReevaluate([PC]~
+            REPLACE_TEXTUALLY EXACT_MATCH ~Attack("Liia"~ ~Attack(Player1~
+            REPLACE_TEXTUALLY EXACT_MATCH ~Attack("Belt"~ ~Attack([PC]~
+        END
+        BUT_ONLY
 END
