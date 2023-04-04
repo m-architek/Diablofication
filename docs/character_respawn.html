@@ -14,23 +14,26 @@
         <h2 id="character-respawn">Character Respawn</h2>
 
         <p>This component prevents "Game Over" screen on protagonist character death (including petrification),
-            situations when all party members are charmed and some plot related situations (fail to cure Marek's poison
-            on time, refusing arrest in Candlekeep).</p>
+            situations when all alive party members are "unavailable" (e.g. charmed or in maze)
+            and in some plot related situations (fail to cure Marek's poison on time, refusing arrest in Candlekeep).</p>
 
         <p>Regarding first point, protagonist is now never really dead. The minimum HP cap of 1 is introduced to prevent
             real death (maximum HP is also increased by 1 to "give back" occupied point). When protagonist HP reach
-            value of 1, respawn process is triggered by scripts. As side effect of this approach, effects that
-            previously drop target HP to 1 now leaves 2 HP. In case of instant kill effects (like petrification),
-            protagonist is immune to effect itself, but instead respawn process is triggered.</p>
+            value of 1, respawn process is triggered by game scripts.
+            As side effect of this approach, effects that in unmodded game decrease target HP to 1 are now patched to leave 2 HP.
+            In case of instant kill effects (like petrification or disintegration), protagonist is immune to effect itself,
+            but instead respawn process is triggered.</p>
 
-        <p>Since Infinity Engine provides many ways to kill character, not all of them are properly handled at current
-            stage of component development. At this point, all ways that can cause death in non-modded game should be
-            handled properly, with the exception of reducing character stat below 1 (currently protagonist is simply
-            protected aginst it).</p>
+        <p>Infinity Engine provides many ways to kill character. To handle all of them, this component patches
+            all items and spells in game (including those added by mods) to apply proper markers for respawn process triggering.
+            In result, respawn process will be triggered in all and only those situations, 
+            that would cause character death in unmodded game.
+            The only excpetion to this rule is reducing character statistic below zero by equipping an item.
+            Other sources of statistics drain, like spells or monsters special attacks, will still kill the character.</p>
 
-        <p>"Game over" when entire party is charmed seems to be performed by engine itself, however it can be
+        <p>"Game over" when entire party is "unavailable" seems to be performed by engine itself, however it can be
             conifigured per location. This component prevents "game over" in such situations for every location in the
-            game (included those from mods). Situation when entire party is charmed is detected by scripts and triggers
+            game (included those from mods). Situation when entire party is "unavailable" is detected by scripts and triggers
             respawn process.</p>
 
         <p>For plot related "game over" situations, component tries to recover game in arguably most sensible way. If
