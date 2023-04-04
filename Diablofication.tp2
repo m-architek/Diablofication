@@ -36,7 +36,7 @@ END
 LANGUAGE ~Universal (no new lines added)~ ~~
 
 
-BEGIN "Character Respawn (Alpha)" 
+BEGIN "Character Respawn (Beta)" 
 LABEL ~character_respawn~
 REQUIRE_PREDICATE GAME_IS ~bgee~ ~BG1 EE is required~
 REQUIRE_PREDICATE NOT GAME_INCLUDES ~sod~ ~SoD not supported~
