@@ -36,7 +36,8 @@ END
 LANGUAGE ~Universal (no new lines added)~ ~~
 
 
-BEGIN "Character Respawn (Alpha)" DESIGNATED 510
+BEGIN "Character Respawn (Alpha)" 
+LABEL ~character_respawn~
 REQUIRE_PREDICATE GAME_IS ~bgee~ ~BG1 EE is required~
 REQUIRE_PREDICATE NOT GAME_INCLUDES ~sod~ ~SoD not supported~
 
@@ -47,19 +48,25 @@ WITH_SCOPE BEGIN
 END
 
 
-BEGIN "More HP on Level One (Beta)" DESIGNATED 710
+BEGIN "More HP on Level One (Beta)"
+LABEL ~level1_hp~
 REQUIRE_PREDICATE GAME_IS ~bgee~ ~BG1 EE is required~
 REQUIRE_PREDICATE NOT GAME_INCLUDES ~sod~ ~SoD not supported~
 
 WITH_SCOPE BEGIN
-    INCLUDE ~%src%/level1_hp/main.tpa~
+    ACTION_TIME "level1_hp" BEGIN 
+        INCLUDE ~%src%/level1_hp/main.tpa~
+    END
 END
 
 
-BEGIN "Character View Lock (Alpha)" DESIGNATED 910
+BEGIN "Character View Lock (Alpha)"
+LABEL ~camera_lock~
 REQUIRE_PREDICATE GAME_IS ~bgee~ ~BG1 EE is required~
 REQUIRE_PREDICATE NOT GAME_INCLUDES ~sod~ ~SoD not supported~
 
 WITH_SCOPE BEGIN
-    INCLUDE ~%src%/character_view_lock/main.tpa~
+    ACTION_TIME "camera_lock" BEGIN 
+        INCLUDE ~%src%/character_view_lock/main.tpa~
+    END
 END
