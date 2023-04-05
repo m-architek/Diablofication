@@ -28,36 +28,43 @@
             all items and spells in game (including those added by mods) to apply proper markers for respawn process triggering.
             In result, respawn process will be triggered in all and only those situations, 
             that would cause character death in unmodded game.
-            The only excpetion to this rule is reducing character statistic below zero by equipping an item.
+            The only exception to this rule is reducing character statistic below zero by equipping an item.
             Other sources of statistics drain, like spells or monsters special attacks, will still kill the character.</p>
 
         <p>"Game over" when entire party is "unavailable" seems to be performed by engine itself, however it can be
-            conifigured per location. This component prevents "game over" in such situations for every location in the
+            configured per location. This component prevents "game over" in such situations for every location in the
             game (included those from mods). Situation when entire party is "unavailable" is detected by scripts and triggers
             respawn process.</p>
 
         <p>For plot related "game over" situations, component tries to recover game in arguably most sensible way. If
             you die from Marek's poison you will respawn normally and another ten days would be given for you to stop
-            this poison. If you die in Candlekeep after you will be marekd as "criminal", you will respawn in Candlekeep
+            this poison. If you die in Candlekeep after you will be marked as "criminal", you will respawn in Candlekeep
             prison and game will continue from there as you would be normally arrested. Note, that since attacking Iron
             Throne leaders mark you as criminal, you have only one chance to deal with this encounter.</p>
 
+        <p>There are situations in game that do not result in explicit "game over", but also it is not possible to recover
+            from them to finish the game (e.g. attacking someone innocent during Candlekeep Prologue).
+            This component do not handle such situations in any particular way.
+            Notable exception is escort mission in Ducal Palace. This component makes Grand Dukes unkillable,
+            what makes this escort mission immposible to fail. Enemies AI during this fight is slightly changed,
+            to target protagonist and other party members instead of Grand Dukes.</p>
+
         <p>All possible respawn points are configured in <a href="../config/respawn_points.2da">respawn_points.2da</a>
             table.
-            Configuration includes areas and players positon after respawn. Plot related respawn points are hardcoded
+            Configuration includes areas and players position after respawn. Plot related respawn points are hardcoded
             and always take precedence, however you can configure nearest respawn point for master areas with <a
                 href="../config/respawn_points_nearest.2da">respawn_points_nearest.2da</a> table. If newly visited
-            master area do not have
-            respawn point configured here, the value of previously visited master area would be used. Note that all
-            changes to those 2da tables must be performed before component is installed.</p>
+            master area do not have respawn point configured here, the value of previously visited master area would be used.
+            Note that all changes to those 2da tables must be performed before component is installed.</p>
 
-        <p>During respawn process all party members are resurrected and healed. After respawn protagonist should be in
-            state that would be the case after death and resurrection, although this part was not deeply tested and
-            probably not work correctly in some cases. Healing process, that is applied to every party member, include
-            all effects of normal heal, restoration and dispel magic. It also makes party fully rest.</p>
+        <p>During respawn process all party members are resurrected and healed. Healing process include
+            all effects of normal heal, neutralize poison, restoration, spiritual clarity and dispel magic. 
+            It restores natural form if character was under polymorph effect. It also makes party fully rest.
+            Some non magical effects that are not removed with spell mentioned above (like physical or psionic paralysis)
+            can still persist after respawn, until their duration expires.</p>
 
-        <p>After respawn, protagonist should have all equipment that was possesed in moment of "death", however
-            equipment of dead companions is still on battlefield (unless it was pickuped meanwhile by protagonist or
+        <p>After respawn, protagonist should have all equipment that was possessed in moment of "death", however
+            equipment of dead companions is still on battlefield (unless it was picked up meanwhile by protagonist or
             other party member). Please note, that in case when battlefield is far enough from respawn point, this can
             cause equipment disappear before you will be able to recover it. Some equipment loss can also take place in
             case when you cannot go back to place of party member death (e.g. fight with Iron Throne leaders in
@@ -67,11 +74,11 @@
             depends on current party gold and it is configured in <a
                 href="../config/respawn_penalty_gold.2da">respawn_penalty_gold.2da</a> table.
             XP penalty is applied on each party member separately and it depends on character current XP,
-            it is configured in <a href="../config/respawn_penalty_xp.2da">respawn_penalty_xp.2da</a> table. Note that
-            all changes to
-            those 2da tables must be performed before component is installed. In case you change configuration, you
-            should also avoid reducing character's XP below 0, which is not handled properly by the engine. XP penalty
-            does not affect character level, it just delays getting next level.</p>
+            it is configured in <a href="../config/respawn_penalty_xp.2da">respawn_penalty_xp.2da</a> table.
+            Note that all changes to those 2da tables must be performed before component is installed. 
+            In case you change configuration, you should also avoid reducing character's XP below 0, 
+            which is not handled properly by the engine. XP penalty does not affect character level,
+            it just delays getting next level.</p>
 
         <hr />
 
