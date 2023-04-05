@@ -103,6 +103,16 @@ BEGIN
             parameter2 = EFF_OPCODE_ALTERNATIVE_CHARM
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_REMOVE_OPCODE
+            parameter1 = "-1"
+            parameter2 = EFF_OPCODE_MAKE_UNSELECTABLE
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_REMOVE_OPCODE
+            parameter1 = "-1"
+            parameter2 = EFF_OPCODE_GRAPHICS_REMOVE_SELECTION_CIRCLE
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_FREEDOM
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 

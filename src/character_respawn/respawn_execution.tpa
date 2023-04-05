@@ -194,15 +194,14 @@ DEFINE_ACTION_FUNCTION APPLY_CANDLEKEEP_ENTER_EXTENSION
 BEGIN
     OUTER_SPRINT candlekeep_enter_variable ~%GLOBAL_CR_CANDLEKEEP_ENTER%~
 
-    <<<<<<<< .../candlekeep_enterence_extension.d
-    ADD_TRANS_ACTION KEEPER 
-        BEGIN 4 END 
-        BEGIN 0 END 
-        ~SetGlobal("%candlekeep_enter_variable%", "GLOBAL", 1)~
-    >>>>>>>>
-
-    COMPILE ~.../candlekeep_enterence_extension.d~
-        EVALUATE_BUFFER
+    COPY_EXISTING ~CH6CUT01.BCS~ ~override~
+        DECOMPILE_AND_PATCH BEGIN
+            REPLACE_TEXTUALLY EXACT_MATCH ~CutSceneId(Player1)~ ~~~~~
+                CutSceneId(Player1)
+                SetGlobal("%candlekeep_enter_variable%", "GLOBAL", 1)
+            ~~~~~
+        END
+        BUT_ONLY
 END
 
 
@@ -213,9 +212,6 @@ DEFINE_ACTION_FUNCTION APPLY_CANDLEKEEP_ARRESTED_EXTENSION BEGIN
         Global("Arrested", "GLOBAL", 0)
     THEN
         RESPONSE #100
-            Deactivate("Ulraunt")
-            Deactivate("Tethtoril2")
-            Wait(5)
             ClearAllActions()
             StartCutSceneMode()
             SetGlobal("Arrested", "GLOBAL", 1)
