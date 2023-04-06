@@ -1,4 +1,3 @@
-OUTER_SPRINT src ~%src%~ ^ ~/level1_hp~
 INCLUDE ~%src%/rules_adjustments.tpa~
 INCLUDE ~%src%/companions_adjustments.tpa~
 

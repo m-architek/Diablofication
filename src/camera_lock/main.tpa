@@ -1,4 +1,3 @@
-OUTER_SPRINT src ~%src%~ ^ ~/character_view_lock~
 INCLUDE ~%src%/scripts_adjustments.tpa~
 INCLUDE ~%src%/scroll_lock.tpa~
 
