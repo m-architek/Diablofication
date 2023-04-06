@@ -1,4 +1,3 @@
-OUTER_SPRINT src ~%src%~ ^ ~/character_respawn~
 INCLUDE ~%src%/effects_adjustments.tpa~
 INCLUDE ~%src%/scripts_adjustments.tpa~
 INCLUDE ~%src%/death_prevention.tpa~
