@@ -1,5 +1,5 @@
 INCLUDE ~%src%/scripts_adjustments.tpa~
-INCLUDE ~%src%/scroll_lock.tpa~
+INCLUDE ~%src%/ui_adjustments.tpa~
 
 LAF APPLY_SCRIPTS_ADJUSTMENTS END
-LAF APPLY_SCROLL_LOCK END
+LAF APPLY_UI_ADJUSTMENTS END
