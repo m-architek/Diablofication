@@ -9,6 +9,7 @@ NO_IF_EVAL_BUG
   
 ALWAYS
     CLEAR_EVERYTHING
+    OUTER_SPRINT s ~[%TAB% %LNL%%MNL%%WNL%]~
 
     OUTER_SPRINT config ~%MOD_FOLDER%/config~
     OUTER_SPRINT lib ~%MOD_FOLDER%/lib~
