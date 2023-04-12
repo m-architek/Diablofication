@@ -9,6 +9,7 @@ NO_IF_EVAL_BUG
   
 ALWAYS
     CLEAR_EVERYTHING
+    OUTER_SET is_EEex = MOD_IS_INSTALLED ~EEex.tp2~ ~0~
     OUTER_SPRINT s ~[%TAB% %LNL%%MNL%%WNL%]~
 
     OUTER_SPRINT config ~%MOD_FOLDER%/config~
@@ -27,8 +28,8 @@ ALWAYS
     INCLUDE ~%lib%/joinable_npc_array.tpa~
     INCLUDE ~%lib%/patch_all_effects.tpa~
     INCLUDE ~%lib%/spl.tpa~
-    INCLUDE ~%lib%/vvc.tpa~
 
+    INCLUDE ~%resources%/lua.tpa~
     INCLUDE ~%resources%/resources.tpa~
     INCLUDE ~%resources%/variables.tpa~
 END

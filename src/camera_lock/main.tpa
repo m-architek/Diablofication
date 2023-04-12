@@ -1,5 +1,5 @@
 INCLUDE ~%src%/scripts_adjustments.tpa~
 INCLUDE ~%src%/ui_adjustments.tpa~
 
-LAF APPLY_SCRIPTS_ADJUSTMENTS END
-LAF APPLY_UI_ADJUSTMENTS END
+LAF APPLY_UI_ADJUSTMENTS RET lock_scroll_lua_fn lock_scroll_on_leader_lua_fn unlock_scroll_lua_fn END
+LAF APPLY_SCRIPTS_ADJUSTMENTS STR_VAR lock_scroll_on_leader_lua_fn unlock_scroll_lua_fn END
