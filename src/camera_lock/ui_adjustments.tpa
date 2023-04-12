@@ -1,24 +1,46 @@
-DEFINE_ACTION_FUNCTION APPLY_UI_ADJUSTMENTS BEGIN
+DEFINE_ACTION_FUNCTION APPLY_UI_ADJUSTMENTS 
+    RET lock_scroll_lua_fn lock_scroll_on_leader_lua_fn unlock_scroll_lua_fn
+BEGIN
+    OUTER_SPRINT lock_scroll_lua_fn ~%LUA_FUNCTION_CL_LOCK_SCROLL%~
+    OUTER_SPRINT lock_scroll_on_leader_lua_fn ~%LUA_FUNCTION_CL_LOCK_SCROLL_ON_LEADER%~
+    OUTER_SPRINT unlock_scroll_lua_fn ~%LUA_FUNCTION_CL_UNLOCK_SCROLL%~
 
     COPY_EXISTING ~UI.menu~ ~override~
-        LPF APPLY_LOCK_ON_PORTRAIT_DBLCLICK END
-        LPF APPLY_UNLOCK_ON_SELECT_ALL_ALTCLICK END
+        LPF APPLY_LOCK_ON_PORTRAIT_DBLCLICK STR_VAR lock_scroll_lua_fn END
+        LPF APPLY_LOCK_ON_CENTER_ON_GROUP_LEADER STR_VAR lock_scroll_on_leader_lua_fn END
+        LPF APPLY_UNLOCK_ON_SELECT_ALL_ALTCLICK STR_VAR unlock_scroll_lua_fn END
         BUT_ONLY
+
+    COPY ~%src%/ui_adjustments.lua~ ~override/%RESREF_LUA_CL%.lua~
+        EVALUATE_BUFFER
 END
 
-DEFINE_PATCH_FUNCTION APPLY_LOCK_ON_PORTRAIT_DBLCLICK BEGIN 
+DEFINE_PATCH_FUNCTION APPLY_LOCK_ON_PORTRAIT_DBLCLICK 
+    STR_VAR lock_scroll_lua_fn = 0
+BEGIN 
     CLEAR_ARRAY portraits
     DEFINE_ARRAY portraits BEGIN 0 1 2 3 4 5 END
     
     PHP_EACH portraits AS _ => portrait BEGIN 
         REPLACE_TEXTUALLY EXACT_MATCH ~Infinity_OnPortraitDblClick(%portrait%)~ ~~~~~
-            C:Eval('LockScroll()') 
             Infinity_OnPortraitDblClick(%portrait%)
+            %lock_scroll_lua_fn%()
         ~~~~~
     END
 END
 
-DEFINE_PATCH_FUNCTION APPLY_UNLOCK_ON_SELECT_ALL_ALTCLICK BEGIN
+DEFINE_PATCH_FUNCTION APPLY_LOCK_ON_CENTER_ON_GROUP_LEADER 
+    STR_VAR lock_scroll_on_leader_lua_fn = 0
+BEGIN
+    REPLACE_TEXTUALLY EXACT_MATCH ~game:CenterOnGroupLeader()~ ~~~~~
+        game:CenterOnGroupLeader()
+        %lock_scroll_on_leader_lua_fn%()
+    ~~~~~
+END
+
+DEFINE_PATCH_FUNCTION APPLY_UNLOCK_ON_SELECT_ALL_ALTCLICK 
+    STR_VAR unlock_scroll_lua_fn = 0
+BEGIN
     SET ok = 0
     
     REPLACE_EVALUATE ~action%s%*?"%s%*?game:SelectAll()%s%*?"~ 
@@ -26,7 +48,7 @@ DEFINE_PATCH_FUNCTION APPLY_UNLOCK_ON_SELECT_ALL_ALTCLICK BEGIN
             SET ok = 1
         END ~~~~~
             %MATCH0%
-            actionAlt "C:Eval('UnlockScroll()')"
+            actionAlt "%unlock_scroll_lua_fn%()"
         ~~~~~
     
     PATCH_IF (NOT ok) BEGIN 

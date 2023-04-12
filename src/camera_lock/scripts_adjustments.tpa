@@ -1,49 +1,69 @@
-DEFINE_ACTION_FUNCTION APPLY_SCRIPTS_ADJUSTMENTS BEGIN
+DEFINE_ACTION_FUNCTION APPLY_SCRIPTS_ADJUSTMENTS
+    STR_VAR lock_scroll_on_leader_lua_fn = 0 unlock_scroll_lua_fn = 0
+BEGIN
+    OUTER_SPRINT lock_scroll_action ~ActionOverride(Player1, LockScroll())~
+    OUTER_SPRINT unlock_scroll_action ~UnlockScroll()~
+
+    ACTION_IF (is_EEex) BEGIN 
+        OUTER_SPRINT lock_scroll_action ~~~~~
+            EEex_LuaAction("game:SelectAll()")
+            EEex_LuaAction("game:CenterOnGroupLeader()")
+            EEex_LuaAction("%lock_scroll_on_leader_lua_fn%()")
+        ~~~~~
+        OUTER_SPRINT unlock_scroll_action ~~~~~
+            EEex_LuaAction("%unlock_scroll_lua_fn%()")
+        ~~~~~
+    END
 
     COPY_EXISTING_REGEXP GLOB ~^.+\.bcs$~ ~override~
         DECOMPILE_AND_PATCH BEGIN
-            LPF PATCH_CUTSCENE_START END
-            LPF PATCH_CUTSCENE_END END
+            LPF PATCH_CUTSCENE_START STR_VAR unlock_scroll_action END
+            LPF PATCH_CUTSCENE_END STR_VAR lock_scroll_action END
         END
         BUT_ONLY
 
     COPY_EXISTING_REGEXP GLOB ~^.+\.dlg$~ ~override~
         DECOMPILE_AND_PATCH BEGIN
-            LPF PATCH_CUTSCENE_START END
-            LPF PATCH_CUTSCENE_END END
+            LPF PATCH_CUTSCENE_START STR_VAR unlock_scroll_action END
+            LPF PATCH_CUTSCENE_END STR_VAR lock_scroll_action END
         END
         BUT_ONLY
 
-    LAF APPLY_LOCK_ON_GAME_LOAD END
+    LAF APPLY_LOCK_ON_GAME_LOAD STR_VAR lock_scroll_action END
 END
 
-DEFINE_PATCH_FUNCTION PATCH_CUTSCENE_START BEGIN
-    
+DEFINE_PATCH_FUNCTION PATCH_CUTSCENE_START 
+    STR_VAR unlock_scroll_action = 0
+BEGIN
     REPLACE_TEXTUALLY EXACT_MATCH ~StartCutSceneMode()~ ~~~~~
-        UnlockScroll()
+        %unlock_scroll_action%
         StartCutSceneMode()
     ~~~~~
 END
 
-DEFINE_PATCH_FUNCTION PATCH_CUTSCENE_END BEGIN
+DEFINE_PATCH_FUNCTION PATCH_CUTSCENE_END 
+    STR_VAR lock_scroll_action = 0
+BEGIN
 
     REPLACE_TEXTUALLY EXACT_MATCH ~EndCutSceneMode()~ ~~~~~
         EndCutSceneMode()
-        ActionOverride(Player1, LockScroll())
+        %lock_scroll_action%
     ~~~~~
 END
 
-DEFINE_ACTION_FUNCTION APPLY_LOCK_ON_GAME_LOAD BEGIN
-    <<<<<<<< .../scroll_lock.baf
+DEFINE_ACTION_FUNCTION APPLY_LOCK_ON_GAME_LOAD 
+    STR_VAR lock_scroll_action = 0
+BEGIN
+    <<<<<<<< .../camera_lock.baf
     IF
         OnCreation()
     THEN
         RESPONSE #100
-            ActionOverride(Player1, LockScroll())
+            %lock_scroll_action%
             Continue()
     END
     >>>>>>>>
     
-    EXTEND_TOP ~baldur.bcs~ ~.../scroll_lock.baf~ 
+    EXTEND_TOP ~baldur.bcs~ ~.../camera_lock.baf~ 
         EVALUATE_BUFFER
 END
