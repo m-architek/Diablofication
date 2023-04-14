@@ -1,5 +1,5 @@
 DEFINE_ACTION_FUNCTION APPLY_UI_ADJUSTMENTS 
-    RET lock_scroll_lua_fn lock_scroll_on_leader_lua_fn unlock_scroll_lua_fn
+    RET lock_scroll_on_leader_lua_fn
 BEGIN
     OUTER_SPRINT lock_scroll_lua_fn ~%LUA_FUNCTION_CL_LOCK_SCROLL%~
     OUTER_SPRINT lock_scroll_on_leader_lua_fn ~%LUA_FUNCTION_CL_LOCK_SCROLL_ON_LEADER%~
@@ -23,8 +23,8 @@ BEGIN
     
     PHP_EACH portraits AS _ => portrait BEGIN 
         REPLACE_TEXTUALLY EXACT_MATCH ~Infinity_OnPortraitDblClick(%portrait%)~ ~~~~~
-            Infinity_OnPortraitDblClick(%portrait%)
             %lock_scroll_lua_fn%()
+            Infinity_OnPortraitDblClick(%portrait%)
         ~~~~~
     END
 END
@@ -33,8 +33,8 @@ DEFINE_PATCH_FUNCTION APPLY_LOCK_ON_CENTER_ON_GROUP_LEADER
     STR_VAR lock_scroll_on_leader_lua_fn = 0
 BEGIN
     REPLACE_TEXTUALLY EXACT_MATCH ~game:CenterOnGroupLeader()~ ~~~~~
-        game:CenterOnGroupLeader()
         %lock_scroll_on_leader_lua_fn%()
+        game:CenterOnGroupLeader()
     ~~~~~
 END
 

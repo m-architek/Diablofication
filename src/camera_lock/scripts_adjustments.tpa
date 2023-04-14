@@ -1,17 +1,28 @@
 DEFINE_ACTION_FUNCTION APPLY_SCRIPTS_ADJUSTMENTS
-    STR_VAR lock_scroll_on_leader_lua_fn = 0 unlock_scroll_lua_fn = 0
+    STR_VAR lock_scroll_on_leader_lua_fn = 0
 BEGIN
-    OUTER_SPRINT lock_scroll_action ~ActionOverride(Player1, LockScroll())~
-    OUTER_SPRINT unlock_scroll_action ~UnlockScroll()~
+    OUTER_SPRINT lock_scroll_action ~~~~~
+        ActionOverride(Player1, LockScroll())
+    ~~~~~
+    OUTER_SPRINT unlock_scroll_action ~~~~~
+        UnlockScroll()
+        ActionOverride(Player1, UnlockScroll())
+        ActionOverride(Player2, UnlockScroll())
+        ActionOverride(Player3, UnlockScroll())
+        ActionOverride(Player4, UnlockScroll())
+        ActionOverride(Player5, UnlockScroll())
+        ActionOverride(Player6, UnlockScroll())
+    ~~~~~
 
     ACTION_IF (is_EEex) BEGIN 
         OUTER_SPRINT lock_scroll_action ~~~~~
-            EEex_LuaAction("game:SelectAll()")
-            EEex_LuaAction("game:CenterOnGroupLeader()")
             EEex_LuaAction("%lock_scroll_on_leader_lua_fn%()")
-        ~~~~~
-        OUTER_SPRINT unlock_scroll_action ~~~~~
-            EEex_LuaAction("%unlock_scroll_lua_fn%()")
+            ActionOverride(Player1, EEex_LuaAction("%lock_scroll_on_leader_lua_fn%()"))
+            ActionOverride(Player2, EEex_LuaAction("%lock_scroll_on_leader_lua_fn%()"))
+            ActionOverride(Player3, EEex_LuaAction("%lock_scroll_on_leader_lua_fn%()"))
+            ActionOverride(Player4, EEex_LuaAction("%lock_scroll_on_leader_lua_fn%()"))
+            ActionOverride(Player5, EEex_LuaAction("%lock_scroll_on_leader_lua_fn%()"))
+            ActionOverride(Player6, EEex_LuaAction("%lock_scroll_on_leader_lua_fn%()"))
         ~~~~~
     END
 
