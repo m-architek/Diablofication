@@ -18,11 +18,16 @@ function %lock_scroll_lua_fn%()
     else
         C:Eval('LockScroll()')
     end
-
 end
 
 function %lock_scroll_on_leader_lua_fn%()
     if EEex_Active then
+        local id = EEex_Sprite_GetSelectedID()
+
+        if id == -1 then 
+            game:SelectAll()
+        end
+        
         local id = EEex_Sprite_GetSelectedID()
 
         if id ~= -1 then 
