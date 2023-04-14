@@ -22,15 +22,13 @@
 
     <h2 id="overview">Overview</h2>
 
-    <p>Diablofication is Infinity Engine modification that aims to implement some of the mechanics known from Diablo II
+    <p>Diablofication is Infinity Engine modification that aims to implement some of the mechanics known from Diablo games
       into Baldur's Gate games series.</p>
 
-    <p>Diablo II and Baldur's Gate are two very different games. Diablofication doesn't try to change that by being
-      total conversion mod. Instead, it tries to understand why certain mechanic is fun in Diablo II and introduce
-      changes to Baldur's Gate to obtain the same result, without turning game upside down.</p>
+    <p>Diablofication doesn't try to be total conversion mod. Instead, it tries to understand why certain mechanic is fun in Diablo 
+      and introduce some changes to Baldur's Gate to obtain similar result, without turning game upside down.</p>
 
     <p>Consequently, Diablofication is collection of tweaks that focus on following aspects of the game:</p>
-
     <ul>
       <li>
         <p>Improvements for “no reload” gameplay, including ones that make this style of playing available for less
@@ -40,15 +38,15 @@
         <p>Randomization and diversification of game content.</p>
       </li>
       <li>
-        <p>Various hack'n'slash flavoured changes, especially focused on solo playthrough.</p>
+        <p>Various hack'n'slash flavored changes, especially focused on solo playthrough.</p>
       </li>
     </ul>
 
     <p>See <a href="#components">components list</a> for more details about mod content.</p>
 
-    <p>Diablofication tries to maintain compatibility with other mods by following best modding practices joined
-      together with “maximum effect at minimum cost” rule. See <a href="#compatibility">compatibility section</a> for
-      more details.</p>
+    <p>Diablofication tries to maintain compatibility with other mods by following best modding practices. 
+      Also, it tries to provide maximum effect at minimum cost by avoiding risky changes when it is not justified. 
+      See <a href="#compatibility">compatibility section</a> for more details.</p>
 
     <h2 id="installation">Installation</h2>
 
@@ -56,9 +54,12 @@
       For deinstallation reverse steps of installation process. Run setup-Diablofication.exe and choose [U]ninstall
       option. After process finish, you can remove mod files from your game directory.</p>
 
-    <p>See <a
-        href="https://www.gibberlings3.net/forums/topic/33164-a-new-player%E2%80%99s-guide-to-installing-and-playing-mods">here</a>
-      for more details about installing and playing Inifnity Engine modifications.</p>
+    <p>See <a href="https://www.gibberlings3.net/forums/topic/33164-a-new-player%E2%80%99s-guide-to-installing-and-playing-mods"
+      >here</a> for more details about installing and playing Inifnity Engine modifications.</p>
+
+    <p>Some of mod components requires <a href="https://eeex-docs.readthedocs.io/en/latest/">EEex</a> to show their full potential. 
+      For getting access to all those additional features it is advised to install EEex before Diablofication. 
+      Diablofication was tested with EEex version v0.9.19-alpha, please use this version of EEex or later.</p>
 
     <p>Some of mod components require starting new game to work properly. This also means that after mod
       deinstallation, using saves made when those components was yet installed can lead to unexpected issues.
@@ -66,31 +67,32 @@
 
     <h2 id="compatibility">Compatibility</h2>
 
-    <p>Diablofication is using WeiDU for patching game files in a way that will be compatible with patches done by other
-      WeiDU based modifications. However, this “technical” compatibility not guarantee flawless in-game experiance so
-      please read following notes about cross-mod compatibility and installation order.</p>
+    <p>Diablofication is using <a href="https://weidu.org/~thebigg/README-WeiDU.html">WeiDU</a> 
+      for patching game files in a way that will be compatible with patches done by other WeiDU based modifications. 
+      However, this “technical” compatibility not guarantee flawless in-game experience so please read 
+      following notes about cross-mod compatibility and installation order.</p>
 
     <p>Diablofication is tweak collection mod and should be installed possibly late in mod installation process
-      (preferably as the last mod). It tries to detect changes done by other modifications and acts accordingly to
-      provide best compatibility.</p>
+      (preferably as the last mod). It tries to detect changes done by other modifications and act accordingly to
+      provide best possible compatibility.</p>
 
     <p>Each Diablofication component makes changes in different aspect of the game, detail compatibility notes are
-      maintaied per each component individually, please read them before installation.</p>
+      maintained per each component individually, please read them before installation.</p>
 
     <h2 id="components">Components</h2>
 
-    <p>Diablofication mod consists of following components. All components are optional and independent from each other.
-    </p>
+    <p>Diablofication mod consists of following components. All components are optional and can be installed 
+      independent from each other.</p>
 
     <ul>
       <li><a href="#character-respawn">Character Respawn (Beta)</a></li>
       <li><a href="#level1-hp">More HP on Level One (Beta)</a></li>
-      <li><a href="#camera-lock">Camera Lock (Alpha)</a></li>
+      <li><a href="#camera-lock">Camera Lock (Beta)</a></li>
     </ul>
 
     <p>
-      <span>"Alpha" development stage means that component has limited functionality (but at least minmal
-        functionality).</span>
+      <!-- <span>"Alpha" development stage means that component has limited functionality (but at least minmal
+        functionality).</span> -->
       <span>"Beta" development stage means that component has full functionality, but can require some more
         testing.</span>
     </p>
@@ -155,35 +157,36 @@
 
     <br />
 
-    <h3 id="camera-lock">Camera Lock (Alpha)</h3>
+    <h3 id="camera-lock">Camera Lock (Beta)</h3>
 
-    <p>Locks game viewport on protagonist. Viewport will move automatically with your character movement,
-      keeping character always in the center of the screen.</p>
+    <p>Double click on character portrait locks camera, making it move automatically with character movement, 
+      keeping character always in the center of the screen. 
+      You can unlock camera using right click on "select all" button.</p>
 
-    <p><strong>Motivation:</strong> Moving view automatically together with character movement saves you tedious view
+    <p><strong>Motivation:</strong> Moving camera automatically together with character movement saves tedious view
       scrolling, especially when playing solo.
-      It also has its specific flavour by allowng you to experinace game more from your character perspective.</p>
+      It also brings additional immersion by allowing you to experience game more from your character perspective.</p>
 
-    <p><strong>Installation:</strong> This component should be installed after every mod that add new cutscenes.
-      Starting new game is not required.</p>
+    <p><strong>Installation:</strong> This component should be installed after UI overhaul mods and after every mod 
+      that add new cutscenes. Starting new game is not required.</p>
 
     <p><strong>Compatibility:</strong> This component most likely wouldn't be compatible with other mods that change
-      game viewport behavour.</p>
+      game camera behavior.</p>
+
+    <p><strong>Limitations:</strong> If <a href="https://eeex-docs.readthedocs.io/en/latest/">EEex</a> not installed, 
+      camera lock is performed using character action list. That means, if character is in the middle of some action, 
+      like movement or spell casting, camera locked will be delayed until action finish. 
+      <a href="https://eeex-docs.readthedocs.io/en/latest/">EEex</a> allows for overcome this limitation. 
+      Additionally, it allows to perform camera lock on party leader after double click on "select all" button.</p>
 
     <p><strong>Tip:</strong> Move your character using right click button to avoid group select when view is still in
       move.</p>
-
-    <p><strong>Tip:</strong> You cannot use map screen to move your view on the other side of the area,
-      but you can still zoom out to travel greater distance with less clicks.</p>
 
     <p><strong>Tip:</strong> View movement is much smoother on higher framerate. You can adjust framerate by editing
       "Maximum Frame Rate" option in Baldur.lua config file (you can find it next to your save games).
       Note that this setting changes overall game speed.</p>
 
-    <p><strong>Tip:</strong> This component significantly reduces your scouting ability. You can scout using your
-      companions, familiar or scouting spells like Wizard Eye or Farsight only as far as you can zoom out.</p>
-
-    <p>See <a href="./docs/character_view_lock.html">here</a> for more details.</p>
+    <p>See <a href="./docs/camera_lock.html">here</a> for more details.</p>
 
     <br />
 
@@ -194,21 +197,21 @@
       Special thanks goes to:</p>
     <ul>
       <li>
-        <a href="https://www.gibberlings3.net/profile/11489-the_baffled_king/">The_Baffled_King</a>
-        for groundbreaking technical insights and suggestions.
+        <a href="https://www.gibberlings3.net/profile/12457-jmerry/">jmerry</a>,
+        <a href="https://www.gibberlings3.net/profile/11489-the_baffled_king/">The_Baffled_King</a>,
+        <a href="https://www.gibberlings3.net/profile/6306-subtledoctor/">subtledoctor</a>,
+        <a href="https://www.gibberlings3.net/profile/10832-bubb/">Bubb</a>
+        for massive technical help and suggestions (in order of appearance).
       </li>
       <li>
         <a href="https://www.gibberlings3.net/profile/2635-lynx/">lynx</a>,
         <a href="https://www.gibberlings3.net/profile/3522-sam/">Sam.</a>,
-        <a href="https://www.gibberlings3.net/profile/12457-jmerry/">jmerry</a>,
         <a href="https://www.gibberlings3.net/profile/2297-taimon/">Taimon</a>,
         <a href="https://www.gibberlings3.net/profile/3876-argent77/">argent77</a>,
         <a href="https://www.gibberlings3.net/profile/1067-davidw/">DavidW</a>,
-        <a href="https://www.gibberlings3.net/profile/6306-subtledoctor/">subtledoctor</a>,
         <a href="https://www.gibberlings3.net/profile/11715-graion-dilach/">Graion Dilach</a>,
         <a href="https://www.gibberlings3.net/profile/9097-kjeron/">kjeron</a>,
-        <a href="https://www.gibberlings3.net/profile/10832-bubb/">Bubb</a>
-        for technical help (in order of appearance).
+        for technical insights and hints (in order of appearance).
       </li>
       <li>
         <a href="https://www.gibberlings3.net/profile/2129-jarno-mikkola/">Jarno Mikkola</a>,
@@ -231,6 +234,7 @@
       <li><a href="https://gibberlings3.github.io/iesdp/">IESDP</a></li>
       <li><a href="https://weidu.org/~thebigg/README-WeiDU.html">WeiDU Documentation</a></li>
       <li><a href="https://www.pocketplane.net/tutorials/simscript.html">Complete Scripting Guide</a></li>
+      <li><a href="https://eeex-docs.readthedocs.io/en/latest/">EEex Documentation</a></li>
       <li>Work of other modders, especially
         <a href="https://www.gibberlings3.net/mods/tweaks/tweaks/">The Tweaks Anthology</a>,
         <a href="http://www.shsforums.net/files/file/1109-klatu-tweaks-and-fixes/">klatu Tweaks and Fixes</a>,
@@ -255,7 +259,17 @@
 
     <h2 id="changelog">Changelog</h2>
 
-    <h3 id="v04">v0.4</h3>
+    <h3 id="v0_5">v0.5</h3>
+    <ul>
+      <li>Moved Camera Lock (previously Character View Lock) component to Beta:</li>
+      <ul>
+        <li>added UI extension that allows on demand change of camera lock subject or camera unlock,</li>
+        <li>added improved UI handling when EEex available,</li>
+        <li>added support for multiplayer games.</li>
+      </ul>
+    </ul>
+
+    <h3 id="v0_4">v0.4</h3>
     <ul>
       <li>Moved Character Respawn component to Beta:</li>
       <ul>
@@ -265,17 +279,17 @@
       </ul>
     </ul>
 
-    <h3 id="v03">v0.3</h3>
+    <h3 id="v0_3">v0.3</h3>
     <ul>
       <li>More HP on Level One (Beta) for BG1 EE v2.6 (no SoD support)</li>
     </ul>
 
-    <h3 id="v02">v0.2</h3>
+    <h3 id="v0_2">v0.2</h3>
     <ul>
       <li>Character View Lock (Alpha) for BG1 EE v2.6 (no SoD support)</li>
     </ul>
 
-    <h3 id="v01">v0.1</h3>
+    <h3 id="v0_1">v0.1</h3>
     <ul>
       <li>Character Respawn (Alpha) for BG1 EE v2.6 (no SoD support)</li>
     </ul>
