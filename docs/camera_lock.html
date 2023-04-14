@@ -13,11 +13,30 @@
     <div class="container-lg px-3 my-5 markdown-body">
         <h2 id="camera-lock">Camera Lock</h2>
 
-        <p>This component use LockScroll() action to lock view on protagonist character.
-            Scroll is locked right after game loading. Protagonist is then always in the center of the screen.</p>
+        <p>This component locks camera on protagonist character right after game loading. 
+            Protagonist is then always in the center of the screen. 
+            Before every cutscene scroll is unlocked to allow its correct display.
+            Scroll is automatically locked back after cutscene end.</p>
 
-        <p>Before every cutscene scroll is unlock to allow its correct display.
-            Scroll is automiatically locked back after cutscene end.</p>
+        <p>If EEex not present, this component use LockScroll() script action. From game scripts 
+            this action can be applied on character using ActionOverride() action. However, this is not suitable for UI 
+            since ActionOverride() overwrites creature action list, what can lead to stopping movement, wasting spell etc. 
+            Instead ActionOverride(), UI extension is using fact that C:Eval(..) method adds evaluated action at the end of 
+            action list of creature that is currently under the cursor, this also include situation 
+            when cursor is on character portrait. This allows for locking camera without character action interruption.</p>
+
+        <p>With EEex, lock is performed directly on engine structures. This allows to omit creature action list 
+            and perform camera lock immediately after click, even if character is in the middle of the action. 
+            It also allows for performing camera lock on "select all" double click, since ActionOverride() is not longer required.</p>
+
+        <p>Component was also tested in multiplayer game. Camera is locked automatically on the highest character controlled by player 
+            (EEex only). Unlocking camera before cutscenes works correctly, however during dialogues initiated by other players 
+            camera stays lock where it was. All UI actions works like in singleplayer mode and not disrupt other players.</p>
+
+        <p>From technical perspective, in multiplayer game all (un)lock camera related actions executed from game scripts 
+            need to be applied through action list of character controlled by particular player. 
+            That means all such actions need to be repeated with ActionOverride(PlayerX,..) 
+            what can be done only if it not disrupts singleplayer game (when all characters are controlled by the same player).</p>
 
         <hr />
 
