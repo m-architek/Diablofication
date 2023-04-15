@@ -43,6 +43,13 @@ BEGIN
 END
 
 
+DEFINE_PATCH_FUNCTION READ_CRE_HP
+    RET current_hp max_hp
+BEGIN
+    READ_SHORT CRE_HP_CURRENT_OFFSET current_hp
+    READ_SHORT CRE_HP_MAX_OFFSET max_hp
+END
+
 DEFINE_PATCH_FUNCTION PATCH_CRE_HP
     INT_VAR current_hp = ~~
         max_hp = ~~

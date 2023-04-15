@@ -42,12 +42,18 @@ BEGIN
     ) BEGIN 
         SET hp_lvl1 = $~%hp_lvl1_values_ref%~(~%hp_table%~)
         SET hp_static_increment = $~%hp_static_increment_values_ref%~(~%hp_table%~)
-        SET hp = hp_lvl1 + ((level - 1) * hp_static_increment)
+        SET max_hp = hp_lvl1 + ((level - 1) * hp_static_increment)
 
-        PATCH_LOG ~%SOURCE_RES%: %hp_table% level %level% => %hp%~
-        LPF PATCH_CRE_HP INT_VAR current_hp = hp 
-            max_hp = hp
-            END
+        LPF READ_CRE_HP RET existing_current_hp = current_hp existing_max_hp = max_hp END
+        SET rate = (existing_current_hp * 100) / existing_max_hp
+        SET current_hp = (max_hp * rate) / 100
+
+        PATCH_IF (current_hp > 0 AND max_hp > 0)  BEGIN
+            PATCH_LOG ~%SOURCE_RES%: %hp_table% level %level% => %current_hp%/%max_hp% hp (rate %rate%%)~
+            LPF PATCH_CRE_HP INT_VAR current_hp max_hp END
+        END ELSE BEGIN
+            PATCH_FAIL ~Invalid COMPANION CRE %SOURCE_FILE%: calculated hp %current_hp%/%max_hp% (rate %rate%%)~
+        END
     END ELSE BEGIN 
         PATCH_WARN ~Cannot patch COMPANION CRE %SOURCE_RES% with class %class_name% and kit %kit_name%.~
     END
