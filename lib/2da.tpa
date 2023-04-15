@@ -8,7 +8,7 @@ BEGIN
     COUNT_2DA_ROWS 0 raw_rows_count
     SET content_rows_count = raw_rows_count - 2DA_CONTENT_OFFSET
 
-    DEFINE_ASSOCIATIVE_ARRAY out BEGIN END
+    CLEAR_ARRAY out
     FOR (content_row_index = 0; content_row_index < content_rows_count; ++content_row_index) BEGIN
         SET raw_row_index = content_row_index + 2DA_CONTENT_OFFSET // READ_2DA_ENTRY counts from the begginign of the file
         READ_2DA_ENTRY raw_row_index 0 0 row_name
@@ -22,7 +22,7 @@ BEGIN
     COUNT_2DA_COLS raw_columns_count
     SET content_columns_count = raw_columns_count - 1 // First column does not have name
 
-    DEFINE_ASSOCIATIVE_ARRAY out BEGIN END
+    CLEAR_ARRAY out
     FOR (content_coulmn_index = 0; content_coulmn_index < content_columns_count; ++content_coulmn_index) BEGIN
         READ_2DA_ENTRY 2DA_CONTENT_HEADER_ROW_INDEX content_coulmn_index 0 column_name
         DEFINE_ASSOCIATIVE_ARRAY out BEGIN ~%column_name%~ => ~%content_coulmn_index%~ END
@@ -38,7 +38,7 @@ BEGIN
     COUNT_2DA_ROWS 0 raw_rows_count
     SET content_rows_count = raw_rows_count - 2DA_CONTENT_OFFSET
 
-    DEFINE_ASSOCIATIVE_ARRAY out BEGIN END
+    CLEAR_ARRAY out
     FOR (content_row_index = 0; content_row_index < content_rows_count; ++content_row_index) BEGIN
         SET raw_row_index = content_row_index + 2DA_CONTENT_OFFSET // READ_2DA_ENTRY counts from the begginign of the file
         READ_2DA_ENTRY raw_row_index 0 0 this_row_name
@@ -74,7 +74,7 @@ BEGIN
     COUNT_2DA_ROWS 0 raw_rows_count
     SET content_rows_count = raw_rows_count - 2DA_CONTENT_OFFSET
 
-    DEFINE_ASSOCIATIVE_ARRAY out BEGIN END
+    CLEAR_ARRAY out
     FOR (content_row_index = 0; content_row_index < content_rows_count; ++content_row_index) BEGIN
         SET raw_row_index = content_row_index + 2DA_CONTENT_OFFSET // READ_2DA_ENTRY counts from the begginign of the file
         READ_2DA_ENTRY raw_row_index 0 0 row_name
