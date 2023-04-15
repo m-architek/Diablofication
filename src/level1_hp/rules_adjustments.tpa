@@ -3,18 +3,19 @@ DEFINE_ACTION_FUNCTION APPLY_RULES_ADJUSTMENTS
         hp_lvl1_values 
         hp_static_increment_values 
 BEGIN
+    ACTION_CLEAR_ARRAY hpclass_table
     COPY_EXISTING - ~hpclass.2da~ ~~
         LPF READ_2DA_COLUMN STR_VAR column_name = ~TABLE~
             RET_ARRAY hpclass_table = out
             END
     
-    ACTION_DEFINE_ASSOCIATIVE_ARRAY hp_tables BEGIN END
+    ACTION_CLEAR_ARRAY hp_tables
     ACTION_PHP_EACH hpclass_table AS _ => table BEGIN
         ACTION_DEFINE_ASSOCIATIVE_ARRAY hp_tables BEGIN ~%table%~ => ~~ END
     END
     
-    ACTION_DEFINE_ASSOCIATIVE_ARRAY hp_lvl1_values BEGIN END
-    ACTION_DEFINE_ASSOCIATIVE_ARRAY hp_static_increment_values BEGIN END
+    ACTION_CLEAR_ARRAY hp_lvl1_values
+    ACTION_CLEAR_ARRAY hp_static_increment_values
     ACTION_PHP_EACH hp_tables AS hp_table => _ BEGIN
         COPY_EXISTING ~%hp_table%.2DA~ ~override~
             LPF PATCH_HP_TABLE RET lvl1_hp static_increment END
@@ -63,7 +64,8 @@ BEGIN
         SET lvl1_hp = lvl1_hp - static_increment_based_reduction
         
         PATCH_IF (lvl1_hp > 0) BEGIN
-            DEFINE_ASSOCIATIVE_ARRAY patches BEGIN END
+            CLEAR_ARRAY patches
+            CLEAR_ARRAY patch_1
 
             DEFINE_ASSOCIATIVE_ARRAY patch_1 BEGIN 
                 ROLLS => 0
@@ -72,6 +74,7 @@ BEGIN
             DEFINE_ASSOCIATIVE_ARRAY patches BEGIN 1 => patch_1 END
 
             FOR (lvl = 2; lvl < first_static_lvl; ++lvl) BEGIN
+                CLEAR_ARRAY ~patch_%lvl%~
                 DEFINE_ASSOCIATIVE_ARRAY ~patch_%lvl%~ BEGIN 
                     ROLLS => 0
                     MODIFIER => ~%static_increment%~
