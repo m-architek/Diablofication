@@ -35,12 +35,20 @@ BEGIN
     ) BEGIN
         SPRINT hp_table $~%hpclass_table_ref%~(~%kit_name%~)
     END
-    SET hp_lvl1 = $~%hp_lvl1_values_ref%~(~%hp_table%~)
-    SET hp_static_increment = $~%hp_static_increment_values_ref%~(~%hp_table%~)
-    SET hp = hp_lvl1 + ((level - 1) * hp_static_increment)
 
-    PATCH_LOG ~%SOURCE_RES%: %hp_table% level %level% => %hp%~
-    LPF PATCH_CRE_HP INT_VAR current_hp = hp 
-        max_hp = hp
-        END
+    PATCH_IF (
+        VARIABLE_IS_SET $~%hp_lvl1_values_ref%~(~%hp_table%~) AND
+        VARIABLE_IS_SET $~%hp_static_increment_values_ref%~(~%hp_table%~)
+    ) BEGIN 
+        SET hp_lvl1 = $~%hp_lvl1_values_ref%~(~%hp_table%~)
+        SET hp_static_increment = $~%hp_static_increment_values_ref%~(~%hp_table%~)
+        SET hp = hp_lvl1 + ((level - 1) * hp_static_increment)
+
+        PATCH_LOG ~%SOURCE_RES%: %hp_table% level %level% => %hp%~
+        LPF PATCH_CRE_HP INT_VAR current_hp = hp 
+            max_hp = hp
+            END
+    END ELSE BEGIN 
+        PATCH_WARN ~Cannot patch COMPANION CRE %SOURCE_RES% with class %class_name% and kit %kit_name%.~
+    END
 END
