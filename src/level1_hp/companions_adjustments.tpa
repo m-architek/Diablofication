@@ -52,9 +52,11 @@ BEGIN
             PATCH_LOG ~%SOURCE_RES%: %hp_table% level %level% => %current_hp%/%max_hp% hp (rate %rate%%)~
             LPF PATCH_CRE_HP INT_VAR current_hp max_hp END
         END ELSE BEGIN
-            PATCH_FAIL ~Invalid COMPANION CRE %SOURCE_FILE%: calculated hp %current_hp%/%max_hp% (rate %rate%%)~
+            PATCH_FAIL ~Invalid COMPANION CRE %SOURCE_RES%: calculated hp %current_hp%/%max_hp% (rate %rate%%)~
         END
     END ELSE BEGIN 
-        PATCH_WARN ~Cannot patch COMPANION CRE %SOURCE_RES% with class %class_name% and kit %kit_name%.~
+        PATCH_IF (NOT ~%SOURCE_RES%~ STR_EQ ~CEBEAR01~) BEGIN 
+            PATCH_WARN ~Cannot patch COMPANION CRE %SOURCE_RES% with class %class_name% and kit %kit_name%.~
+        END
     END
 END
