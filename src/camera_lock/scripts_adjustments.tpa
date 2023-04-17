@@ -46,7 +46,7 @@ END
 DEFINE_PATCH_FUNCTION PATCH_CUTSCENE_START 
     STR_VAR unlock_scroll_action = 0
 BEGIN
-    REPLACE_TEXTUALLY EXACT_MATCH ~StartCutSceneMode()~ ~~~~~
+    REPLACE_TEXTUALLY CASE_INSENSITIVE EXACT_MATCH ~StartCutSceneMode()~ ~~~~~
         %unlock_scroll_action%
         StartCutSceneMode()
     ~~~~~
@@ -56,7 +56,7 @@ DEFINE_PATCH_FUNCTION PATCH_CUTSCENE_END
     STR_VAR lock_scroll_action = 0
 BEGIN
 
-    REPLACE_TEXTUALLY EXACT_MATCH ~EndCutSceneMode()~ ~~~~~
+    REPLACE_TEXTUALLY CASE_INSENSITIVE EXACT_MATCH ~EndCutSceneMode()~ ~~~~~
         EndCutSceneMode()
         %lock_scroll_action%
     ~~~~~

@@ -22,7 +22,7 @@ BEGIN
     DEFINE_ARRAY portraits BEGIN 0 1 2 3 4 5 END
     
     PHP_EACH portraits AS _ => portrait BEGIN 
-        REPLACE_TEXTUALLY EXACT_MATCH ~Infinity_OnPortraitDblClick(%portrait%)~ ~~~~~
+        REPLACE_TEXTUALLY CASE_SENSITIVE EXACT_MATCH ~Infinity_OnPortraitDblClick(%portrait%)~ ~~~~~
             %lock_scroll_lua_fn%()
             Infinity_OnPortraitDblClick(%portrait%)
         ~~~~~
@@ -32,7 +32,7 @@ END
 DEFINE_PATCH_FUNCTION APPLY_LOCK_ON_CENTER_ON_GROUP_LEADER 
     STR_VAR lock_scroll_on_leader_lua_fn = 0
 BEGIN
-    REPLACE_TEXTUALLY EXACT_MATCH ~game:CenterOnGroupLeader()~ ~~~~~
+    REPLACE_TEXTUALLY CASE_SENSITIVE EXACT_MATCH ~game:CenterOnGroupLeader()~ ~~~~~
         %lock_scroll_on_leader_lua_fn%()
         game:CenterOnGroupLeader()
     ~~~~~
@@ -43,7 +43,7 @@ DEFINE_PATCH_FUNCTION APPLY_UNLOCK_ON_SELECT_ALL_ALTCLICK
 BEGIN
     SET ok = 0
     
-    REPLACE_EVALUATE ~action%s%*?"%s%*?game:SelectAll()%s%*?"~ 
+    REPLACE_EVALUATE CASE_SENSITIVE ~action%s%*?"%s%*?game:SelectAll()%s%*?"~ 
         BEGIN 
             SET ok = 1
         END ~~~~~

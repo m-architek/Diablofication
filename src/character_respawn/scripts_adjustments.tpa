@@ -29,18 +29,18 @@ BEGIN
         Continue()
     ~~~~~
 
-    REPLACE_TEXTUALLY EXACT_MATCH ~Kill(Player1)~ ~%kill_player1_action%~
-    REPLACE_TEXTUALLY EXACT_MATCH ~Kill(Protagonist)~ ~%kill_player1_action%~
-    REPLACE_TEXTUALLY EXACT_MATCH ~GameOver(19377)~ ~%kill_player1_action%~
+    REPLACE_TEXTUALLY CASE_INSENSITIVE EXACT_MATCH ~Kill(Player1)~ ~%kill_player1_action%~
+    REPLACE_TEXTUALLY CASE_INSENSITIVE EXACT_MATCH ~Kill(Protagonist)~ ~%kill_player1_action%~
+    REPLACE_TEXTUALLY CASE_INSENSITIVE EXACT_MATCH ~GameOver(19377)~ ~%kill_player1_action%~
 END
 
 DEFINE_PATCH_FUNCTION PATCH_1HP_TRIGGERS_AND_ACTIONS BEGIN
-    REPLACE_TEXTUALLY EXACT_MATCH ~HP(Player1,1) ~ ~HP(Player1,2)~
-    REPLACE_TEXTUALLY EXACT_MATCH ~HP(Protagonist,1) ~ ~HP(Protagonist,2)~
-    REPLACE_TEXTUALLY EXACT_MATCH ~HPLT(Player1,2) ~ ~HPLT(Player1,3)~
-    REPLACE_TEXTUALLY EXACT_MATCH ~HPLT(Protagonist,2) ~ ~HPLT(Protagonist,3)~
-    REPLACE_TEXTUALLY EXACT_MATCH ~ChangeStat(Player1,CURHITPOINTS,1,SET) ~ ~ChangeStat(Player1,CURHITPOINTS,2,SET)~
-    REPLACE_TEXTUALLY EXACT_MATCH ~ChangeStat(Protagonist,CURHITPOINTS,1,SET) ~ ~ChangeStat(Protagonist,CURHITPOINTS,2,SET)~
+    REPLACE_TEXTUALLY CASE_INSENSITIVE EXACT_MATCH ~HP(Player1,1) ~ ~HP(Player1,2)~
+    REPLACE_TEXTUALLY CASE_INSENSITIVE EXACT_MATCH ~HP(Protagonist,1) ~ ~HP(Protagonist,2)~
+    REPLACE_TEXTUALLY CASE_INSENSITIVE EXACT_MATCH ~HPLT(Player1,2) ~ ~HPLT(Player1,3)~
+    REPLACE_TEXTUALLY CASE_INSENSITIVE EXACT_MATCH ~HPLT(Protagonist,2) ~ ~HPLT(Protagonist,3)~
+    REPLACE_TEXTUALLY CASE_INSENSITIVE EXACT_MATCH ~ChangeStat(Player1,CURHITPOINTS,1,SET) ~ ~ChangeStat(Player1,CURHITPOINTS,2,SET)~
+    REPLACE_TEXTUALLY CASE_INSENSITIVE EXACT_MATCH ~ChangeStat(Protagonist,CURHITPOINTS,1,SET) ~ ~ChangeStat(Protagonist,CURHITPOINTS,2,SET)~
 END
 
 DEFINE_ACTION_FUNCTION APPLY_PALACE_ESCORT_MISSION_ADJUSTMENTS BEGIN 
@@ -55,16 +55,16 @@ DEFINE_ACTION_FUNCTION APPLY_PALACE_ESCORT_MISSION_ADJUSTMENTS BEGIN
     
     COPY_EXISTING ~SARDOPP.BCS~ ~override~
         DECOMPILE_AND_PATCH BEGIN
-            REPLACE_TEXTUALLY EXACT_MATCH ~AttackReevaluate("Liia"~ ~AttackReevaluate(Player1~
-            REPLACE_TEXTUALLY EXACT_MATCH ~AttackReevaluate("Belt"~ ~AttackReevaluate([PC]~
-            REPLACE_TEXTUALLY EXACT_MATCH ~Attack("Liia"~ ~Attack(Player1~
-            REPLACE_TEXTUALLY EXACT_MATCH ~Attack("Belt"~ ~Attack([PC]~
+            REPLACE_TEXTUALLY CASE_INSENSITIVE EXACT_MATCH ~AttackReevaluate("Liia"~ ~AttackReevaluate(Player1~
+            REPLACE_TEXTUALLY CASE_INSENSITIVE EXACT_MATCH ~AttackReevaluate("Belt"~ ~AttackReevaluate([PC]~
+            REPLACE_TEXTUALLY CASE_INSENSITIVE EXACT_MATCH ~Attack("Liia"~ ~Attack(Player1~
+            REPLACE_TEXTUALLY CASE_INSENSITIVE EXACT_MATCH ~Attack("Belt"~ ~Attack([PC]~
         END
         BUT_ONLY
 
     COPY_EXISTING ~SAREVO.DLG~ ~override~
         DECOMPILE_AND_PATCH BEGIN
-            REPLACE_TEXTUALLY EXACT_MATCH ~SetGlobal("SarevokBehavior","GLOBAL",10)~ ~StartCutSceneMode()~
+            REPLACE_TEXTUALLY CASE_INSENSITIVE EXACT_MATCH ~SetGlobal("SarevokBehavior","GLOBAL",10)~ ~StartCutSceneMode()~
         END
         BUT_ONLY   
 END
