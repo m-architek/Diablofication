@@ -1,0 +1,41 @@
+DEFINE_ACTION_FUNCTION APPLY_SCRIPTS_ADJUSTMENTS BEGIN
+    
+    ACTION_CLEAR_ARRAY add_xp_patterns
+    ACTION_DEFINE_ARRAY add_xp_patterns BEGIN
+        ~AddExperienceParty(.*?)~
+        ~AddXPObject(.*?)~
+        ~AddXP2DA(.*?)~
+    END
+
+
+    COPY_EXISTING_REGEXP GLOB ~^.+\.bcs$~ ~override~
+        PATCH_IF (
+            NOT ~%SOURCE_RES%~ STR_EQ ~AR1002~ AND
+            NOT ~%SOURCE_RES%~ STR_EQ ~TANARI~
+        ) BEGIN 
+            DECOMPILE_AND_PATCH BEGIN
+                LPF PATCH_NONCOMBAT_XP STR_VAR add_xp_patterns_ref = add_xp_patterns END
+            END
+        END
+        BUT_ONLY
+
+    COPY_EXISTING_REGEXP GLOB ~^.+\.dlg$~ ~override~
+        PATCH_IF () BEGIN 
+            DECOMPILE_AND_PATCH BEGIN
+                LPF PATCH_NONCOMBAT_XP STR_VAR add_xp_patterns_ref = add_xp_patterns END
+            END
+        END
+        BUT_ONLY
+END
+
+DEFINE_PATCH_FUNCTION PATCH_NONCOMBAT_XP 
+    STR_VAR add_xp_patterns_ref = 0 
+BEGIN
+    PHP_EACH ~%add_xp_patterns_ref%~ AS _ => pattern BEGIN 
+        REPLACE_EVALUATE CASE_INSENSITIVE ~%pattern%~
+            BEGIN 
+                PATCH_PRINT ~%SOURCE_EXT% %SOURCE_RES%: %MATCH0%~
+            END 
+            ~NoAction()~ 
+    END
+END

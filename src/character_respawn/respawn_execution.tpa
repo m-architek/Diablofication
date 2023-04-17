@@ -196,7 +196,7 @@ BEGIN
 
     COPY_EXISTING ~CH6CUT01.BCS~ ~override~
         DECOMPILE_AND_PATCH BEGIN
-            REPLACE_TEXTUALLY EXACT_MATCH ~CutSceneId(Player1)~ ~~~~~
+            REPLACE_TEXTUALLY CASE_INSENSITIVE EXACT_MATCH ~CutSceneId(Player1)~ ~~~~~
                 CutSceneId(Player1)
                 SetGlobal("%candlekeep_enter_variable%", "GLOBAL", 1)
             ~~~~~
