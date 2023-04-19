@@ -7,23 +7,17 @@ DEFINE_ACTION_FUNCTION APPLY_SCRIPTS_ADJUSTMENTS BEGIN
         ~AddXP2DA(.*?)~
     END
 
-
-    COPY_EXISTING_REGEXP GLOB ~^.+\.bcs$~ ~override~
-        PATCH_IF (
-            NOT ~%SOURCE_RES%~ STR_EQ ~AR1002~ AND
-            NOT ~%SOURCE_RES%~ STR_EQ ~TANARI~
-        ) BEGIN 
+    COPY_EXISTING_REGEXP GLOB ~^.+\.dlg$~ ~override~
+        PATCH_IF (NOT ~%SOURCE_RES%~ STR_EQ ~NARRAT2~) BEGIN 
             DECOMPILE_AND_PATCH BEGIN
                 LPF PATCH_NONCOMBAT_XP STR_VAR add_xp_patterns_ref = add_xp_patterns END
             END
         END
         BUT_ONLY
 
-    COPY_EXISTING_REGEXP GLOB ~^.+\.dlg$~ ~override~
-        PATCH_IF () BEGIN 
-            DECOMPILE_AND_PATCH BEGIN
-                LPF PATCH_NONCOMBAT_XP STR_VAR add_xp_patterns_ref = add_xp_patterns END
-            END
+    COPY_EXISTING ~BALDUR.BCS~ ~override~
+        DECOMPILE_AND_PATCH BEGIN
+            REPLACE_TEXTUALLY CASE_INSENSITIVE EXACT_MATCH ~AddExperienceParty(10000)~ ~NoAction()~
         END
         BUT_ONLY
 END
@@ -34,7 +28,7 @@ BEGIN
     PHP_EACH ~%add_xp_patterns_ref%~ AS _ => pattern BEGIN 
         REPLACE_EVALUATE CASE_INSENSITIVE ~%pattern%~
             BEGIN 
-                PATCH_PRINT ~%SOURCE_EXT% %SOURCE_RES%: %MATCH0%~
+                PATCH_LOG ~PATCH_NONCOMBAT_XP %SOURCE_EXT% %SOURCE_RES%: Remove action %MATCH0%~
             END 
             ~NoAction()~ 
     END
