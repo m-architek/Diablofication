@@ -1,0 +1,24 @@
+DEFINE_ACTION_FUNCTION APPLY_RULES_ADJUSTMENTS BEGIN 
+    ACTION_CLEAR_ARRAY skills
+    ACTION_CLEAR_ARRAY skill_levels
+    ACTION_CLEAR_ARRAY patches
+
+    COPY_EXISTING ~xpbonus.2da~ ~override~
+        LPF READ_2DA_ROW_NAMES RET_ARRAY skills = out END
+        LPF READ_2DA_COLUMN_NAMES RET_ARRAY skill_levels = out END
+        
+        PHP_EACH skills AS skill => _ BEGIN 
+            CLEAR_ARRAY ~patch_%skill%~
+            PHP_EACH skill_levels AS skill_level => _ BEGIN 
+                DEFINE_ASSOCIATIVE_ARRAY ~patch_%skill%~ BEGIN 
+                    ~%skill_level%~ => 0
+                END
+            END
+            DEFINE_ASSOCIATIVE_ARRAY patches BEGIN 
+                ~%skill%~ => ~patch_%skill%~
+            END
+        END
+        LPF PATCH_2DA_TABLE STR_VAR patches_ref = patches END
+        PRETTY_PRINT_2DA
+        BUT_ONLY
+END
