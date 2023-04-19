@@ -86,6 +86,7 @@
 
     <ul>
       <li><a href="#character-respawn">Character Respawn (Beta)</a></li>
+      <li><a href="#noncombat-xp">Remove Non-Combat Experience</a></li>
       <li><a href="#level1-hp">More HP on Level One</a></li>
       <li><a href="#camera-lock">Camera Lock (Beta)</a></li>
     </ul>
@@ -123,6 +124,24 @@
 
     <br />
 
+    <h3 id="noncombat-xp">Remove Non-Combat Experience</h3>
+
+    <p>Removes experience points rewards from quests, dialogues, thief ability usages and spell learning.</p>
+
+    <p><strong>Motivation:</strong> Removal of "free" XP in early parts of the game. Reducing overall XP amount for solo playthroughs. 
+      Increased freedom in picking dialogue options for powergamers.</p>
+
+    <p><strong>Installation:</strong> This component should be installed after every mod that adds new quests and dialogues.
+      Starting new game is not required.</p>
+
+    <p><strong>Compatibility:</strong> This component will not be compatible with every modification that alters XP rewards, 
+      like XP adjustments components from <a href="https://rawgit.com/K4thos/EET_Tweaks/master/EET_Tweaks/readme-EET_Tweaks.html"
+      >EET Tweaks</a> (excluding those related to combat XP).</p>
+
+    <p>See <a href="./docs/noncombat_xp.html">here</a> for more details (this can include spoilers).</p>
+
+    <br />
+
     <h3 id="level1-hp">More HP on Level One</h3>
 
     <p>Significantly increases HP amount that protagonist and all companions receives on level one.
@@ -142,7 +161,7 @@
     <p><strong>Tip:</strong> This component ignores "Maximum HP" game option. It always calculates HP using "Maximum HP"
       rule.</p>
 
-    <p>See <a href="./docs/level1-hp.html">here</a> for more details.</p>
+    <p>See <a href="./docs/level1_hp.html">here</a> for more details.</p>
 
     <br />
 
@@ -262,6 +281,7 @@
         <li>removed installation failure caused by companions with non standard classes,</li>
         <li>added maintenance of companion hp rate during hp calculation.</li>
       </ul>
+      <li>Remove Non-Combat Experience for BG1 EE v2.6 (no SoD support)</li>
     </ul>
 
     <h3 id="v0_4">v0.4</h3>
