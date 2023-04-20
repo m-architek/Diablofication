@@ -87,6 +87,7 @@
     <ul>
       <li><a href="#character-respawn">Character Respawn (Beta)</a></li>
       <li><a href="#noncombat-xp">Remove Non-Combat Experience</a></li>
+      <li><a href="#spells-regen">Spells Regeneration</a></li>
       <li><a href="#level1-hp">More HP on Level One</a></li>
       <li><a href="#camera-lock">Camera Lock (Beta)</a></li>
     </ul>
@@ -126,7 +127,7 @@
 
     <h3 id="noncombat-xp">Remove Non-Combat Experience</h3>
 
-    <p>Removes experience points rewards from quests, dialogues, thief ability usages and spell learning.</p>
+    <p>Removes experience points rewards from quests, dialogues, thief ability usages and spells learning.</p>
 
     <p><strong>Motivation:</strong> Removal of "free" XP in early parts of the game. Reducing overall XP amount for solo playthroughs. 
       Increased freedom in picking dialogue options for powergamers.</p>
@@ -139,6 +140,21 @@
       >EET Tweaks</a> (excluding those related to combat XP).</p>
 
     <p>See <a href="./docs/noncombat_xp.html">here</a> for more details (this can include spoilers).</p>
+
+    <br />
+
+    <h3 id="spells-regen">Spells Regeneration</h3>
+
+    <p>Grants out of combat regenration of one spell (arcane and divine) per round for all party members (including familiars).</p>
+
+    <p><strong>Motivation:</strong> Making playthrough with casters more dynamic by reducing number of required resting.</p>
+
+    <p><strong>Installation:</strong> This component has no installation order restrictions.
+      Starting new game is not required.</p>
+
+    <p><strong>Compatibility:</strong> This component has no compatibility restrictions.</p>
+
+    <p>See <a href="./docs/spells_regen.html">here</a> for more details.</p>
 
     <br />
 
@@ -185,7 +201,8 @@
       camera lock is performed using character action list. That means, if character is in the middle of some action, 
       like movement or spell casting, camera locked will be delayed until action finish. 
       <a href="https://eeex-docs.readthedocs.io/en/latest/">EEex</a> allows for overcome this limitation. 
-      Additionally, it allows to perform camera lock on party leader after double click on "select all" button.</p>
+      Additionally, it allows to perform camera lock on party leader after double click on "select all" button.
+      In multiplayer game, camera unlock not work properly for players other then host, unless EEex is installed.</p>
 
     <p><strong>Tip:</strong> Move your character using right click button to avoid group select when view is still in
       move.</p>
@@ -270,23 +287,24 @@
 
     <h3 id="v0_5">v0.5</h3>
     <ul>
-      <li>Moved Camera Lock (previously Character View Lock) component to Beta:</li>
+      <li>Camera Lock (previously Character View Lock, now in Beta):</li>
       <ul>
         <li>added UI extension that allows on demand change of camera lock subject or camera unlock,</li>
         <li>added improved UI handling when EEex available,</li>
         <li>added support for multiplayer games.</li>
       </ul>
-      <li>Moved More HP on Level One component out of Beta:</li>
+      <li>More HP on Level One (now out of Beta):</li>
       <ul>
         <li>removed installation failure caused by companions with non standard classes,</li>
         <li>added maintenance of companion hp rate during hp calculation.</li>
       </ul>
       <li>Remove Non-Combat Experience for BG1 EE v2.6 (no SoD support)</li>
+      <li>Spells Regeneration for BG1 EE v2.6 (no SoD support)</li>
     </ul>
 
     <h3 id="v0_4">v0.4</h3>
     <ul>
-      <li>Moved Character Respawn component to Beta:</li>
+      <li>Character Respawn (now in Beta):</li>
       <ul>
         <li>fixed bug when death in polymorphed state preserve this form and make unable to return to natural form,</li>
         <li>added proper handling for all possible death scenarios including those unpresent in unmodded game,</li>
