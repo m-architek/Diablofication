@@ -14,7 +14,7 @@ COPY ~%resources%/blank.spl~ ~override/%RESREF_SPL_SR_REGENERATION%.SPL~
 
 
 ACTION_CLEAR_ARRAY players
-ACTION_DEFINE_ARRAY players BEGIN Player1 Player2 Player3 Player4 Player5 Player6 END
+ACTION_DEFINE_ARRAY players BEGIN Player1 Player2 Player3 Player4 Player5 Player6 Familiar END
 
 <<<<<<<< .../spells_regen.baf
 IF
