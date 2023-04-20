@@ -31,7 +31,9 @@
 
         <p>Component was also tested in multiplayer game. Camera is locked automatically on the highest character controlled by player 
             (EEex only). Unlocking camera before cutscenes works correctly, however during dialogues initiated by other players 
-            camera stays lock where it was. All UI actions works like in singleplayer mode and not disrupt other players.</p>
+            camera stays lock where it was. Camera lock on portrait double click works like in singleplayer mode and not disrupt 
+            other players. Camera unlock on "select all" right click not work in multiplayer game for other players then host, 
+            unless EEex is installed.</p>
 
         <p>From technical perspective, in multiplayer game all (un)lock camera related actions executed from game scripts 
             need to be applied through action list of character controlled by particular player. 
