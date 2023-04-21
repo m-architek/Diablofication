@@ -19,6 +19,7 @@ ACTION_DEFINE_ARRAY players BEGIN Player1 Player2 Player3 Player4 Player5 Player
 <<<<<<<< .../spells_regen.baf
 IF
     Exists(%player%)
+    !StateCheck(%player%, STATE_REALLY_DEAD)
     !TriggerOverride(%player%, ActuallyInCombat())
     !GlobalTimerNotExpired("%timer%","GLOBAL")
 THEN
