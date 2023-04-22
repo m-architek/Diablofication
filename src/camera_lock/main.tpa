@@ -1,5 +1,6 @@
-INCLUDE ~%src%/scripts_adjustments.tpa~
-INCLUDE ~%src%/ui_adjustments.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/resources.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/scripts_adjustments.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/ui_adjustments.tpa~
 
 LAF APPLY_UI_ADJUSTMENTS RET lock_scroll_on_leader_lua_fn END
 LAF APPLY_SCRIPTS_ADJUSTMENTS STR_VAR lock_scroll_on_leader_lua_fn END

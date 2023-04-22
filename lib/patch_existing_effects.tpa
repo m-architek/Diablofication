@@ -1,6 +1,10 @@
-DEFINE_ACTION_FUNCTION PATCH_ALL_EFFECTS 
+DEFINE_ACTION_FUNCTION PATCH_EXISTING_EFFECTS 
     STR_VAR patches_ref = 0
 BEGIN 
+    PRINT ~~
+    PRINT ~Patching existing effects. This can take a while...~
+    PRINT ~~
+
     LAF PATCH_EFF_V2_EFFECT_RECURSIVE STR_VAR glob = ~^.+\.eff$~ patches_ref
         RET_ARRAY ~%patches_ref%_box~
         END

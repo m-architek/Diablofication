@@ -6,7 +6,7 @@ BEGIN
         patch_type => ~CLONE~
         match_opcode => EFF_OPCODE_KILL_CREATURE
         opcode => EFF_OPCODE_USE_EFF_FILE
-        resource => ~%RESREF_EFF_CR_KILL_CREATURE%~
+        resource => ~%RESREF_EFF_KILL_CREATURE%~
     END
     
     ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_KILL_CREATURE_IMMUNITY BEGIN
@@ -16,24 +16,24 @@ BEGIN
         opcode => EFF_OPCODE_PROTECTION_FROM_SPELL
         parameter1 => 0
         parameter2 => 0
-        resource => ~%RESREF_EFF_CR_KILL_CREATURE%~
+        resource => ~%RESREF_EFF_KILL_CREATURE%~
     END
 
     ACTION_DEFINE_ASSOCIATIVE_ARRAY ~%patches_ref%~ BEGIN 
-        KILL_CREATURE => patch_KILL_CREATURE
-        KILL_CREATURE_IMMUNITY => patch_KILL_CREATURE_IMMUNITY
+        ~%CHARACTER_RESPAWN_PREFIX%_KILL_CREATURE~ => patch_KILL_CREATURE
+        ~%CHARACTER_RESPAWN_PREFIX%_KILL_CREATURE_IMMUNITY~ => patch_KILL_CREATURE_IMMUNITY
     END
 END
 
 DEFINE_ACTION_FUNCTION APPLY_KILL_CREATURE_RESOURCES 
     STR_VAR instant_death_variable = 0
 BEGIN
-    COPY ~%resources%/blank.eff~ ~override/%RESREF_EFF_CR_KILL_CREATURE%.EFF~
+    CREATE ~EFF~ ~%RESREF_EFF_KILL_CREATURE%~
         LPF ALTER_EFF_V2_EFFECT
             INT_VAR opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
                 parameter1 = 1
                 parent_resource_type = EFF_V2_PARENT_RESOURCE_TYPE_SPELL
             STR_VAR resource = ~%instant_death_variable%~
-                parent_resource = ~%RESREF_EFF_CR_KILL_CREATURE%~
+                parent_resource = ~%RESREF_EFF_KILL_CREATURE%~
             END
 END

@@ -8,7 +8,7 @@ BEGIN
         opcode => EFF_OPCODE_USE_EFF_FILE
         parameter1 => 2 // PC
         parameter2 => 2 // EA
-        resource => ~%RESREF_EFF_CR_IMPRISONMENT%~
+        resource => ~%RESREF_EFF_IMPRISONMENT%~
     END
 
     ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_IMPRISONMENT_IMMUNITY BEGIN
@@ -18,24 +18,24 @@ BEGIN
         opcode => EFF_OPCODE_PROTECTION_FROM_SPELL
         parameter1 => 0 // Message
         parameter2 => 0 // Irrelevant
-        resource => ~%RESREF_EFF_CR_IMPRISONMENT%~
+        resource => ~%RESREF_EFF_IMPRISONMENT%~
     END
 
     ACTION_DEFINE_ASSOCIATIVE_ARRAY ~%patches_ref%~ BEGIN 
-        IMPRISONMENT => patch_IMPRISONMENT
-        IMPRISONMENT_IMMUNITY => patch_IMPRISONMENT_IMMUNITY
+        ~%CHARACTER_RESPAWN_PREFIX%_IMPRISONMENT~ => patch_IMPRISONMENT
+        ~%CHARACTER_RESPAWN_PREFIX%_IMPRISONMENT_IMMUNITY~ => patch_IMPRISONMENT_IMMUNITY
     END
 END
 
 DEFINE_ACTION_FUNCTION APPLY_IMPRISONMENT_RESOURCES 
     STR_VAR instant_death_variable = 0
 BEGIN
-    COPY ~%resources%/blank.eff~ ~override/%RESREF_EFF_CR_IMPRISONMENT%.EFF~
+    CREATE ~EFF~ ~%RESREF_EFF_IMPRISONMENT%~
         LPF ALTER_EFF_V2_EFFECT
             INT_VAR opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
                 parameter1 = 1
                 parent_resource_type = EFF_V2_PARENT_RESOURCE_TYPE_SPELL
             STR_VAR resource = ~%instant_death_variable%~
-                parent_resource = ~%RESREF_EFF_CR_IMPRISONMENT%~
+                parent_resource = ~%RESREF_EFF_IMPRISONMENT%~
             END
 END

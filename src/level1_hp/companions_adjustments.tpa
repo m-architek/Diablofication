@@ -3,7 +3,8 @@ DEFINE_ACTION_FUNCTION APPLY_COMPANIONS_ADJUSTMENTS
         hp_lvl1_values_ref = 0
         hp_static_increment_values_ref = 0
 BEGIN
-    LAM JOINABLE_NPC_ARRAY
+    LAF JOINABLE_NPC_ARRAY RET_ARRAY JOINABLE_NPC_ARRAY END
+    
     ACTION_PHP_EACH JOINABLE_NPC_ARRAY AS cre => dv BEGIN
         COPY_EXISTING ~%cre%~ ~override~
             LPF PATCH_COMPANION_CRE STR_VAR hpclass_table_ref 

@@ -63,11 +63,11 @@ DEFINE_ACTION_FUNCTION APPLY_RESPAWN_PENALTY_XP RET check_cutscene_name penalty_
     THEN
         RESPONSE #100
             CutSceneId(%player%)
-            SetGlobal("%GLOBAL_CR_XP_PENALTY%%player%", "GLOBAL", %respawn_penalty_xp_threshold%)
+            SetGlobal("%GLOBAL_XP_PENALTY%%player%", "GLOBAL", %respawn_penalty_xp_threshold%)
     END
     >>>>>>>>
 
-    OUTER_SPRINT check_cutscene_name ~%RESREF_BCS_CR_XP_PENALTY_CHECK%~
+    OUTER_SPRINT check_cutscene_name ~%RESREF_BCS_XP_PENALTY_CHECK%~
 
     ACTION_PHP_EACH respawn_penalty_xp_thresholds AS respawn_penalty_xp_threshold => _ BEGIN
         OUTER_SPRINT respawn_penalty_xp_threshold_ref ~respawn_penalty_xp_threshold_%respawn_penalty_xp_threshold%~
@@ -81,16 +81,16 @@ DEFINE_ACTION_FUNCTION APPLY_RESPAWN_PENALTY_XP RET check_cutscene_name penalty_
 
     <<<<<<<< .../apply_respawn_penalty_xp.baf
     IF
-        Global("%GLOBAL_CR_XP_PENALTY%%player%", "GLOBAL", %respawn_penalty_xp_threshold%)
+        Global("%GLOBAL_XP_PENALTY%%player%", "GLOBAL", %respawn_penalty_xp_threshold%)
     THEN
         RESPONSE #100
             CutSceneId(%player%)
             AddXPObject(%player%, -%xp_penalty%) 
-            SetGlobal("%GLOBAL_CR_XP_PENALTY%%player%", "GLOBAL", 0)
+            SetGlobal("%GLOBAL_XP_PENALTY%%player%", "GLOBAL", 0)
     END
     >>>>>>>>
 
-    OUTER_SPRINT penalty_cutscene_name ~%RESREF_BCS_CR_XP_PENALTY_APPLY%~
+    OUTER_SPRINT penalty_cutscene_name ~%RESREF_BCS_XP_PENALTY_APPLY%~
 
     ACTION_PHP_EACH respawn_penalty_xp_thresholds AS respawn_penalty_xp_threshold => _ BEGIN
         OUTER_SPRINT respawn_penalty_xp_threshold_ref ~respawn_penalty_xp_threshold_%respawn_penalty_xp_threshold%~
@@ -118,11 +118,11 @@ DEFINE_ACTION_FUNCTION APPLY_RESPAWN_PENALTY_GOLD RET check_cutscene_name penalt
     THEN
         RESPONSE #100
             CutSceneId(Player1)
-            SetGlobal("%GLOBAL_CR_GOLD_PENALTY%", "GLOBAL", %respawn_penalty_gold_threshold%)
+            SetGlobal("%GLOBAL_GOLD_PENALTY%", "GLOBAL", %respawn_penalty_gold_threshold%)
     END
     >>>>>>>>
 
-    OUTER_SPRINT check_cutscene_name ~%RESREF_BCS_CR_GOLD_PENALTY_CHECK%~
+    OUTER_SPRINT check_cutscene_name ~%RESREF_BCS_GOLD_PENALTY_CHECK%~
 
     ACTION_PHP_EACH respawn_penalty_gold_thresholds AS respawn_penalty_gold_threshold => _ BEGIN
         OUTER_SPRINT respawn_penalty_gold_threshold_ref ~respawn_penalty_gold_threshold_%respawn_penalty_gold_threshold%~
@@ -133,16 +133,16 @@ DEFINE_ACTION_FUNCTION APPLY_RESPAWN_PENALTY_GOLD RET check_cutscene_name penalt
 
     <<<<<<<< .../apply_respawn_penalty_gold.baf
     IF
-        Global("%GLOBAL_CR_GOLD_PENALTY%", "GLOBAL", %respawn_penalty_gold_threshold%)
+        Global("%GLOBAL_GOLD_PENALTY%", "GLOBAL", %respawn_penalty_gold_threshold%)
     THEN
         RESPONSE #100
             CutSceneId(Player1)
             TakePartyGold(%gold_penalty%)
-            SetGlobal("%GLOBAL_CR_GOLD_PENALTY%", "GLOBAL", 0)
+            SetGlobal("%GLOBAL_GOLD_PENALTY%", "GLOBAL", 0)
     END
     >>>>>>>>
 
-    OUTER_SPRINT penalty_cutscene_name ~%RESREF_BCS_CR_GOLD_PENALTY_APPLY%~
+    OUTER_SPRINT penalty_cutscene_name ~%RESREF_BCS_GOLD_PENALTY_APPLY%~
 
     ACTION_PHP_EACH respawn_penalty_gold_thresholds AS respawn_penalty_gold_threshold => _ BEGIN
         OUTER_SPRINT respawn_penalty_gold_threshold_ref ~respawn_penalty_gold_threshold_%respawn_penalty_gold_threshold%~

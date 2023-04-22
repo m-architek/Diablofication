@@ -1,4 +1,6 @@
-COPY ~%resources%/blank.spl~ ~override/%RESREF_SPL_SR_REGENERATION%.SPL~
+INCLUDE ~%COMPONENT_FOLDER%/resources.tpa~
+
+CREATE ~SPL~ ~%RESREF_SPL_REGENERATION%~
     LPF ADD_SPL_ABILITY RET ability_index END
     LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
         opcode = EFF_OPCODE_RESTORE_SPELL
@@ -10,7 +12,6 @@ COPY ~%resources%/blank.spl~ ~override/%RESREF_SPL_SR_REGENERATION%.SPL~
         parameter1 = 7 // max level
         parameter2 = 1 // Cleric / Druid / Shaman
         END
-    BUT_ONLY
 
 
 ACTION_CLEAR_ARRAY players
@@ -24,13 +25,13 @@ IF
     !GlobalTimerNotExpired("%timer%","GLOBAL")
 THEN
     RESPONSE #100
-        ApplySpellRES("%RESREF_SPL_SR_REGENERATION%", %player%)
+        ApplySpellRES("%RESREF_SPL_REGENERATION%", %player%)
         SetGlobalTimer("%timer%","GLOBAL","ONE_ROUND")
 END
 >>>>>>>>
 
 ACTION_PHP_EACH players AS _ => player BEGIN 
-    OUTER_SPRINT timer ~%GLOBAL_SR_REGENERATION_TIMER_PREFIX%%player%~
+    OUTER_SPRINT timer ~%GLOBAL_REGENERATION_TIMER_PREFIX%%player%~
     
     EXTEND_BOTTOM ~BALDUR.BCS~ ~.../spells_regen.baf~ 
         EVALUATE_BUFFER

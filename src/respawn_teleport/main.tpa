@@ -1,0 +1,21 @@
+DEFINE_ACTION_FUNCTION APPLY_RESPAWN_TELEPORT 
+    INT_VAR teleport_next_cutscene_variable_value = ~~
+    STR_VAR teleport_next_cutscene_name = 0
+    RET teleport_cutscene_name 
+        teleport_next_cutscene_variable_name
+BEGIN 
+    OUTER_SPRINT SOURCE_COMPONENT ~%COMPONENT%~
+    OUTER_SPRINT COMPONENT ~respawn_teleport~
+    OUTER_SPRINT COMPONENT_FOLDER ~%src%/%COMPONENT%~
+
+    ACTION_TIME ~%SOURCE_COMPONENT%_%COMPONENT%~ BEGIN 
+        INCLUDE ~%COMPONENT_FOLDER%/resources.tpa~
+        INCLUDE ~%COMPONENT_FOLDER%/teleport_cutscene.tpa~
+
+        LAF APPLY_RESPAWN_TELEPORT_CUTSCENE INT_VAR teleport_next_cutscene_variable_value
+            STR_VAR teleport_next_cutscene_name
+            RET teleport_cutscene_name 
+                teleport_next_cutscene_variable_name
+            END 
+    END
+END

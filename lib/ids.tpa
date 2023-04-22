@@ -1,0 +1,34 @@
+OUTER_SET IDS_SPELL_TYPE_WIZARD = 2
+
+
+DEFINE_ACTION_FUNCTION SPELL_IDS_ADD_SPELL 
+    INT_VAR spell_type = 0
+        spell_level = 0
+    STR_VAR ids_name = 0
+    RET spell_resource
+BEGIN 
+    ADD_SPELL ~.../blank~ spell_type spell_level ~%ids_name%~
+
+    OUTER_SET ids = IDS_OF_SYMBOL (SPELL ~%ids_name%~)
+    ACTION_IF (ids == "-1") BEGIN 
+        FAIL ~SPELL_IDS_ADD_SPELL: Ids name %ids_name% not found back in SPELL.IDS.~
+    END
+
+    LAF SUBSTRING INT_VAR start = 0 length = 1
+        STR_VAR string = ~%ids%~
+        RET ids_spell_type = substring
+        END
+    LAF SUBSTRING INT_VAR start = 1 length = 3
+        STR_VAR string = ~%ids%~
+        RET ids_spell_value = substring
+        END
+
+    ACTION_MATCH ~%ids_spell_type%~ WITH
+        ~%IDS_SPELL_TYPE_WIZARD%~ BEGIN 
+            OUTER_SPRINT spell_resource ~SPWI%ids_spell_value%~
+        END
+        DEFAULT FAIL ~SPELL_IDS_ADD_SPELL: Unrecognized ids spell type: %ids_spell_type%.~
+    END
+
+    CLEAR_IDS_MAP
+END

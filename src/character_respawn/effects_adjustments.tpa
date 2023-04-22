@@ -1,22 +1,18 @@
-INCLUDE ~%src%/effects_adjustments/petrification.tpa~
-INCLUDE ~%src%/effects_adjustments/harm_damage.tpa~
-INCLUDE ~%src%/effects_adjustments/disintegrate.tpa~
-INCLUDE ~%src%/effects_adjustments/kill_creature.tpa~
-INCLUDE ~%src%/effects_adjustments/kill_60hp.tpa~
-INCLUDE ~%src%/effects_adjustments/level_drain.tpa~
-INCLUDE ~%src%/effects_adjustments/stat_drain.tpa~
-INCLUDE ~%src%/effects_adjustments/replace_creature.tpa~
-INCLUDE ~%src%/effects_adjustments/instant_death.tpa~
-INCLUDE ~%src%/effects_adjustments/imprisonment.tpa~
-INCLUDE ~%src%/effects_adjustments/maze.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments/petrification.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments/harm_damage.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments/disintegrate.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments/kill_creature.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments/kill_60hp.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments/level_drain.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments/stat_drain.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments/replace_creature.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments/instant_death.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments/imprisonment.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments/maze.tpa~
 
 DEFINE_ACTION_FUNCTION APPLY_EFFECTS_ADJUSTMENTS
     RET instant_death_variable patrification_state_variable maze_state_variable
 BEGIN
-    PRINT ~~
-    PRINT ~Adjusting existing effects. This can take a while...~
-    PRINT ~~
-
     ACTION_CLEAR_ARRAY patches
 
     LAF APPLY_PETRIFICATION_PATCHES
@@ -77,12 +73,12 @@ BEGIN
             patch_MAZE_START_IMMUNITY patch_MAZE_END_IMMUNITY
         END
 
-    LAF PATCH_ALL_EFFECTS STR_VAR patches_ref = patches END
+    LAF PATCH_EXISTING_EFFECTS STR_VAR patches_ref = patches END
 
 
-    OUTER_SPRINT instant_death_variable ~%LOCALS_CR_STATE_INSTANT_DEATH%~
-    OUTER_SPRINT patrification_state_variable ~%LOCALS_CR_STATE_PETRIFICATION%~
-    OUTER_SPRINT maze_state_variable ~%LOCALS_CR_STATE_MAZE%~
+    OUTER_SPRINT instant_death_variable ~%LOCALS_STATE_INSTANT_DEATH%~
+    OUTER_SPRINT patrification_state_variable ~%LOCALS_STATE_PETRIFICATION%~
+    OUTER_SPRINT maze_state_variable ~%LOCALS_STATE_MAZE%~
 
     LAF APPLY_PETRIFICATION_RESOURCES STR_VAR patrification_state_variable END
     LAF APPLY_DISINTEGRATE_RESOURCES STR_VAR instant_death_variable END

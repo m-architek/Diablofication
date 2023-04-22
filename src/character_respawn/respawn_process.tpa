@@ -4,44 +4,126 @@ DEFINE_ACTION_FUNCTION APPLY_RESPAWN_PROCESS
         instant_death_variable = 0
         kill_player1_variable = 0
         maze_state_variable = 0
-    RET_ARRAY respawn_point_names respawn_cutscenes
+    RET respawn_cutscene_name
 BEGIN
-    LAF APPLY_RESPAWN_RESSURECTION RET resurrection_spl END
-    LAF APPLY_RESPAWN_HEAL RET heal_spl END
+    OUTER_SET teleport_next_cutscene_variable_value = 2
 
-    COPY - ~%config%/respawn_points.2da~ ~~
-        LPF READ_2DA_ROW_NAMES RET_ARRAY respawn_point_names = out END
-        PHP_EACH respawn_point_names AS respawn_point_name => _ BEGIN
-            LPF READ_2DA_ROW STR_VAR row_name = ~%respawn_point_name%~ 
-                RET_ARRAY ~respawn_point_%respawn_point_name%~ = out END
+    LAF APPLY_RESPAWN_HEAL_CUTSCENE STR_VAR next_cutscene_name = ~%penalty_cutscene_name%~
+        RET respawn_heal_cutscene_name 
         END
 
-    ACTION_DEFINE_ASSOCIATIVE_ARRAY respawn_cutscenes BEGIN END
-    ACTION_PHP_EACH respawn_point_names AS respawn_point_name => respawn_point_index BEGIN
-        OUTER_SPRINT respawn_area $~respawn_point_%respawn_point_name%~(AREA)
-    
-        LAF APPLY_RESPAWN_CUTSCENE INT_VAR respawn_point_index 
-            STR_VAR respawn_point_ref = ~respawn_point_%respawn_point_name%~
-                resurrection_spl = ~%resurrection_spl%~ 
-                heal_spl = ~%heal_spl%~ 
-                patrification_state_variable = ~%patrification_state_variable%~
-                instant_death_variable = ~%instant_death_variable%~
-                kill_player1_variable = ~%kill_player1_variable%~
-                maze_state_variable = ~%maze_state_variable%~
-                next_cutscene_name = ~%penalty_cutscene_name%~
-            RET respawn_cutscene_name
-            END
-        ACTION_DEFINE_ASSOCIATIVE_ARRAY respawn_cutscenes BEGIN ~%respawn_point_name%~ => ~%respawn_cutscene_name%~ END
-    END
+    LAF APPLY_RESPAWN_TELEPORT INT_VAR teleport_next_cutscene_variable_value
+        STR_VAR teleport_next_cutscene_name = ~%respawn_heal_cutscene_name%~
+        RET teleport_cutscene_name
+            teleport_next_cutscene_variable_name
+        END
+
+    LAF APPLY_RESPAWN_RESURRECTION_CUTSCENE INT_VAR teleport_next_cutscene_variable_value
+        STR_VAR teleport_cutscene_name
+            patrification_state_variable = ~%patrification_state_variable%~
+            instant_death_variable = ~%instant_death_variable%~
+            kill_player1_variable = ~%kill_player1_variable%~
+            maze_state_variable = ~%maze_state_variable%~
+            teleport_next_cutscene_variable_name
+        RET respawn_cutscene_name = respawn_resurrection_cutscene_name 
+        END
 END
 
 
-DEFINE_ACTION_FUNCTION APPLY_RESPAWN_RESSURECTION 
+DEFINE_ACTION_FUNCTION APPLY_RESPAWN_RESURRECTION_CUTSCENE 
+    INT_VAR teleport_next_cutscene_variable_value = ~~
+    STR_VAR teleport_cutscene_name = 0
+        patrification_state_variable = 0
+        instant_death_variable = 0
+        kill_player1_variable = 0
+        maze_state_variable = 0
+        teleport_next_cutscene_variable_name = 0
+    RET respawn_resurrection_cutscene_name
+BEGIN 
+    OUTER_SPRINT respawn_resurrection_cutscene_name ~%RESREF_BCS_RESPAWN_RESURRECTION_CUTSCENE%~
+
+    LAF APPLY_RESPAWN_RESURRECTION RET resurrection_spl END
+    
+    <<<<<<<< .../respawn_resurrection_cutscene.baf
+    IF
+        True()
+    THEN
+        RESPONSE #100
+            CutSceneId(Player1)
+            SmallWait(60)
+            FadeToColor([30.0], 0)
+            SmallWait(30)
+
+            ApplySpellRES("%resurrection_spl%", Player1)
+            ApplySpellRES("%resurrection_spl%", Player2)
+            ApplySpellRES("%resurrection_spl%", Player3)
+            ApplySpellRES("%resurrection_spl%", Player4)
+            ApplySpellRES("%resurrection_spl%", Player5)
+            ApplySpellRES("%resurrection_spl%", Player6)
+
+            SetGlobal("%kill_player1_variable%", "GLOBAL", 0)
+            SetGlobal("%patrification_state_variable%", "LOCALS", 0)
+            SetGlobal("%maze_state_variable%", "LOCALS", 0)
+            SetGlobal("%instant_death_variable%", "LOCALS", 0)
+
+            SetSequence(SEQ_READY)
+            ActionOverride(Player2, SetSequence(SEQ_READY))
+            ActionOverride(Player3, SetSequence(SEQ_READY))
+            ActionOverride(Player4, SetSequence(SEQ_READY))
+            ActionOverride(Player5, SetSequence(SEQ_READY))
+            ActionOverride(Player6, SetSequence(SEQ_READY)) 
+
+            SetGlobal("%teleport_next_cutscene_variable_name%", "GLOBAL", %teleport_next_cutscene_variable_value%)
+            StartCutSceneEx("%teleport_cutscene_name%",TRUE)      
+    END
+    >>>>>>>>
+
+    EXTEND_BOTTOM ~%respawn_resurrection_cutscene_name%.BCS~ ~.../respawn_resurrection_cutscene.baf~ 
+        EVALUATE_BUFFER
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_RESPAWN_HEAL_CUTSCENE 
+    STR_VAR next_cutscene_name = 0
+    RET respawn_heal_cutscene_name
+BEGIN 
+    OUTER_SPRINT respawn_heal_cutscene_name ~%RESREF_BCS_RESPAWN_HEAL_CUTSCENE%~
+
+    LAF APPLY_RESPAWN_HEAL RET heal_spl END
+    
+    <<<<<<<< .../respawn_heal_cutscene.baf
+    IF
+        True()
+    THEN
+        RESPONSE #100
+            CutSceneId(Player1)
+            SmallWait(15)
+
+            ApplySpellRES("%heal_spl%", Player1)
+            ApplySpellRES("%heal_spl%", Player2)
+            ApplySpellRES("%heal_spl%", Player3)
+            ApplySpellRES("%heal_spl%", Player4)
+            ApplySpellRES("%heal_spl%", Player5)
+            ApplySpellRES("%heal_spl%", Player6)
+
+            SmallWait(15)
+            FadeFromColor([30.0], 0)
+            SmallWait(30)
+            StartCutSceneEx("%next_cutscene_name%", TRUE)
+    END
+    >>>>>>>>
+
+    EXTEND_BOTTOM ~%respawn_heal_cutscene_name%.BCS~ ~.../respawn_heal_cutscene.baf~
+        EVALUATE_BUFFER
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_RESPAWN_RESURRECTION 
     RET resurrection_spl
 BEGIN
-    OUTER_SPRINT resurrection_spl ~%RESREF_SPL_CR_RESURRECTION%~
+    OUTER_SPRINT resurrection_spl ~%RESREF_SPL_RESURRECTION%~
 
-    COPY ~%resources%/blank.spl~ ~override/%resurrection_spl%.SPL~
+    CREATE ~SPL~ ~%resurrection_spl%~
         LPF ADD_SPL_ABILITY RET ability_index END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_RAISE_DEAD
@@ -49,10 +131,15 @@ BEGIN
             parameter2 = 0
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_APPLY_EFFECTS_LIST
-            parameter1 = 0
-            parameter2 = 0
+            opcode = EFF_OPCODE_CAST_SPELL
+            parameter1 = 0 // Casting Level
+            parameter2 = 1 // Cast Instantly at caster level
             STR_VAR resource = ~#RDREMOV~
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_REMOVE_OPCODE
+            parameter1 = "-1"
+            parameter2 = EFF_OPCODE_MAKE_UNSELECTABLE
             END
 END
 
@@ -60,37 +147,50 @@ END
 DEFINE_ACTION_FUNCTION APPLY_RESPAWN_HEAL 
     RET heal_spl
 BEGIN
-    COPY_EXISTING ~SPPR607.SPL~ ~override/%RESREF_SPL_CR_HEAL_HEAL%.SPL~ 
+    COPY_EXISTING ~SPPR607.SPL~ ~override/%RESREF_SPL_HEAL_HEAL%.SPL~ 
         WRITE_LONG NAME1 0
+        WRITE_LONG UNIDENTIFIED_DESC 0
+        LPF ADD_SPL_HEADER END
+        BUT_ONLY
+    COPY_EXISTING ~SPPR404.SPL~ ~override/%RESREF_SPL_HEAL_CURE%.SPL~
+        WRITE_LONG NAME1 0
+        WRITE_LONG UNIDENTIFIED_DESC 0
+        LPF ADD_SPL_HEADER END
+        BUT_ONLY
+    COPY_EXISTING ~SPPR713.SPL~ ~override/%RESREF_SPL_HEAL_RESTORATION%.SPL~
+        WRITE_LONG NAME1 0
+        WRITE_LONG UNIDENTIFIED_DESC 0
+        LPF ADD_SPL_HEADER END
         LPF DELETE_SPELL_EFFECT INT_VAR opcode_to_delete = EFF_OPCODE_FATIGUE_MODIFIER END
         BUT_ONLY
-    COPY_EXISTING ~SPPR404.SPL~ ~override/%RESREF_SPL_CR_HEAL_CURE%.SPL~
+    COPY_EXISTING ~SPPR350.SPL~ ~override/%RESREF_SPL_HEAL_CLARITY%.SPL~
         WRITE_LONG NAME1 0
-        LPF DELETE_SPELL_EFFECT INT_VAR opcode_to_delete = EFF_OPCODE_FATIGUE_MODIFIER END
-        BUT_ONLY
-    COPY_EXISTING ~SPPR713.SPL~ ~override/%RESREF_SPL_CR_HEAL_RESTORATION%.SPL~
-        WRITE_LONG NAME1 0
-        LPF DELETE_SPELL_EFFECT INT_VAR opcode_to_delete = EFF_OPCODE_FATIGUE_MODIFIER END
-        BUT_ONLY
-    COPY_EXISTING ~SPPR350.SPL~ ~override/%RESREF_SPL_CR_HEAL_CLARITY%.SPL~
-        WRITE_LONG NAME1 0
-        LPF DELETE_SPELL_EFFECT INT_VAR opcode_to_delete = EFF_OPCODE_FATIGUE_MODIFIER END
+        WRITE_LONG UNIDENTIFIED_DESC 0
+        LPF ADD_SPL_HEADER END
         BUT_ONLY
 
-    OUTER_SPRINT heal_spl ~%RESREF_SPL_CR_HEAL%~
+    OUTER_SPRINT heal_spl ~%RESREF_SPL_HEAL%~
 
-    COPY ~%resources%/blank.spl~ ~override/%heal_spl%.SPL~
+    CREATE ~SPL~ ~%heal_spl%~
         LPF ADD_SPL_ABILITY RET ability_index END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_CURE_INVISIBILITY
+            END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
             opcode = EFF_OPCODE_CURE_PAUSE
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_CURE_INVISIBILITY
+            opcode = EFF_OPCODE_REMOVE_OPCODE
+            parameter1 = "-1"
+            parameter2 = EFF_OPCODE_GRAPHICS_REMOVE_SELECTION_CIRCLE
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_REMOVE_OPCODE
             parameter1 = "-1"
             parameter2 = EFF_OPCODE_FREEDOM
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_FREEDOM
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_REMOVE_OPCODE
@@ -103,19 +203,6 @@ BEGIN
             parameter2 = EFF_OPCODE_ALTERNATIVE_CHARM
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_REMOVE_OPCODE
-            parameter1 = "-1"
-            parameter2 = EFF_OPCODE_MAKE_UNSELECTABLE
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_REMOVE_OPCODE
-            parameter1 = "-1"
-            parameter2 = EFF_OPCODE_GRAPHICS_REMOVE_SELECTION_CIRCLE
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_FREEDOM
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_POLYMORPH // Empty resource = Natural form
             parameter1 = 0 // Irrelevant
             parameter2 = 0 // Gain Resistances/statistics
@@ -126,20 +213,24 @@ BEGIN
             parameter2 = 7 // Button: Talk
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
-            opcode = EFF_OPCODE_APPLY_EFFECTS_LIST
-            STR_VAR resource = ~%RESREF_SPL_CR_HEAL_HEAL%~
+            opcode = EFF_OPCODE_CAST_SPELL
+            parameter2 = 1 // Cast Instantly at caster level
+            STR_VAR resource = ~%RESREF_SPL_HEAL_HEAL%~
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
-            opcode = EFF_OPCODE_APPLY_EFFECTS_LIST
-            STR_VAR resource = ~%RESREF_SPL_CR_HEAL_CURE%~
+            opcode = EFF_OPCODE_CAST_SPELL
+            parameter2 = 1 // Cast Instantly at caster level
+            STR_VAR resource = ~%RESREF_SPL_HEAL_CURE%~
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
-            opcode = EFF_OPCODE_APPLY_EFFECTS_LIST
-            STR_VAR resource = ~%RESREF_SPL_CR_HEAL_RESTORATION%~
+            opcode = EFF_OPCODE_CAST_SPELL
+            parameter2 = 1 // Cast Instantly at caster level
+            STR_VAR resource = ~%RESREF_SPL_HEAL_RESTORATION%~
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
-            opcode = EFF_OPCODE_APPLY_EFFECTS_LIST
-            STR_VAR resource = ~%RESREF_SPL_CR_HEAL_CLARITY%~
+            opcode = EFF_OPCODE_CAST_SPELL
+            parameter2 = 1 // Cast Instantly at caster level
+            STR_VAR resource = ~%RESREF_SPL_HEAL_CLARITY%~
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_DISPEL_MAGIC
@@ -153,34 +244,4 @@ BEGIN
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_SPELL_MAGICAL_REST
             END 
-        BUT_ONLY
-END
-
-
-DEFINE_ACTION_FUNCTION APPLY_RESPAWN_CUTSCENE
-    INT_VAR respawn_point_index = ~~
-    STR_VAR respawn_point_ref = 0
-        resurrection_spl = 0
-        heal_spl = 0
-        patrification_state_variable = 0
-        instant_death_variable = 0
-        kill_player1_variable = 0
-        maze_state_variable = 0
-        next_cutscene_name = 0
-    RET respawn_cutscene_name
-BEGIN
-    OUTER_SPRINT respawn_cutscene_name ~%RESREF_BCS_CR_RESPAWN_PROCESS_PREFIX%%respawn_point_index%~
-    
-    COPY ~%src%/respawn_process.baf~ ~override/%respawn_cutscene_name%.BCS~
-        SPRINT area $~%respawn_point_ref%~(AREA)
-        SPRINT master_area $~%respawn_point_ref%~(MASTER_AREA)
-        SPRINT p1_pos $~%respawn_point_ref%~(PLAYER1_POS)
-        SPRINT p2_pos $~%respawn_point_ref%~(PLAYER2_POS)
-        SPRINT p3_pos $~%respawn_point_ref%~(PLAYER3_POS)
-        SPRINT p4_pos $~%respawn_point_ref%~(PLAYER4_POS)
-        SPRINT p5_pos $~%respawn_point_ref%~(PLAYER5_POS)
-        SPRINT p6_pos $~%respawn_point_ref%~(PLAYER6_POS)
-        SPRINT face $~%respawn_point_ref%~(FACE)
-        EVALUATE_BUFFER
-        COMPILE_BAF_TO_BCS
 END

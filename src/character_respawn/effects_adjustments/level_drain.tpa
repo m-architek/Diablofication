@@ -10,7 +10,7 @@ BEGIN
         opcode => EFF_OPCODE_CAST_SPELL
         parameter1 => 0 // Casting Level
         parameter2 => 1 // Cast Instantly at caster level
-        resource => ~%RESREF_SPL_CR_LEVEL_DRAIN_KILL%~
+        resource => ~%RESREF_SPL_LEVEL_DRAIN_KILL%~
     END
 
     ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_LEVEL_DRAIN BEGIN
@@ -27,13 +27,13 @@ BEGIN
         opcode => EFF_OPCODE_PROTECTION_FROM_SPELL
         parameter1 => 0 // Message
         parameter2 => 0 // Irrelevant
-        resource => ~%RESREF_SPL_CR_LEVEL_DRAIN_KILL%~
+        resource => ~%RESREF_SPL_LEVEL_DRAIN_KILL%~
     END
 
     ACTION_DEFINE_ASSOCIATIVE_ARRAY ~%patches_ref%~ BEGIN 
-        LEVEL_DRAIN_KILL => patch_LEVEL_DRAIN_KILL
-        LEVEL_DRAIN => patch_LEVEL_DRAIN
-        LEVEL_DRAIN_IMMUNITY => patch_LEVEL_DRAIN_IMMUNITY
+        ~%CHARACTER_RESPAWN_PREFIX%_LEVEL_DRAIN_KILL~ => patch_LEVEL_DRAIN_KILL
+        ~%CHARACTER_RESPAWN_PREFIX%_LEVEL_DRAIN~ => patch_LEVEL_DRAIN
+        ~%CHARACTER_RESPAWN_PREFIX%_LEVEL_DRAIN_IMMUNITY~ => patch_LEVEL_DRAIN_IMMUNITY
     END
 END
 
@@ -79,7 +79,7 @@ END
 DEFINE_ACTION_FUNCTION APPLY_LEVEL_DRAIN_RESOURCES 
     STR_VAR instant_death_variable = 0
 BEGIN
-    COPY ~%resources%/blank.spl~ ~override/%RESREF_SPL_CR_LEVEL_DRAIN_KILL%.SPL~
+    CREATE ~SPL~ ~%RESREF_SPL_LEVEL_DRAIN_KILL%~
         LPF ADD_SPL_ABILITY RET ability_index END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_INSTANT_DEATH

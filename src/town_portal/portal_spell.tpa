@@ -1,0 +1,39 @@
+DEFINE_ACTION_FUNCTION APPLY_PORTAL_SPELL
+    INT_VAR cut250_index = ~~
+BEGIN     
+    LAF SPELL_IDS_ADD_SPELL INT_VAR spell_type = IDS_SPELL_TYPE_WIZARD spell_level = 1
+        STR_VAR ids_name = ~%TOWN_PORTAL_PREFIX%_TOWN_PORTAL~
+        RET spell_resource
+        END
+
+    CREATE ~SPL~ ~%spell_resource%~
+        SAY NAME1 @1
+        SAY UNIDENTIFIED_DESC @2
+        LPF ADD_SPL_HEADER INT_VAR spell_type = SPL_SPELL_TYPE_WIZARD
+                exclusion = SPL_EXCLUSION_ABJURERS
+                animation = SPL_ANIMATION_ALTERATION
+                school = SPL_SCHOOL_TRANSMUTER
+                secondary_type = SPL_SECONDARY_TYPE_NON_COMBAT
+                level = 1
+            STR_VAR sound_resource = ~CAS_M08~
+                icon_resource = ~SPWI402C~
+            END
+        LPF ADD_SPL_ABILITY INT_VAR location = SPL_ABILITY_LOCATION_SPELL
+                target = SPL_ABILITY_TARGET_CASTER
+                range = 0
+                level_required = 1
+                casting_time = 9
+            STR_VAR icon_resource = ~SPWI402C~
+            RET ability_index 
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_SCRIPT_MODIFY_GLOBAL_VAR
+            target = EFF_TARGET_SELF
+            parameter1 = cut250_index
+            STR_VAR resource = ~CUT250~
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_EXECUTE_CUT250
+            target = EFF_TARGET_SELF
+            END
+END

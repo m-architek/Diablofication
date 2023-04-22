@@ -1,13 +1,12 @@
-INCLUDE ~%src%/effects_adjustments.tpa~
-INCLUDE ~%src%/scripts_adjustments.tpa~
-INCLUDE ~%src%/death_prevention.tpa~
-INCLUDE ~%src%/respawn_trigger.tpa~
-INCLUDE ~%src%/respawn_execution.tpa~
-INCLUDE ~%src%/respawn_process.tpa~
-INCLUDE ~%src%/respawn_penalty.tpa~
+INCLUDE ~%src%/respawn_teleport/main.tpa~
 
-OUTER_SPRINT RESREF_PREFIX ~%RESREF_PREFIX_CR%~
-
+INCLUDE ~%COMPONENT_FOLDER%/resources.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/scripts_adjustments.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/death_prevention.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/respawn_trigger.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/respawn_process.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/respawn_penalty.tpa~
 
 LAF APPLY_EFFECTS_ADJUSTMENTS RET patrification_state_variable instant_death_variable maze_state_variable END
 
@@ -19,15 +18,9 @@ LAF APPLY_RESPAWN_PENALTY RET penalty_cutscene_name END
 
 LAF APPLY_RESPAWN_PROCESS 
     STR_VAR penalty_cutscene_name patrification_state_variable instant_death_variable kill_player1_variable maze_state_variable
-    RET_ARRAY respawn_point_names respawn_cutscenes 
-    END
-
-LAF APPLY_RESPAWN_EXECUTION 
-    STR_VAR respawn_point_names_ref = respawn_point_names 
-        respawn_cutscenes_ref = respawn_cutscenes
-    RET respawn_execution_cutscene
+    RET respawn_cutscene_name
     END
 
 LAF APPLY_RESPAWN_TRIGGER 
-    STR_VAR respawn_execution_cutscene patrification_state_variable instant_death_variable kill_player1_variable maze_state_variable
+    STR_VAR respawn_cutscene_name patrification_state_variable instant_death_variable kill_player1_variable maze_state_variable
     END

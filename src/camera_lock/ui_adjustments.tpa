@@ -1,9 +1,9 @@
 DEFINE_ACTION_FUNCTION APPLY_UI_ADJUSTMENTS 
     RET lock_scroll_on_leader_lua_fn
 BEGIN
-    OUTER_SPRINT lock_scroll_lua_fn ~%LUA_FUNCTION_CL_LOCK_SCROLL%~
-    OUTER_SPRINT lock_scroll_on_leader_lua_fn ~%LUA_FUNCTION_CL_LOCK_SCROLL_ON_LEADER%~
-    OUTER_SPRINT unlock_scroll_lua_fn ~%LUA_FUNCTION_CL_UNLOCK_SCROLL%~
+    OUTER_SPRINT lock_scroll_lua_fn ~%LUA_FUNCTION_LOCK_SCROLL%~
+    OUTER_SPRINT lock_scroll_on_leader_lua_fn ~%LUA_FUNCTION_LOCK_SCROLL_ON_LEADER%~
+    OUTER_SPRINT unlock_scroll_lua_fn ~%LUA_FUNCTION_UNLOCK_SCROLL%~
 
     COPY_EXISTING ~UI.menu~ ~override~
         LPF APPLY_LOCK_ON_PORTRAIT_DBLCLICK STR_VAR lock_scroll_lua_fn END
@@ -11,7 +11,7 @@ BEGIN
         LPF APPLY_UNLOCK_ON_SELECT_ALL_ALTCLICK STR_VAR unlock_scroll_lua_fn END
         BUT_ONLY
 
-    COPY ~%src%/ui_adjustments.lua~ ~override/%RESREF_LUA_CL%.lua~
+    COPY ~%COMPONENT_FOLDER%/ui_adjustments.lua~ ~override/%RESREF_LUA_FILE%.lua~
         EVALUATE_BUFFER
 END
 

@@ -8,7 +8,7 @@ BEGIN
         opcode => EFF_OPCODE_USE_EFF_FILE
         parameter1 => 2 // PC
         parameter2 => 2 // EA
-        resource => ~%RESREF_EFF_CR_PETRIFICATION%~
+        resource => ~%RESREF_EFF_PETRIFICATION%~
     END
 
     ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_PETRIFICATION_IMMUNITY BEGIN
@@ -18,24 +18,24 @@ BEGIN
         opcode => EFF_OPCODE_PROTECTION_FROM_SPELL
         parameter1 => 0
         parameter2 => 0
-        resource => ~%RESREF_EFF_CR_PETRIFICATION%~
+        resource => ~%RESREF_EFF_PETRIFICATION%~
     END
 
     ACTION_DEFINE_ASSOCIATIVE_ARRAY ~%patches_ref%~ BEGIN 
-        PETRIFICATION => patch_PETRIFICATION
-        PETRIFICATION_IMMUNITY => patch_PETRIFICATION_IMMUNITY
+        ~%CHARACTER_RESPAWN_PREFIX%_PETRIFICATION~ => patch_PETRIFICATION
+        ~%CHARACTER_RESPAWN_PREFIX%_PETRIFICATION_IMMUNITY~ => patch_PETRIFICATION_IMMUNITY
     END
 END
 
 DEFINE_ACTION_FUNCTION APPLY_PETRIFICATION_RESOURCES 
     STR_VAR patrification_state_variable = 0
 BEGIN
-    COPY ~%resources%/blank.eff~ ~override/%RESREF_EFF_CR_PETRIFICATION%.EFF~
+    CREATE ~EFF~ ~%RESREF_EFF_PETRIFICATION%~
         LPF ALTER_EFF_V2_EFFECT
             INT_VAR opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
                 parameter1 = 1
                 parent_resource_type = EFF_V2_PARENT_RESOURCE_TYPE_SPELL
             STR_VAR resource = ~%patrification_state_variable%~
-                parent_resource = ~%RESREF_EFF_CR_PETRIFICATION%~
+                parent_resource = ~%RESREF_EFF_PETRIFICATION%~
             END
 END

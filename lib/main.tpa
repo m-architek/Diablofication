@@ -1,0 +1,14 @@
+INCLUDE ~%lib%/vendor/extend_cut250.tpa~
+INCLUDE ~%lib%/vendor/joinable_npc_array.tpa~
+INCLUDE ~%lib%/2da.tpa~
+INCLUDE ~%lib%/box_array.tpa~
+INCLUDE ~%lib%/cre.tpa~
+INCLUDE ~%lib%/eff.tpa~
+INCLUDE ~%lib%/eff_v1.tpa~
+INCLUDE ~%lib%/eff_v2.tpa~
+INCLUDE ~%lib%/ids.tpa~
+INCLUDE ~%lib%/itm.tpa~
+INCLUDE ~%lib%/itm_spl.tpa~
+INCLUDE ~%lib%/joinable_npc_array.tpa~
+INCLUDE ~%lib%/patch_existing_effects.tpa~
+INCLUDE ~%lib%/spl.tpa~

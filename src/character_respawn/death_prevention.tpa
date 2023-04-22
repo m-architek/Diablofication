@@ -12,8 +12,7 @@ END
 
 
 DEFINE_ACTION_FUNCTION APPLY_DEATH_PREVENTION_SPL BEGIN
-
-    COPY ~%resources%/blank.spl~ ~override/%RESREF_SPL_CR_DEATH_PREVENTION%.SPL~
+    CREATE ~SPL~ ~%RESREF_SPL_DEATH_PREVENTION%~
         LPF ADD_SPL_ABILITY RET ability_index END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_HP_MINIMUM
@@ -70,16 +69,15 @@ DEFINE_ACTION_FUNCTION APPLY_DEATH_PREVENTION_SPL BEGIN
             parameter2 = 1
             timing = EFF_TIMING_INSTANT_PERMANENT
             END
-        BUT_ONLY
 
     <<<<<<<< .../enable_death_prevention.baf
     IF
         OnCreation()
-        Global("%GLOBAL_CR_DEATH_PREVENTION_ON%", "GLOBAL", 0)
+        Global("%GLOBAL_DEATH_PREVENTION_ON%", "GLOBAL", 0)
     THEN
         RESPONSE #100
-            ApplySpellRES("%RESREF_SPL_CR_DEATH_PREVENTION%", Player1)
-            SetGlobal("%GLOBAL_CR_DEATH_PREVENTION_ON%", "GLOBAL", 1)
+            ApplySpellRES("%RESREF_SPL_DEATH_PREVENTION%", Player1)
+            SetGlobal("%GLOBAL_DEATH_PREVENTION_ON%", "GLOBAL", 1)
             Continue()
     END
     >>>>>>>>

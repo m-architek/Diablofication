@@ -11,31 +11,42 @@ ALWAYS
     CLEAR_EVERYTHING
     OUTER_SET is_EEex = MOD_IS_INSTALLED ~EEex.tp2~ ~0~
     OUTER_SPRINT s ~[%TAB% %LNL%%MNL%%WNL%]~
+    
+    <<<<<<<< .../blank
+    >>>>>>>>
 
     OUTER_SPRINT config ~%MOD_FOLDER%/config~
     OUTER_SPRINT lib ~%MOD_FOLDER%/lib~
-    OUTER_SPRINT resources ~%MOD_FOLDER%/resources~
     OUTER_SPRINT src ~%MOD_FOLDER%/src~
+    OUTER_SPRINT tra ~%MOD_FOLDER%/tra~
 
-    INCLUDE ~%lib%/2da.tpa~
-    INCLUDE ~%lib%/box_array.tpa~
-    INCLUDE ~%lib%/cre.tpa~
-    INCLUDE ~%lib%/eff.tpa~
-    INCLUDE ~%lib%/eff_v1.tpa~
-    INCLUDE ~%lib%/eff_v2.tpa~
-    INCLUDE ~%lib%/itm.tpa~
-    INCLUDE ~%lib%/itm_spl.tpa~
-    INCLUDE ~%lib%/joinable_npc_array.tpa~
-    INCLUDE ~%lib%/patch_all_effects.tpa~
-    INCLUDE ~%lib%/spl.tpa~
+    INCLUDE ~%lib%/main.tpa~
 
-    INCLUDE ~%resources%/lua.tpa~
-    INCLUDE ~%resources%/resources.tpa~
-    INCLUDE ~%resources%/variables.tpa~
+    OUTER_SPRINT MOD_PREFIX ~DB~
+    OUTER_SPRINT CAMERA_LOCK_PREFIX ~%MOD_PREFIX%CL~
+    OUTER_SPRINT CHARACTER_RESPAWN_PREFIX ~%MOD_PREFIX%CR~
+    OUTER_SPRINT RESPAWN_TELEPORT_PREFIX ~%MOD_PREFIX%RT~
+    OUTER_SPRINT SPELLS_REGEN_PREFIX ~%MOD_PREFIX%SR~
+    OUTER_SPRINT TOWN_PORTAL_PREFIX ~%MOD_PREFIX%TP~
 END
 
 
-LANGUAGE ~Universal (no new lines added)~ ~~
+LANGUAGE ~English~ ~english~
+
+
+BEGIN "Town Portal" 
+LABEL ~town_portal~
+REQUIRE_PREDICATE GAME_IS ~bgee~ ~BG1 EE is required~
+REQUIRE_PREDICATE NOT GAME_INCLUDES ~sod~ ~SoD not supported~
+
+WITH_SCOPE BEGIN
+    OUTER_SPRINT COMPONENT ~town_portal~
+    OUTER_SPRINT COMPONENT_FOLDER ~%src%/%COMPONENT%~
+
+    ACTION_TIME ~%COMPONENT%~ BEGIN 
+        INCLUDE ~%COMPONENT_FOLDER%/main.tpa~
+    END
+END
 
 
 BEGIN "Character Respawn (Beta)" 
@@ -44,9 +55,11 @@ REQUIRE_PREDICATE GAME_IS ~bgee~ ~BG1 EE is required~
 REQUIRE_PREDICATE NOT GAME_INCLUDES ~sod~ ~SoD not supported~
 
 WITH_SCOPE BEGIN
-    ACTION_TIME "character_respawn" BEGIN 
-        OUTER_SPRINT src ~%src%~ ^ ~/character_respawn~
-        INCLUDE ~%src%/main.tpa~
+    OUTER_SPRINT COMPONENT ~character_respawn~
+    OUTER_SPRINT COMPONENT_FOLDER ~%src%/%COMPONENT%~
+
+    ACTION_TIME ~%COMPONENT%~ BEGIN 
+        INCLUDE ~%COMPONENT_FOLDER%/main.tpa~
     END
 END
 
@@ -57,9 +70,11 @@ REQUIRE_PREDICATE GAME_IS ~bgee~ ~BG1 EE is required~
 REQUIRE_PREDICATE NOT GAME_INCLUDES ~sod~ ~SoD not supported~
 
 WITH_SCOPE BEGIN
-    ACTION_TIME "noncombat_xp" BEGIN 
-        OUTER_SPRINT src ~%src%~ ^ ~/noncombat_xp~
-        INCLUDE ~%src%/main.tpa~
+    OUTER_SPRINT COMPONENT ~noncombat_xp~
+    OUTER_SPRINT COMPONENT_FOLDER ~%src%/%COMPONENT%~
+
+    ACTION_TIME ~%COMPONENT%~ BEGIN 
+        INCLUDE ~%COMPONENT_FOLDER%/main.tpa~
     END
 END
 
@@ -70,9 +85,11 @@ REQUIRE_PREDICATE GAME_IS ~bgee~ ~BG1 EE is required~
 REQUIRE_PREDICATE NOT GAME_INCLUDES ~sod~ ~SoD not supported~
 
 WITH_SCOPE BEGIN
-    ACTION_TIME "spells_regen" BEGIN 
-        OUTER_SPRINT src ~%src%~ ^ ~/spells_regen~
-        INCLUDE ~%src%/main.tpa~
+    OUTER_SPRINT COMPONENT ~spells_regen~
+    OUTER_SPRINT COMPONENT_FOLDER ~%src%/%COMPONENT%~
+
+    ACTION_TIME ~%COMPONENT%~ BEGIN 
+        INCLUDE ~%COMPONENT_FOLDER%/main.tpa~
     END
 END
 
@@ -83,9 +100,11 @@ REQUIRE_PREDICATE GAME_IS ~bgee~ ~BG1 EE is required~
 REQUIRE_PREDICATE NOT GAME_INCLUDES ~sod~ ~SoD not supported~
 
 WITH_SCOPE BEGIN
-    ACTION_TIME "level1_hp" BEGIN 
-        OUTER_SPRINT src ~%src%~ ^ ~/level1_hp~
-        INCLUDE ~%src%/main.tpa~
+    OUTER_SPRINT COMPONENT ~level1_hp~
+    OUTER_SPRINT COMPONENT_FOLDER ~%src%/%COMPONENT%~
+
+    ACTION_TIME ~%COMPONENT%~ BEGIN 
+        INCLUDE ~%COMPONENT_FOLDER%/main.tpa~
     END
 END
 
@@ -96,8 +115,10 @@ REQUIRE_PREDICATE GAME_IS ~bgee~ ~BG1 EE is required~
 REQUIRE_PREDICATE NOT GAME_INCLUDES ~sod~ ~SoD not supported~
 
 WITH_SCOPE BEGIN
-    ACTION_TIME "camera_lock" BEGIN 
-        OUTER_SPRINT src ~%src%~ ^ ~/camera_lock~
-        INCLUDE ~%src%/main.tpa~
+    OUTER_SPRINT COMPONENT ~camera_lock~
+    OUTER_SPRINT COMPONENT_FOLDER ~%src%/%COMPONENT%~
+
+    ACTION_TIME ~%COMPONENT%~ BEGIN 
+        INCLUDE ~%COMPONENT_FOLDER%/main.tpa~
     END
 END

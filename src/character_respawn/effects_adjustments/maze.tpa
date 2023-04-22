@@ -10,7 +10,7 @@ BEGIN
         opcode => EFF_OPCODE_USE_EFF_FILE
         parameter1 => 2 // PC
         parameter2 => 2 // EA
-        resource => ~%RESREF_EFF_CR_MAZE_START%~
+        resource => ~%RESREF_EFF_MAZE_START%~
     END
     ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_MAZE_END BEGIN
         patch_type => ~CLONE~
@@ -20,7 +20,7 @@ BEGIN
         opcode => EFF_OPCODE_USE_EFF_FILE
         parameter1 => 2 // PC
         parameter2 => 2 // EA
-        resource => ~%RESREF_EFF_CR_MAZE_END%~
+        resource => ~%RESREF_EFF_MAZE_END%~
         timing_mode => EFF_TIMING_DELAY_PERMANENT_UNTIL_DEATH
     END
 
@@ -31,7 +31,7 @@ BEGIN
         opcode => EFF_OPCODE_USE_EFF_FILE
         parameter1 => 2 // PC
         parameter2 => 2 // EA
-        resource => ~%RESREF_EFF_CR_MAZE_START%~
+        resource => ~%RESREF_EFF_MAZE_START%~
         timing_mode => EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
         duration => 0
     END
@@ -42,7 +42,7 @@ BEGIN
         opcode => EFF_OPCODE_USE_EFF_FILE
         parameter1 => 2 // PC
         parameter2 => 2 // EA
-        resource => ~%RESREF_EFF_CR_MAZE_END%~
+        resource => ~%RESREF_EFF_MAZE_END%~
         timing_mode => EFF_TIMING_DELAY_PERMANENT_UNTIL_DEATH
         duration => 1
     END
@@ -54,7 +54,7 @@ BEGIN
         opcode => EFF_OPCODE_PROTECTION_FROM_SPELL
         parameter1 => 0
         parameter2 => 0
-        resource => ~%RESREF_EFF_CR_MAZE_START%~
+        resource => ~%RESREF_EFF_MAZE_START%~
     END
     ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_MAZE_END_IMMUNITY BEGIN
         patch_type => ~CLONE~
@@ -63,16 +63,16 @@ BEGIN
         opcode => EFF_OPCODE_PROTECTION_FROM_SPELL
         parameter1 => 0
         parameter2 => 0
-        resource => ~%RESREF_EFF_CR_MAZE_END%~
+        resource => ~%RESREF_EFF_MAZE_END%~
     END
 
     ACTION_DEFINE_ASSOCIATIVE_ARRAY ~%patches_ref%~ BEGIN 
-        MAZE_START => patch_MAZE_START
-        MAZE_END => patch_MAZE_END
-        MAZE_FIXED_START => patch_MAZE_FIXED_START
-        MAZE_FIXED_END => patch_MAZE_FIXED_END
-        MAZE_START_IMMUNITY => patch_MAZE_START_IMMUNITY
-        MAZE_END_IMMUNITY => patch_MAZE_END_IMMUNITY
+        ~%CHARACTER_RESPAWN_PREFIX%_MAZE_START~ => patch_MAZE_START
+        ~%CHARACTER_RESPAWN_PREFIX%_MAZE_END~ => patch_MAZE_END
+        ~%CHARACTER_RESPAWN_PREFIX%_MAZE_FIXED_START~ => patch_MAZE_FIXED_START
+        ~%CHARACTER_RESPAWN_PREFIX%_MAZE_FIXED_END~ => patch_MAZE_FIXED_END
+        ~%CHARACTER_RESPAWN_PREFIX%_MAZE_START_IMMUNITY~ => patch_MAZE_START_IMMUNITY
+        ~%CHARACTER_RESPAWN_PREFIX%_MAZE_END_IMMUNITY~ => patch_MAZE_END_IMMUNITY
     END
 END
 
@@ -93,20 +93,20 @@ END
 DEFINE_ACTION_FUNCTION APPLY_MAZE_RESOURCES 
     STR_VAR maze_state_variable = 0
 BEGIN
-    COPY ~%resources%/blank.eff~ ~override/%RESREF_EFF_CR_MAZE_START%.EFF~
+    CREATE ~EFF~ ~%RESREF_EFF_MAZE_START%~
         LPF ALTER_EFF_V2_EFFECT
             INT_VAR opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
                 parameter1 = 1
                 parent_resource_type = EFF_V2_PARENT_RESOURCE_TYPE_SPELL
             STR_VAR resource = ~%maze_state_variable%~
-                parent_resource = ~%RESREF_EFF_CR_MAZE_START%~
+                parent_resource = ~%RESREF_EFF_MAZE_START%~
             END
-    COPY ~%resources%/blank.eff~ ~override/%RESREF_EFF_CR_MAZE_END%.EFF~
+    CREATE ~EFF~ ~%RESREF_EFF_MAZE_END%~
         LPF ALTER_EFF_V2_EFFECT
             INT_VAR opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
                 parameter1 = 0
                 parent_resource_type = EFF_V2_PARENT_RESOURCE_TYPE_SPELL
             STR_VAR resource = ~%maze_state_variable%~
-                parent_resource = ~%RESREF_EFF_CR_MAZE_END%~
+                parent_resource = ~%RESREF_EFF_MAZE_END%~
             END
 END

@@ -8,7 +8,7 @@ BEGIN
         opcode => EFF_OPCODE_CAST_SPELL
         parameter1 => 0 // Casting Level
         parameter2 => 1 // Cast Instantly at caster level
-        resource => ~%RESREF_SPL_CR_KILL_60HP%~
+        resource => ~%RESREF_SPL_KILL_60HP%~
     END
 
     ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_KILL_60HP_IMMUNITY BEGIN
@@ -18,25 +18,25 @@ BEGIN
         opcode => EFF_OPCODE_PROTECTION_FROM_SPELL
         parameter1 => 0
         parameter2 => 0
-        resource => ~%RESREF_SPL_CR_KILL_60HP%~
+        resource => ~%RESREF_SPL_KILL_60HP%~
     END
 
     ACTION_DEFINE_ASSOCIATIVE_ARRAY ~%patches_ref%~ BEGIN 
-        KILL_60HP => patch_KILL_60HP
-        KILL_60HP_IMMUNITY => patch_KILL_60HP_IMMUNITY
+        ~%CHARACTER_RESPAWN_PREFIX%_KILL_60HP~ => patch_KILL_60HP
+        ~%CHARACTER_RESPAWN_PREFIX%_KILL_60HP_IMMUNITY~ => patch_KILL_60HP_IMMUNITY
     END
 END
 
 DEFINE_ACTION_FUNCTION APPLY_KILL_60HP_RESOURCES 
     STR_VAR instant_death_variable = 0
 BEGIN
-    COPY ~%resources%/blank.spl~ ~override/%RESREF_SPL_CR_KILL_60HP%.SPL~
+    CREATE ~SPL~ ~%RESREF_SPL_KILL_60HP%~
         LPF ADD_SPL_ABILITY RET ability_index END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_PROTECTION_FROM_RESOURCE
             parameter1 = 60
             parameter2 = 144 // 144_CURRENTHP>=n
-            STR_VAR resource = ~%RESREF_SPL_CR_KILL_60HP%~
+            STR_VAR resource = ~%RESREF_SPL_KILL_60HP%~
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR

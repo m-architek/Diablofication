@@ -1,0 +1,12 @@
+@1 = ~Town Portal~
+@2 = ~Town Portal
+(Alteration)
+
+Level: 1
+Range: 0
+Duration: Instant
+Casting Time: 9
+Area of Effect: The caster
+Saving Throw: None
+
+When the spell is cast, a dimensional portal opens up in front of the caster and all of <PRO_HISHER> companions, and takes them to the nearest temple (or other place of safety, if temple is currently unreachable). The caster can maintain channel between destination and origin locations to be able to open reverse portal, that will bring party back where their been before the spell cast.~

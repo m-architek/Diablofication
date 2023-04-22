@@ -1,7 +1,7 @@
 DEFINE_ACTION_FUNCTION APPLY_SCRIPTS_ADJUSTMENTS 
     RET kill_player1_variable
 BEGIN
-    OUTER_SPRINT kill_player1_variable ~%GLOBAL_CR_KILL_PLAYER1%~
+    OUTER_SPRINT kill_player1_variable ~%GLOBAL_KILL_PLAYER1%~
 
     COPY_EXISTING_REGEXP GLOB ~^.+\.bcs$~ ~override~
         DECOMPILE_AND_PATCH BEGIN
