@@ -1,10 +1,8 @@
-OUTER_SPRINT RESREF_2DA_STAT_DRAIN_KILL_RESOURCES ~%CHARACTER_RESPAWN_PREFIX%_STAT_DRAIN_KILL_RESOURCES~
-
 DEFINE_ACTION_FUNCTION APPLY_STAT_DRAIN_PATCHES 
     STR_VAR patches_ref = 0
     RET_ARRAY ~%patches_ref%_box~
 BEGIN
-    COPY ~.../blank~ ~override/%RESREF_2DA_STAT_DRAIN_KILL_RESOURCES%.2DA~
+    COPY ~.../blank~ ~override/%RESREF_2DA_STAT_DRAIN_RESOURCES%.2DA~
 
     ACTION_DEFINE_ASSOCIATIVE_ARRAY stat_drains_opcodes BEGIN 
         STR_DRAIN => EFF_OPCODE_STR_MOD
@@ -116,7 +114,7 @@ BEGIN
     SPRINT drain_kill_resource ~%prefix%%stat_amount%~
 
     INNER_ACTION BEGIN 
-        COPY_EXISTING ~%RESREF_2DA_STAT_DRAIN_KILL_RESOURCES%.2DA~ ~override~
+        COPY_EXISTING ~%RESREF_2DA_STAT_DRAIN_RESOURCES%.2DA~ ~override~
             INSERT_2DA_ROW 0 0 ~%drain_kill_resource% %stat% %stat_amount%~
             BUT_ONLY
     END
@@ -137,7 +135,7 @@ BEGIN
         ~CHR~ => 132 // 132_STAT(CHR)>=n
     END
 
-    COPY_EXISTING - ~%RESREF_2DA_STAT_DRAIN_KILL_RESOURCES%.2DA~ ~~
+    COPY_EXISTING - ~%RESREF_2DA_STAT_DRAIN_RESOURCES%.2DA~ ~~
         READ_2DA_ENTRIES_NOW drain_kill_resources 1
         BUT_ONLY
 

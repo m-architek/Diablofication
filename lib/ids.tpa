@@ -1,4 +1,5 @@
 OUTER_SET IDS_SPELL_TYPE_WIZARD = 2
+OUTER_SET IDS_SPELL_TYPE_INNATE = 3
 
 
 DEFINE_ACTION_FUNCTION SPELL_IDS_ADD_SPELL 
@@ -26,6 +27,9 @@ BEGIN
     ACTION_MATCH ~%ids_spell_type%~ WITH
         ~%IDS_SPELL_TYPE_WIZARD%~ BEGIN 
             OUTER_SPRINT spell_resource ~SPWI%ids_spell_value%~
+        END
+        ~%IDS_SPELL_TYPE_INNATE%~ BEGIN 
+            OUTER_SPRINT spell_resource ~SPIN%ids_spell_value%~
         END
         DEFAULT FAIL ~SPELL_IDS_ADD_SPELL: Unrecognized ids spell type: %ids_spell_type%.~
     END

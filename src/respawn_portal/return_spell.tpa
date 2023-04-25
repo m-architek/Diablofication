@@ -1,0 +1,94 @@
+DEFINE_ACTION_FUNCTION APPLY_RETURN_SPELL 
+    STR_VAR return_cutscene_name = 0
+    RET give_return_spell remove_return_spell
+BEGIN     
+    LAF EXTEND_CUT250_WITH_CUTSCENE STR_VAR cutscene_name = ~%return_cutscene_name%~
+        RET cut250_index
+        END
+
+    LAF SPELL_IDS_ADD_SPELL INT_VAR spell_type = IDS_SPELL_TYPE_INNATE spell_level = 1
+        STR_VAR ids_name = ~%SPELL_IDS_RETURN_SPELL%~
+        RET spell_resource
+        END
+
+    CREATE ~SPL~ ~%spell_resource%~
+        SAY NAME1 @1
+        SAY UNIDENTIFIED_DESC @2
+        LPF ADD_SPL_HEADER INT_VAR spell_type = SPL_SPELL_TYPE_INNATE
+                animation = SPL_ANIMATION_ALTERATION
+                level = 1
+            STR_VAR sound_resource = ~CAS_M08~
+                icon_resource = ~SPWI402C~
+            END
+        LPF ADD_SPL_ABILITY INT_VAR location = SPL_ABILITY_LOCATION_INNATE
+                target = SPL_ABILITY_TARGET_CASTER
+                range = 0
+                level_required = 1
+                casting_time = 9
+            STR_VAR icon_resource = ~SPWI402C~
+            RET ability_index 
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_SCRIPT_MODIFY_GLOBAL_VAR
+            target = EFF_TARGET_SELF
+            parameter1 = cut250_index
+            STR_VAR resource = ~CUT250~
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_EXECUTE_CUT250
+            target = EFF_TARGET_SELF
+            END
+        LPF ADD_SPELL_CFEFFECT INT_VAR insert_point = 0
+            opcode = EFF_OPCODE_REMOVE_SPELL
+            target = EFF_TARGET_SELF
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            STR_VAR resource = ~%spell_resource%~
+            END
+        LPF ADD_SPELL_CFEFFECT INT_VAR insert_point = 1
+            opcode = EFF_OPCODE_GIVE_SPELL
+            target = EFF_TARGET_SELF
+            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            STR_VAR resource = ~%spell_resource%~
+            END     
+         
+    LAF APPLY_GIVE_RETURN_SPELL STR_VAR return_spell = ~%spell_resource%~
+        RET give_return_spell
+        END
+    LAF APPLY_REMOVE_RETURN_SPELL STR_VAR return_spell = ~%spell_resource%~ 
+        RET remove_return_spell
+        END
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_GIVE_RETURN_SPELL 
+    STR_VAR return_spell = 0
+    RET give_return_spell
+BEGIN 
+    OUTER_SPRINT give_return_spell ~%RESREF_SPL_PORTAL_GIVE_RETURN%~
+
+    CREATE ~SPL~ ~%give_return_spell%~
+        LPF ADD_SPL_ABILITY RET ability_index END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_REMOVE_SPELL
+            STR_VAR resource = ~%return_spell%~
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_GIVE_SPELL
+            STR_VAR resource = ~%return_spell%~
+            END
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_REMOVE_RETURN_SPELL
+    STR_VAR return_spell = 0
+    RET remove_return_spell
+BEGIN 
+    OUTER_SPRINT remove_return_spell ~%RESREF_SPL_PORTAL_REMOVE_RETURN%~
+
+    CREATE ~SPL~ ~%remove_return_spell%~
+        LPF ADD_SPL_ABILITY RET ability_index END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_REMOVE_SPELL
+            STR_VAR resource = ~%return_spell%~
+            END
+END

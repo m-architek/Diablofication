@@ -1,0 +1,23 @@
+DEFINE_ACTION_FUNCTION APPLY_RETURN_POINT_RESOLVING
+    STR_VAR master_areas_ref = 0
+        return_cutscene_prefix = 0
+        portal_master_area_variable = 0
+        this_cutscene_name = 0
+BEGIN 
+    <<<<<<<< .../return_point_rule.baf
+    IF
+        Global("%portal_master_area_variable%", "GLOBAL", %master_area_index%)
+    THEN
+        RESPONSE #100
+            CutSceneId(Player1)
+            StartCutSceneEx("%return_cutscene_name%", TRUE)
+    END
+    >>>>>>>>
+
+    ACTION_PHP_EACH ~%master_areas_ref%~ AS _ => master_area_index BEGIN 
+        OUTER_SPRINT return_cutscene_name ~%return_cutscene_prefix%%master_area_index%~
+        
+        EXTEND_BOTTOM ~%this_cutscene_name%.BCS~ ~.../return_point_rule.baf~ 
+            EVALUATE_BUFFER
+    END
+END

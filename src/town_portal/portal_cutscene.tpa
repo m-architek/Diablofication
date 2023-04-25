@@ -1,56 +1,30 @@
 DEFINE_ACTION_FUNCTION APPLY_PORTAL_CUTSCENE 
-    RET cut250_index 
+    RET portal_cutscene_name 
 BEGIN 
-    OUTER_SET teleport_next_cutscene_variable_value = 1
+    OUTER_SET respawn_portal_next_cutscene_variable_value = 1
 
     LAF APPLY_PORTAL_LEAVE_CUTSCENE RET portal_leave_cutscene_name END
 
-    LAF APPLY_RESPAWN_TELEPORT INT_VAR teleport_next_cutscene_variable_value
-        STR_VAR teleport_next_cutscene_name = ~%portal_leave_cutscene_name%~
-        RET teleport_cutscene_name 
-            teleport_next_cutscene_variable_name
+    LAF APPLY_RESPAWN_PORTAL INT_VAR next_cutscene_variable_value = ~%respawn_portal_next_cutscene_variable_value%~
+        STR_VAR next_cutscene_name = ~%portal_leave_cutscene_name%~
+        RET respawn_portal_cutscene_name
+            respawn_portal_next_cutscene_variable_name = next_cutscene_variable_name
         END
 
-    LAF APPLY_PORTAL_ENTER_CUTSCENE INT_VAR teleport_next_cutscene_variable_value
-        STR_VAR teleport_cutscene_name 
-            teleport_next_cutscene_variable_name
+    LAF APPLY_PORTAL_ENTER_CUTSCENE INT_VAR respawn_portal_next_cutscene_variable_value
+        STR_VAR respawn_portal_cutscene_name 
+            respawn_portal_next_cutscene_variable_name
         RET portal_enter_cutscene_name
         END
 
-    LAF APPLY_CUT250_PORTAL_EXTENSION STR_VAR portal_enter_cutscene_name
-        RET cut250_index
-        END
-END
-
-
-DEFINE_ACTION_FUNCTION APPLY_CUT250_PORTAL_EXTENSION 
-    STR_VAR portal_enter_cutscene_name = 0
-    RET cut250_index 
-BEGIN 
-    <<<<<<<< .../cut250_portal_custscene.baf
-    IF
-        True()
-    THEN
-        RESPONSE #100
-            CutSceneId(Player1)
-            StartCutSceneEx("%portal_enter_cutscene_name%",TRUE)
-    END
-    >>>>>>>>
-
-    LAF EXTEND_CUT250 STR_VAR baf_file = ~.../cut250_portal_custscene.baf~
-        RET cut250_index = value
-        END
-
-    ACTION_IF (NOT cut250_index) BEGIN 
-        FAIL ~Cannot extend CUT250 with portal cutscene.~
-    END
+    OUTER_SPRINT portal_cutscene_name ~%portal_enter_cutscene_name%~
 END
 
 
 DEFINE_ACTION_FUNCTION APPLY_PORTAL_ENTER_CUTSCENE
-    INT_VAR teleport_next_cutscene_variable_value = ~~
-    STR_VAR teleport_cutscene_name = 0
-        teleport_next_cutscene_variable_name = 0
+    INT_VAR respawn_portal_next_cutscene_variable_value = ~~
+    STR_VAR respawn_portal_cutscene_name = 0
+        respawn_portal_next_cutscene_variable_name = 0
     RET portal_enter_cutscene_name
 BEGIN 
     OUTER_SPRINT portal_enter_cutscene_name ~%RESREF_BCS_PORTAL_ENTER_CUTSCENE%~
@@ -83,8 +57,8 @@ BEGIN
             ApplySpellRES("%clarity_spl%", Player5)
             ApplySpellRES("%clarity_spl%", Player6)
 
-            SetGlobal("%teleport_next_cutscene_variable_name%", "GLOBAL", %teleport_next_cutscene_variable_value%)
-            StartCutSceneEx("%teleport_cutscene_name%",TRUE)
+            SetGlobal("%respawn_portal_next_cutscene_variable_name%", "GLOBAL", %respawn_portal_next_cutscene_variable_value%)
+            StartCutSceneEx("%respawn_portal_cutscene_name%",TRUE)
     END
     >>>>>>>>
 
@@ -156,11 +130,6 @@ BEGIN
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_FREEDOM
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_REMOVE_OPCODE
-            parameter1 = "-1"
-            parameter2 = EFF_OPCODE_MAKE_UNSELECTABLE
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
             opcode = EFF_OPCODE_CAST_SPELL

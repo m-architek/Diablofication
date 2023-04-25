@@ -1,0 +1,73 @@
+DEFINE_ACTION_FUNCTION APPLY_PORTAL_MARKERS 
+    RET_ARRAY portal_markers
+BEGIN 
+    ACTION_CLEAR_ARRAY portal_markers
+
+    LAF APPLY_PORTAL_MARKER_SCRIPT RET portal_marker_script END
+    
+    ACTION_CLEAR_ARRAY player_indices
+    ACTION_DEFINE_ARRAY player_indices BEGIN 1 2 3 4 5 6 END
+
+    ACTION_PHP_EACH player_indices AS _ => player_index BEGIN 
+        OUTER_SPRINT portal_marker_resource ~%RESREF_CRE_PORTAL_MARKER_PREFIX%%player_index%~
+        OUTER_SPRINT portal_marker_dv ~%DV_PORTAL_MARKER_PREFIX%%player_index%~
+        
+        CREATE ~CRE~ ~%portal_marker_resource%~
+            WRITE_ASCII DEATHVAR ~%portal_marker_dv%~ #32
+            WRITE_ASCII SCRIPT_OVERRIDE ~%portal_marker_script%~ #8
+            LPF PATCH_CRE_HP INT_VAR current_hp = 1 max_hp = 1 END
+            ADD_CRE_ITEM ~MINHP1~ #0 #0 #0 ~NONE~ ~AMULET~
+            LPF ADD_CRE_EFFECT INT_VAR opcode = EFF_OPCODE_SANCTUARY 
+                parameter2 = 1 // Custom overlay
+                timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+                END
+            LPF ADD_CRE_EFFECT INT_VAR opcode = EFF_OPCODE_GRAPHICS_ANIMATION_REMOVAL 
+                parameter2 = 1 // Stat Value
+                timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+                END
+
+        LAF APPLY_PORTAL_MARKER_CREATION STR_VAR portal_marker_resource portal_marker_dv END
+        
+        ACTION_DEFINE_ASSOCIATIVE_ARRAY portal_markers BEGIN 
+            ~%player_index%~ => ~%portal_marker_dv%~
+        END
+    END
+END
+
+DEFINE_ACTION_FUNCTION APPLY_PORTAL_MARKER_SCRIPT 
+    RET portal_marker_script
+BEGIN 
+    OUTER_SPRINT portal_marker_script ~%RESREF_BCS_PORTAL_MARKER%~
+
+    <<<<<<<< .../marker_script.baf
+    IF
+        OnCreation()
+    THEN
+        RESPONSE #100
+            MakeGlobalOverride()
+            Continue()
+    END
+    >>>>>>>>
+
+    EXTEND_TOP ~%portal_marker_script%.BCS~ ~.../marker_script.baf~
+        EVALUATE_BUFFER
+END
+
+DEFINE_ACTION_FUNCTION APPLY_PORTAL_MARKER_CREATION 
+    STR_VAR portal_marker_resource = 0
+        portal_marker_dv = 0
+BEGIN 
+    <<<<<<<< .../create_marker.baf
+    IF
+        OnCreation()
+        !Exists("%portal_marker_dv%")
+    THEN
+        RESPONSE #100
+            CreateCreatureObject("%portal_marker_resource%", Player1, 0, 0, 0)
+            Continue()
+    END
+    >>>>>>>>
+    
+    EXTEND_TOP ~BALDUR.BCS~ ~.../create_marker.baf~
+        EVALUATE_BUFFER
+END

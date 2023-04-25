@@ -1,0 +1,115 @@
+DEFINE_ACTION_FUNCTION APPLY_PORTAL_POINT_RESOLVING
+    STR_VAR candlekeep_enter_variable = 0
+        this_cutscene_name = 0
+        next_cutscene_name = 0
+    RET respawn_point_variable
+    RET_ARRAY respawn_points
+BEGIN
+    OUTER_SPRINT respawn_point_variable ~%GLOBAL_RESPAWN_POINT%~
+    ACTION_CLEAR_ARRAY respawn_points
+
+    COPY - ~%config%/respawn_points.2da~ ~~
+        LPF READ_2DA_ROW_NAMES RET_ARRAY respawn_points = out END
+
+
+    <<<<<<<< .../respawn_point_rule.baf
+    IF
+        %respawn_point_filter%
+    THEN
+        RESPONSE #100
+            CutSceneId(Player1)
+            SetGlobal("%respawn_point_variable%", "GLOBAL", %respawn_point_index%)
+    END
+    >>>>>>>>
+
+
+    // Apply nearest point rules
+
+    LAF APPLY_NEAREST_RESPAWN_POINT_VARIABLES STR_VAR respawn_points_ref = respawn_points
+        RET nearest_respawn_point_variable 
+        END
+
+    ACTION_PHP_EACH respawn_points AS _ => respawn_point_index BEGIN
+        EXTEND_BOTTOM ~%this_cutscene_name%.BCS~ ~.../respawn_point_rule.baf~ 
+            SPRINT respawn_point_filter ~Global("%nearest_respawn_point_variable%", "GLOBAL", %respawn_point_index%)~
+            EVALUATE_BUFFER
+    END
+
+
+    // Apply plot critical rules
+
+    EXTEND_BOTTOM ~%this_cutscene_name%.BCS~ ~.../respawn_point_rule.baf~ 
+        SPRINT respawn_point_filter ~~~~~
+            Global("Chapter", "GLOBAL", 0)
+        ~~~~~
+        SPRINT respawn_point_index $respawn_points(CANDLEKEEP_PROLOGUE)
+        EVALUATE_BUFFER
+
+    EXTEND_BOTTOM ~%this_cutscene_name%.BCS~ ~.../respawn_point_rule.baf~ 
+        SPRINT respawn_point_filter ~~~~~
+            Global("Chapter", "GLOBAL", 6)
+            Global("%candlekeep_enter_variable%", "GLOBAL", 1)
+            Global("Criminal", "GLOBAL", 0)
+        ~~~~~
+        SPRINT respawn_point_index $respawn_points(CANDLEKEEP)
+        EVALUATE_BUFFER
+
+    EXTEND_BOTTOM ~%this_cutscene_name%.BCS~ ~.../respawn_point_rule.baf~ 
+        SPRINT respawn_point_filter ~~~~~
+            Global("Chapter", "GLOBAL", 6)
+            Global("Criminal", "GLOBAL", 1)
+            Global("Arrested", "GLOBAL", 0)
+        ~~~~~
+        SPRINT respawn_point_index $respawn_points(CANDLEKEEP_PRISON)
+        EVALUATE_BUFFER
+
+    EXTEND_BOTTOM ~%this_cutscene_name%.BCS~ ~.../respawn_point_rule.baf~ 
+        SPRINT respawn_point_filter ~~~~~
+            Global("Chapter", "GLOBAL", 6)
+            Global("Criminal", "GLOBAL", 1)
+            Global("Arrested", "GLOBAL", 1)
+        ~~~~~
+        SPRINT respawn_point_index $respawn_points(CANDLEKEEP_CATACOMBS)
+        EVALUATE_BUFFER
+
+    EXTEND_BOTTOM ~%this_cutscene_name%.BCS~ ~.../respawn_point_rule.baf~ 
+        SPRINT respawn_point_filter ~~~~~
+            Global("EnteredAR1008", "GLOBAL", 1)
+            Global("iceisle", "GLOBAL", 0)
+        ~~~~~
+        SPRINT respawn_point_index $respawn_points(ICE_ISLAND)
+        EVALUATE_BUFFER
+
+
+    LAF START_NEXT_CUTSCENE STR_VAR this_cutscene_name next_cutscene_name END
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_NEAREST_RESPAWN_POINT_VARIABLES
+    STR_VAR respawn_points_ref = 0
+    RET nearest_respawn_point_variable
+BEGIN
+    OUTER_SPRINT nearest_respawn_point_variable ~%GLOBAL_NEAREST_RESPAWN_POINT%~
+
+    COPY - ~%config%/respawn_points_nearest.2da~ ~~
+        LPF READ_2DA_COLUMN STR_VAR column_name = ~RESPAWN_POINT~
+            RET_ARRAY nearest_respawn_points = out
+            END
+
+    <<<<<<<< .../nearest_respawn_point.baf
+    IF
+        !Global("%nearest_respawn_point_variable%", "GLOBAL", %respawn_point_index%)
+        Exists(Player1)
+    THEN
+        RESPONSE #100
+            SetGlobal("%nearest_respawn_point_variable%", "GLOBAL", %respawn_point_index%)
+            Continue()
+    END
+    >>>>>>>>
+
+    ACTION_PHP_EACH nearest_respawn_points AS area_name => respawn_point_name BEGIN
+        EXTEND_TOP ~%area_name%.BCS~ ~.../nearest_respawn_point.baf~ 
+            SPRINT respawn_point_index $~%respawn_points_ref%~(~%respawn_point_name%~)
+            EVALUATE_BUFFER
+    END
+END

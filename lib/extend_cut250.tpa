@@ -1,0 +1,22 @@
+DEFINE_ACTION_FUNCTION EXTEND_CUT250_WITH_CUTSCENE 
+    STR_VAR cutscene_name = 0
+    RET cut250_index 
+BEGIN 
+    <<<<<<<< .../cut250_custscene.baf
+    IF
+        True()
+    THEN
+        RESPONSE #100
+            CutSceneId(Player1)
+            StartCutSceneEx("%cutscene_name%", TRUE)
+    END
+    >>>>>>>>
+
+    LAF EXTEND_CUT250 STR_VAR baf_file = ~.../cut250_custscene.baf~
+        RET cut250_index = value
+        END
+
+    ACTION_IF (NOT cut250_index) BEGIN 
+        FAIL ~Cannot extend CUT250 with cutscene %cutscene_name%.~
+    END
+END

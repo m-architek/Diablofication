@@ -1,11 +1,11 @@
-INCLUDE ~%src%/respawn_teleport/main.tpa~
-    
+INCLUDE ~%src%/respawn_portal/lib.tpa~
+
 INCLUDE ~%COMPONENT_FOLDER%/resources.tpa~
-INCLUDE ~%COMPONENT_FOLDER%/portal_cutscene.tpa~
 INCLUDE ~%COMPONENT_FOLDER%/portal_spell.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/portal_cutscene.tpa~
 
 LOAD_TRA ~%tra%/%LANGUAGE%/%COMPONENT%.tra~
 
-LAF APPLY_PORTAL_CUTSCENE RET cut250_index END
+LAF APPLY_PORTAL_CUTSCENE RET portal_cutscene_name END
 
-LAF APPLY_PORTAL_SPELL STR_VAR cut250_index END
+LAF APPLY_PORTAL_SPELL STR_VAR portal_cutscene_name END

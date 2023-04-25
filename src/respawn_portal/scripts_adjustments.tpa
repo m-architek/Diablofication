@@ -1,0 +1,167 @@
+DEFINE_ACTION_FUNCTION APPLY_SCRIPTS_ADJUSTMENTS 
+    STR_VAR portal_open_variable = 0 remove_return_spell = 0
+    RET candlekeep_enter_variable
+BEGIN 
+    OUTER_SPRINT close_portal_action ~~~~~
+        SetGlobal("%portal_open_variable%", "GLOBAL", 0)
+        ApplySpellRES("%remove_return_spell%", Player1)
+    ~~~~~
+
+    LAF APPLY_CANDLEKEEP_PROLOGUE_END_EXTENSION STR_VAR close_portal_action END
+    LAF APPLY_CLOAKWOOD_END_EXTENSION STR_VAR close_portal_action END
+    LAF APPLY_CANDLEKEEP_ENTER_EXTENSION STR_VAR close_portal_action
+        RET candlekeep_enter_variable 
+        END
+    LAF APPLY_CANDLEKEEP_ARRESTED_EXTENSION STR_VAR close_portal_action END
+    LAF APPLY_CANDLEKEEP_EXIT_EXTENSION STR_VAR close_portal_action END
+    LAF APPLY_ICE_ISLAND_ENTER_EXTENSION STR_VAR close_portal_action END
+    LAF APPLY_ICE_ISLAND_EXIT_EXTENSION STR_VAR close_portal_action END
+    LAF APPLY_BALDURAN_ISLAND_ENTER_EXTENSION STR_VAR close_portal_action END
+    LAF APPLY_BALDURAN_ISLAND_EXIT_EXTENSION STR_VAR close_portal_action END
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_CANDLEKEEP_PROLOGUE_END_EXTENSION
+    STR_VAR close_portal_action = 0
+BEGIN 
+    COPY_EXISTING ~CH1CUT04.BCS~ ~override~
+        DECOMPILE_AND_PATCH BEGIN
+            REPLACE_TEXTUALLY CASE_INSENSITIVE EXACT_MATCH ~EndCutSceneMode()~ ~~~~~
+                EndCutSceneMode()
+                %close_portal_action%
+            ~~~~~
+        END
+        BUT_ONLY
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_CLOAKWOOD_END_EXTENSION
+    STR_VAR close_portal_action = 0
+BEGIN 
+    DEFINE_PATCH_FUNCTION PATCH_CLOAKWOOD_END BEGIN 
+        DECOMPILE_AND_PATCH BEGIN
+            REPLACE_TEXTUALLY CASE_INSENSITIVE EXACT_MATCH ~SetGlobal("FLOODED","GLOBAL",1)~ ~~~~~
+                SetGlobal("FLOODED","GLOBAL",1)
+                %close_portal_action%
+            ~~~~~
+        END
+    END
+
+    COPY_EXISTING ~CH4END.BCS~ ~override~
+        LPF PATCH_CLOAKWOOD_END END
+        BUT_ONLY
+
+    COPY_EXISTING ~MINEC2.DLG~ ~override~	
+        LPF PATCH_CLOAKWOOD_END END
+        BUT_ONLY
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_CANDLEKEEP_ENTER_EXTENSION
+    STR_VAR close_portal_action = 0
+    RET candlekeep_enter_variable
+BEGIN
+    OUTER_SPRINT candlekeep_enter_variable ~%GLOBAL_CANDLEKEEP_ENTER%~
+
+    COPY_EXISTING ~CH6CUT01.BCS~ ~override~
+        DECOMPILE_AND_PATCH BEGIN
+            REPLACE_TEXTUALLY CASE_INSENSITIVE EXACT_MATCH ~EndCutSceneMode()~ ~~~~~
+                EndCutSceneMode()
+                SetGlobal("%candlekeep_enter_variable%", "GLOBAL", 1)
+                %close_portal_action%
+            ~~~~~
+        END
+        BUT_ONLY
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_CANDLEKEEP_ARRESTED_EXTENSION 
+    STR_VAR close_portal_action = 0
+BEGIN
+
+    <<<<<<<< .../candlekeep_arrested_extension.baf
+    IF
+        Global("Arrested", "GLOBAL", 0)
+    THEN
+        RESPONSE #100
+            ClearAllActions()
+            StartCutSceneMode()
+            SetGlobal("Arrested", "GLOBAL", 1)
+            %close_portal_action%
+            StartCutScene("ch6cut02")
+    END
+    >>>>>>>>
+
+    EXTEND_BOTTOM ~AR2631.BCS~ ~.../candlekeep_arrested_extension.baf~ 
+        EVALUATE_BUFFER
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_CANDLEKEEP_EXIT_EXTENSION
+    STR_VAR close_portal_action = 0
+BEGIN 
+    COPY_EXISTING ~AR2626.BCS~ ~override~
+        DECOMPILE_AND_PATCH BEGIN
+            REPLACE_TEXTUALLY CASE_INSENSITIVE EXACT_MATCH ~SetGlobal("Teth","GLOBAL",3)~ ~~~~~
+                SetGlobal("Teth","GLOBAL",3)
+                %close_portal_action%
+            ~~~~~
+        END
+        BUT_ONLY
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_ICE_ISLAND_ENTER_EXTENSION
+    STR_VAR close_portal_action = 0
+BEGIN
+    COPY_EXISTING ~AR1008.BCS~ ~override~
+        DECOMPILE_AND_PATCH BEGIN
+            REPLACE_TEXTUALLY CASE_INSENSITIVE EXACT_MATCH ~SetGlobal("EnteredAR1008","GLOBAL",1)~ ~~~~~
+                SetGlobal("EnteredAR1008","GLOBAL",1)
+                %close_portal_action%
+            ~~~~~
+        END
+        BUT_ONLY
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_ICE_ISLAND_EXIT_EXTENSION
+    STR_VAR close_portal_action = 0
+BEGIN
+    COPY_EXISTING ~AR1008.BCS~ ~override~
+        DECOMPILE_AND_PATCH BEGIN
+            REPLACE_TEXTUALLY CASE_INSENSITIVE EXACT_MATCH ~SetGlobal("iceisle","GLOBAL",1)~ ~~~~~
+                SetGlobal("iceisle","GLOBAL",1)
+                %close_portal_action%
+            ~~~~~
+        END
+        BUT_ONLY
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_BALDURAN_ISLAND_ENTER_EXTENSION
+    STR_VAR close_portal_action = 0
+BEGIN
+    COPY_EXISTING ~ISLON.BCS~ ~override~
+        DECOMPILE_AND_PATCH BEGIN
+            REPLACE_TEXTUALLY CASE_INSENSITIVE EXACT_MATCH ~EndCutSceneMode()~ ~~~~~
+                EndCutSceneMode()
+                %close_portal_action%
+            ~~~~~
+        END
+        BUT_ONLY
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_BALDURAN_ISLAND_EXIT_EXTENSION
+    STR_VAR close_portal_action = 0
+BEGIN
+    COPY_EXISTING ~ISLOFF.BCS~ ~override~
+        DECOMPILE_AND_PATCH BEGIN
+            REPLACE_TEXTUALLY CASE_INSENSITIVE EXACT_MATCH ~EndCutSceneMode()~ ~~~~~
+                EndCutSceneMode()
+                %close_portal_action%
+            ~~~~~
+        END
+        BUT_ONLY
+END

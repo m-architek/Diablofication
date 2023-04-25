@@ -6,38 +6,38 @@ DEFINE_ACTION_FUNCTION APPLY_RESPAWN_PROCESS
         maze_state_variable = 0
     RET respawn_cutscene_name
 BEGIN
-    OUTER_SET teleport_next_cutscene_variable_value = 2
+    OUTER_SET respawn_portal_next_cutscene_variable_value = 2
 
     LAF APPLY_RESPAWN_HEAL_CUTSCENE STR_VAR next_cutscene_name = ~%penalty_cutscene_name%~
         RET respawn_heal_cutscene_name 
         END
 
-    LAF APPLY_RESPAWN_TELEPORT INT_VAR teleport_next_cutscene_variable_value
-        STR_VAR teleport_next_cutscene_name = ~%respawn_heal_cutscene_name%~
-        RET teleport_cutscene_name
-            teleport_next_cutscene_variable_name
+    LAF APPLY_RESPAWN_PORTAL INT_VAR next_cutscene_variable_value = ~%respawn_portal_next_cutscene_variable_value%~
+        STR_VAR next_cutscene_name = ~%respawn_heal_cutscene_name%~
+        RET respawn_portal_cutscene_name
+            respawn_portal_next_cutscene_variable_name = next_cutscene_variable_name
         END
 
-    LAF APPLY_RESPAWN_RESURRECTION_CUTSCENE INT_VAR teleport_next_cutscene_variable_value
-        STR_VAR teleport_cutscene_name
+    LAF APPLY_RESPAWN_RESURRECTION_CUTSCENE INT_VAR respawn_portal_next_cutscene_variable_value
+        STR_VAR respawn_portal_cutscene_name
             patrification_state_variable = ~%patrification_state_variable%~
             instant_death_variable = ~%instant_death_variable%~
             kill_player1_variable = ~%kill_player1_variable%~
             maze_state_variable = ~%maze_state_variable%~
-            teleport_next_cutscene_variable_name
+            respawn_portal_next_cutscene_variable_name
         RET respawn_cutscene_name = respawn_resurrection_cutscene_name 
         END
 END
 
 
 DEFINE_ACTION_FUNCTION APPLY_RESPAWN_RESURRECTION_CUTSCENE 
-    INT_VAR teleport_next_cutscene_variable_value = ~~
-    STR_VAR teleport_cutscene_name = 0
+    INT_VAR respawn_portal_next_cutscene_variable_value = ~~
+    STR_VAR respawn_portal_cutscene_name = 0
         patrification_state_variable = 0
         instant_death_variable = 0
         kill_player1_variable = 0
         maze_state_variable = 0
-        teleport_next_cutscene_variable_name = 0
+        respawn_portal_next_cutscene_variable_name = 0
     RET respawn_resurrection_cutscene_name
 BEGIN 
     OUTER_SPRINT respawn_resurrection_cutscene_name ~%RESREF_BCS_RESPAWN_RESURRECTION_CUTSCENE%~
@@ -73,8 +73,8 @@ BEGIN
             ActionOverride(Player5, SetSequence(SEQ_READY))
             ActionOverride(Player6, SetSequence(SEQ_READY)) 
 
-            SetGlobal("%teleport_next_cutscene_variable_name%", "GLOBAL", %teleport_next_cutscene_variable_value%)
-            StartCutSceneEx("%teleport_cutscene_name%",TRUE)      
+            SetGlobal("%respawn_portal_next_cutscene_variable_name%", "GLOBAL", %respawn_portal_next_cutscene_variable_value%)
+            StartCutSceneEx("%respawn_portal_cutscene_name%",TRUE)      
     END
     >>>>>>>>
 

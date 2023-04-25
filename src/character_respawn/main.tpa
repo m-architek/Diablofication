@@ -1,4 +1,4 @@
-INCLUDE ~%src%/respawn_teleport/main.tpa~
+INCLUDE ~%src%/respawn_portal/lib.tpa~
 
 INCLUDE ~%COMPONENT_FOLDER%/resources.tpa~
 INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments.tpa~

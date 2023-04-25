@@ -1,8 +1,12 @@
 DEFINE_ACTION_FUNCTION APPLY_PORTAL_SPELL
-    INT_VAR cut250_index = ~~
+    STR_VAR portal_cutscene_name = 0
 BEGIN     
+    LAF EXTEND_CUT250_WITH_CUTSCENE STR_VAR cutscene_name = ~%portal_cutscene_name%~
+        RET cut250_index
+        END
+
     LAF SPELL_IDS_ADD_SPELL INT_VAR spell_type = IDS_SPELL_TYPE_WIZARD spell_level = 1
-        STR_VAR ids_name = ~%TOWN_PORTAL_PREFIX%_TOWN_PORTAL~
+        STR_VAR ids_name = ~%SPELL_IDS_TOWN_PORTAL%~
         RET spell_resource
         END
 

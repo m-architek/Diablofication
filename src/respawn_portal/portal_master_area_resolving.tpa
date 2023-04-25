@@ -1,0 +1,74 @@
+
+DEFINE_ACTION_FUNCTION APPLY_PORTAL_MASTER_AREA_RESOLVING
+    STR_VAR this_cutscene_name = 0
+        next_cutscene_name = 0
+    RET portal_master_area_variable
+    RET_ARRAY master_areas
+BEGIN 
+    LAF APPLY_CURRENT_MASTER_AREA_DETECTION RET current_master_area_variable
+        RET_ARRAY master_areas
+        END
+
+    LAF APPLY_PORTAL_MASTER_AREA_CUTSCENE STR_VAR current_master_area_variable
+            this_cutscene_name
+            next_cutscene_name
+        RET portal_master_area_variable
+        END
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_CURRENT_MASTER_AREA_DETECTION 
+    RET current_master_area_variable
+    RET_ARRAY master_areas
+BEGIN 
+    OUTER_SPRINT current_master_area_variable ~%GLOBAL_CURRENT_MASTER_AREA%~
+    ACTION_CLEAR_ARRAY master_areas
+
+    COPY_EXISTING - ~mastarea.2da~ ~~
+        LPF READ_2DA_ROW_NAMES RET_ARRAY master_areas = out END
+        BUT_ONLY
+
+    <<<<<<<< .../master_area.baf
+    IF
+        !Global("%current_master_area_variable%", "GLOBAL", %master_area_index%)
+        Exists(Player1)
+    THEN
+        RESPONSE #100
+            SetGlobal("%current_master_area_variable%", "GLOBAL", %master_area_index%)
+            Continue()
+    END
+    >>>>>>>>
+
+    ACTION_PHP_EACH master_areas AS master_area_name => master_area_index BEGIN
+        EXTEND_TOP ~%master_area_name%.BCS~ ~.../master_area.baf~ 
+            EVALUATE_BUFFER
+    END
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_PORTAL_MASTER_AREA_CUTSCENE
+    STR_VAR current_master_area_variable = 0
+        this_cutscene_name = 0
+        next_cutscene_name = 0
+    RET portal_master_area_variable
+BEGIN 
+    OUTER_SPRINT portal_master_area_variable ~%GLOBAL_PORTAL_MASTER_AREA%~
+
+    <<<<<<<< .../portal_master_area.baf
+    IF
+        Global("%current_master_area_variable%", "GLOBAL", %master_area_index%)
+    THEN
+        RESPONSE #100
+            CutSceneId(Player1)
+            SetGlobal("%portal_master_area_variable%", "GLOBAL", %master_area_index%)
+            Continue()
+    END
+    >>>>>>>>
+
+    ACTION_PHP_EACH master_areas AS _ => master_area_index BEGIN
+        EXTEND_BOTTOM ~%this_cutscene_name%.BCS~ ~.../portal_master_area.baf~ 
+            EVALUATE_BUFFER
+    END
+
+    LAF START_NEXT_CUTSCENE STR_VAR this_cutscene_name next_cutscene_name END
+END
