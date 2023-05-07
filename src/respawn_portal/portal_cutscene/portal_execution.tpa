@@ -1,34 +1,15 @@
-DEFINE_ACTION_FUNCTION APPLY_PORTAL_CUTSCENES
-    STR_VAR portal_markers_ref = 0 
+DEFINE_ACTION_FUNCTION APPLY_PORTAL_EXECUTION
+    STR_VAR respawn_point_variable = 0
         respawn_ponts_ref = 0
-        give_return_spell = 0
-        portal_open_variable = 0
-        this_cutscene_prefix = 0
-        next_cutscene_name = 0
+        this_cutscene = 0
+        next_cutscene = 0
 BEGIN
-
-    <<<<<<<< .../portal_cutscene.baf
+    <<<<<<<< .../portal_execution.baf
     IF
-        True()
+        Global("%respawn_point_variable%", "GLOBAL", %respawn_point_index%)
     THEN
         RESPONSE #100
             CutSceneId(Player1)
-
-            MoveGlobalObject("%portal_marker_dv_p1%", Player1) 
-            MoveGlobalObject("%portal_marker_dv_p2%", Player1) 
-            MoveGlobalObject("%portal_marker_dv_p3%", Player1) 
-            MoveGlobalObject("%portal_marker_dv_p4%", Player1) 
-            MoveGlobalObject("%portal_marker_dv_p5%", Player1) 
-            MoveGlobalObject("%portal_marker_dv_p6%", Player1) 
-
-            MoveGlobalObject("%portal_marker_dv_p1%", Player1) 
-            MoveGlobalObject("%portal_marker_dv_p2%", Player2) 
-            MoveGlobalObject("%portal_marker_dv_p3%", Player3) 
-            MoveGlobalObject("%portal_marker_dv_p4%", Player4) 
-            MoveGlobalObject("%portal_marker_dv_p5%", Player5) 
-            MoveGlobalObject("%portal_marker_dv_p6%", Player6) 
-
-            SetGlobal("%portal_open_variable%", "GLOBAL", 1)
 
             LeaveAreaLUAPanic("%area%", "", %p1_pos%, %face%)
             LeaveAreaLUA("%area%", "", %p1_pos%, %face%)
@@ -40,26 +21,19 @@ BEGIN
             SetMasterArea("%master_area%")
             MultiPlayerSync()
 
-            ApplySpellRES("%give_return_spell%", Player1)
-            
-            StartCutSceneEx("%next_cutscene_name%", TRUE)
+            StartCutSceneEx("%next_cutscene%", TRUE)
     END
     >>>>>>>>
-
-    ACTION_PHP_EACH ~%portal_markers_ref%~ AS player_index => portal_marker_dv BEGIN 
-        OUTER_SPRINT ~portal_marker_dv_p%player_index%~ ~%portal_marker_dv%~
-    END
 
     COPY - ~%config%/respawn_points.2da~ ~~        
         PHP_EACH ~%respawn_ponts_ref%~ AS respawn_point_name => respawn_point_index BEGIN
             CLEAR_ARRAY respawn_point
             LPF READ_2DA_ROW STR_VAR row_name = ~%respawn_point_name%~ 
-                RET_ARRAY respawn_point = out END
-
-            SPRINT portal_cutscene_name ~%this_cutscene_prefix%%respawn_point_index%~
+                RET_ARRAY respawn_point = out
+                END
             
             INNER_ACTION BEGIN 
-                EXTEND_BOTTOM ~%portal_cutscene_name%.BCS~ ~.../portal_cutscene.baf~
+                EXTEND_BOTTOM ~%this_cutscene%.BCS~ ~.../portal_execution.baf~
                     SPRINT area $respawn_point(AREA)
                     SPRINT master_area $respawn_point(MASTER_AREA)
                     SPRINT p1_pos $respawn_point(PLAYER1_POS)

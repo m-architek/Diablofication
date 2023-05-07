@@ -1,37 +1,44 @@
 DEFINE_ACTION_FUNCTION APPLY_PORTAL_CUTSCENE 
-    RET portal_cutscene_name 
+    STR_VAR portal_begin_cutscene = 0 
+        portal_onwer_local_varable = 0
 BEGIN 
-    OUTER_SET respawn_portal_next_cutscene_variable_value = 1
+    OUTER_SPRINT portal_end_cutscene ~%RESREF_BCS_PORTAL_END%~
 
-    LAF APPLY_PORTAL_LEAVE_CUTSCENE RET portal_leave_cutscene_name END
+    OUTER_SET portal_next_cutscene_index = 1
 
-    LAF APPLY_RESPAWN_PORTAL INT_VAR next_cutscene_variable_value = ~%respawn_portal_next_cutscene_variable_value%~
-        STR_VAR next_cutscene_name = ~%portal_leave_cutscene_name%~
-        RET respawn_portal_cutscene_name
-            respawn_portal_next_cutscene_variable_name = next_cutscene_variable_name
+    LAF APPLY_RESPAWN_PORTAL INT_VAR next_cutscene_index = ~%portal_next_cutscene_index%~
+        STR_VAR next_cutscene = ~%portal_end_cutscene%~
+        RET portal_cutscene
+            portal_owner_variable
+            portal_next_cutscene_variable = next_cutscene_variable
         END
 
-    LAF APPLY_PORTAL_ENTER_CUTSCENE INT_VAR respawn_portal_next_cutscene_variable_value
-        STR_VAR respawn_portal_cutscene_name 
-            respawn_portal_next_cutscene_variable_name
-        RET portal_enter_cutscene_name
+    LAF APPLY_PORTAL_BEGIN INT_VAR portal_next_cutscene_index
+        STR_VAR portal_owner_variable
+            portal_onwer_local_varable
+            portal_next_cutscene_variable
+            this_cutscene = ~%portal_begin_cutscene%~
+            next_cutscene = ~%portal_cutscene%~
         END
 
-    OUTER_SPRINT portal_cutscene_name ~%portal_enter_cutscene_name%~
+    LAF APPLY_PORTAL_END
+        STR_VAR portal_onwer_local_varable
+            this_cutscene = ~%portal_end_cutscene%~
+        END
 END
 
 
-DEFINE_ACTION_FUNCTION APPLY_PORTAL_ENTER_CUTSCENE
-    INT_VAR respawn_portal_next_cutscene_variable_value = ~~
-    STR_VAR respawn_portal_cutscene_name = 0
-        respawn_portal_next_cutscene_variable_name = 0
-    RET portal_enter_cutscene_name
+DEFINE_ACTION_FUNCTION APPLY_PORTAL_BEGIN
+    INT_VAR portal_next_cutscene_index = ~~
+    STR_VAR portal_owner_variable = 0
+        portal_onwer_local_varable = 0
+        portal_next_cutscene_variable = 0
+        this_cutscene = 0
+        next_cutscene = 0
 BEGIN 
-    OUTER_SPRINT portal_enter_cutscene_name ~%RESREF_BCS_PORTAL_ENTER_CUTSCENE%~
-
     LAF APPLY_PORTAL_CLARITY_SPELL RET clarity_spl END
 
-    <<<<<<<< .../portal_enter_cutscene.baf
+    <<<<<<<< .../portal_begin.baf
     IF
         True()
     THEN
@@ -57,28 +64,53 @@ BEGIN
             ApplySpellRES("%clarity_spl%", Player5)
             ApplySpellRES("%clarity_spl%", Player6)
 
-            SetGlobal("%respawn_portal_next_cutscene_variable_name%", "GLOBAL", %respawn_portal_next_cutscene_variable_value%)
-            StartCutSceneEx("%respawn_portal_cutscene_name%",TRUE)
+            SetGlobal("%portal_next_cutscene_variable%", "GLOBAL", %portal_next_cutscene_index%)
+            SetGlobal("%portal_owner_variable%", "GLOBAL", 0)
     END
     >>>>>>>>
 
-    EXTEND_BOTTOM ~%portal_enter_cutscene_name%.BCS~ ~.../portal_enter_cutscene.baf~
+    EXTEND_BOTTOM ~%this_cutscene%.BCS~ ~.../portal_begin.baf~
         EVALUATE_BUFFER
+
+    <<<<<<<< .../portal_owner_detection.baf
+    IF
+        Exists(%player%)
+        !StateCheck(%player%, STATE_REALLY_DEAD)
+        TriggerOverride(%player%, Global("%portal_onwer_local_varable%", "LOCALS", %player_index%))
+    THEN
+        RESPONSE #100
+            CutSceneId(Player1)
+            SetGlobal("%portal_owner_variable%", "GLOBAL", %player_index%)
+    END
+    >>>>>>>>
+
+    ACTION_PHP_EACH PLAYERS AS player_index => player BEGIN 
+        EXTEND_BOTTOM ~%this_cutscene%.BCS~ ~.../portal_owner_detection.baf~
+                EVALUATE_BUFFER
+    END
+
+    LAF START_NEXT_CUTSCENE STR_VAR this_cutscene next_cutscene END
 END 
 
 
-DEFINE_ACTION_FUNCTION APPLY_PORTAL_LEAVE_CUTSCENE 
-    RET portal_leave_cutscene_name
+DEFINE_ACTION_FUNCTION APPLY_PORTAL_END
+    STR_VAR portal_onwer_local_varable = 0
+        this_cutscene = 0
 BEGIN 
-    OUTER_SPRINT portal_leave_cutscene_name ~%RESREF_BCS_PORTAL_LEAVE_CUTSCENE%~
-
-    <<<<<<<< .../portal_leave_cutscene.baf
+    <<<<<<<< .../portal_end.baf
     IF
         True()
     THEN
         RESPONSE #100
             CutSceneId(Player1)
-            SmallWait(15)
+            
+            SetGlobal("%portal_onwer_local_varable%", "LOCALS", 0)
+            ActionOverride(Player2, SetGlobal("%portal_onwer_local_varable%", "LOCALS", 0))
+            ActionOverride(Player3, SetGlobal("%portal_onwer_local_varable%", "LOCALS", 0))
+            ActionOverride(Player4, SetGlobal("%portal_onwer_local_varable%", "LOCALS", 0))
+            ActionOverride(Player5, SetGlobal("%portal_onwer_local_varable%", "LOCALS", 0))
+            ActionOverride(Player6, SetGlobal("%portal_onwer_local_varable%", "LOCALS", 0))
+            
             CreateVisualEffectObject("spdimndr", Player1)
             CreateVisualEffectObject("spdimndr", Player2)
             CreateVisualEffectObject("spdimndr", Player3)
@@ -92,7 +124,7 @@ BEGIN
     END
     >>>>>>>>
 
-    EXTEND_BOTTOM ~%portal_leave_cutscene_name%.BCS~ ~.../portal_leave_cutscene.baf~
+    EXTEND_BOTTOM ~%this_cutscene%.BCS~ ~.../portal_end.baf~
         EVALUATE_BUFFER
 END
 

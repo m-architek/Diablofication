@@ -1,92 +1,77 @@
 DEFINE_ACTION_FUNCTION APPLY_RESPAWN_PORTAL 
-    INT_VAR next_cutscene_variable_value = ~~
-    STR_VAR next_cutscene_name = 0
-    RET respawn_portal_cutscene_name 
-        next_cutscene_variable_name
+    INT_VAR next_cutscene_index = ~~
+    STR_VAR next_cutscene = 0
+    RET portal_cutscene 
+        portal_owner_variable
+        next_cutscene_variable
 BEGIN 
     OUTER_SPRINT COMPONENT ~respawn_portal~
     OUTER_SPRINT COMPONENT_FOLDER ~%src%/%COMPONENT%~
 
     WITH_TRA ~%tra%/%LANGUAGE%/%COMPONENT%.tra~ BEGIN 
         INCLUDE ~%COMPONENT_FOLDER%/resources.tpa~
-        INCLUDE ~%COMPONENT_FOLDER%/scripts_adjustments.tpa~
-        INCLUDE ~%COMPONENT_FOLDER%/portal_master_area_resolving.tpa~
-        INCLUDE ~%COMPONENT_FOLDER%/portal_markers.tpa~
-        INCLUDE ~%COMPONENT_FOLDER%/portal_point_resolving.tpa~
-        INCLUDE ~%COMPONENT_FOLDER%/portal_execution.tpa~
-        INCLUDE ~%COMPONENT_FOLDER%/portal_cutscenes.tpa~
-        INCLUDE ~%COMPONENT_FOLDER%/portal_next_cutscene_resolving.tpa~
-        INCLUDE ~%COMPONENT_FOLDER%/return_point_resolving.tpa~
-        INCLUDE ~%COMPONENT_FOLDER%/return_cutscenes.tpa~
+        INCLUDE ~%COMPONENT_FOLDER%/portal_marker.tpa~
         INCLUDE ~%COMPONENT_FOLDER%/return_spell.tpa~
+        INCLUDE ~%COMPONENT_FOLDER%/scripts_adjustments.tpa~
+        INCLUDE ~%COMPONENT_FOLDER%/portal_cutscene.tpa~
+        INCLUDE ~%COMPONENT_FOLDER%/return_cutscene.tpa~
+        INCLUDE ~%COMPONENT_FOLDER%/portal_next_cutscene.tpa~
         
-        OUTER_SPRINT respawn_portal_cutscene_name ~%RESREF_BCS_PORTAL_MASTER_AREA_RESOLVING%~
 
-        ACTION_IF (NOT FILE_EXISTS_IN_GAME ~%respawn_portal_cutscene_name%.BCS~) BEGIN 
-            OUTER_SPRINT portal_master_area_resolving_cutscene ~%RESREF_BCS_PORTAL_MASTER_AREA_RESOLVING%~
-            OUTER_SPRINT portal_point_resolving_cutscene ~%RESREF_BCS_PORTAL_POINT_RESOLVING%~
-            OUTER_SPRINT portal_execution_cutscene ~%RESREF_BCS_PORTAL_EXECUTION%~
-            OUTER_SPRINT portal_cutscene_prefix ~%RESREF_BCS_PORTAL_CUTSCENE_PREFIX%~
-            OUTER_SPRINT portal_next_cutscene_resolving_cutscene ~%RESREF_BCS_PORTAL_NEXT_CUTSCENE_RESOLVING%~
-            OUTER_SPRINT return_point_resolving_cutscene ~%RESREF_BCS_RETURN_POINT_RESOLVING%~
-            OUTER_SPRINT return_cutscene_prefix ~%RESREF_BCS_RETURN_CUTSCENE_PREFIX%~
+        OUTER_SPRINT portal_owner_variable ~%GLOBAL_PORTAL_OWNER%~
+        OUTER_SPRINT portal_begin_cutscene ~%RESREF_BCS_PORTAL_BEGIN%~
+        OUTER_SPRINT portal_end_cutscene ~%RESREF_BCS_PORTAL_END%~
+
+        ACTION_IF (NOT FILE_EXISTS_IN_GAME ~%portal_begin_cutscene%.BCS~) BEGIN 
             OUTER_SPRINT portal_open_variable ~%GLOBAL_PORTAL_OPEN%~
+            OUTER_SPRINT return_begin_cutscene ~%RESREF_BCS_RETURN_BEGIN%~
 
-            LAF APPLY_RETURN_SPELL STR_VAR return_cutscene_name = ~%return_point_resolving_cutscene%~
-                RET give_return_spell remove_return_spell
+            LAF APPLY_PORTAL_MARKER RET portal_marker_dv END
+            
+            LAF APPLY_RETURN_SPELL STR_VAR return_cutscene = ~%return_begin_cutscene%~
+                RET return_spell give_return_spell remove_return_spell
                 END
 
-            LAF APPLY_SCRIPTS_ADJUSTMENTS STR_VAR portal_open_variable remove_return_spell
+            LAF APPLY_SCRIPTS_ADJUSTMENTS 
+                STR_VAR portal_open_variable 
+                    portal_owner_variable
+                    return_spell 
+                    remove_return_spell
                 RET candlekeep_enter_variable
                 END
             
-            LAF APPLY_PORTAL_MASTER_AREA_RESOLVING STR_VAR this_cutscene_name = ~%portal_master_area_resolving_cutscene%~ 
-                    next_cutscene_name = ~%portal_point_resolving_cutscene%~
-                RET portal_master_area_variable
-                RET_ARRAY master_areas
-                END
-
-            LAF APPLY_PORTAL_MARKERS RET_ARRAY portal_markers END
-
-            LAF APPLY_PORTAL_POINT_RESOLVING STR_VAR candlekeep_enter_variable
-                    this_cutscene_name = ~%portal_point_resolving_cutscene%~
-                    next_cutscene_name = ~%portal_execution_cutscene%~
-                RET respawn_point_variable
-                RET_ARRAY respawn_points
-                END
-
-            LAF APPLY_PORTAL_EXECUTION STR_VAR respawn_points_ref = respawn_points
-                    portal_cutscene_prefix
-                    respawn_point_variable
-                    this_cutscene_name = ~%portal_execution_cutscene%~
-                END
-
-            LAF APPLY_PORTAL_CUTSCENES STR_VAR portal_markers_ref = portal_markers 
-                    respawn_ponts_ref = respawn_points
+            LAF APPLY_PORTAL_CUTSCENE
+                STR_VAR portal_open_variable
+                    portal_owner_variable
+                    portal_marker_dv
                     give_return_spell
-                    portal_open_variable
-                    this_cutscene_prefix = ~%portal_cutscene_prefix%~
-                    next_cutscene_name = ~%portal_next_cutscene_resolving_cutscene%~
-                END
-
-            LAF APPLY_RETURN_POINT_RESOLVING STR_VAR master_areas_ref = master_areas
-                    return_cutscene_prefix
+                    candlekeep_enter_variable
+                    portal_begin_cutscene
+                    portal_end_cutscene
+                RET portal_area_variable
                     portal_master_area_variable
-                    this_cutscene_name = ~%return_point_resolving_cutscene%~
+                RET_ARRAY all_areas 
+                    master_areas
                 END
 
-            LAF APPLY_RETURN_CUTSCENES STR_VAR master_areas_ref = master_areas
-                    portal_markers_ref = portal_markers
+            LAF APPLY_RETURN_CUTSCENE
+                STR_VAR return_begin_cutscene
                     portal_open_variable
+                    portal_marker_dv
+                    portal_area_variable
+                    portal_master_area_variable
+                    all_areas_ref = all_areas
+                    master_areas_ref = master_areas
                     remove_return_spell
-                    this_cutscene_prefix = ~%return_cutscene_prefix%~
                 END
         END
 
-        LAF APPLY_PORTAL_NEXT_CUTSCENE_RESOLVING INT_VAR next_cutscene_variable_value
-            STR_VAR this_cutscene_name = ~%portal_next_cutscene_resolving_cutscene%~
-                next_cutscene_name
-            RET next_cutscene_variable_name
+        LAF APPLY_PORTAL_NEXT_CUTSCENE INT_VAR next_cutscene_index
+            STR_VAR portal_end_cutscene
+                next_cutscene
+            RET next_cutscene_variable
             END
+
+        OUTER_SPRINT portal_cutscene ~%portal_begin_cutscene%~
     END
 END

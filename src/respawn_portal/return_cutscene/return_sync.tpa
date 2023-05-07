@@ -1,0 +1,30 @@
+DEFINE_ACTION_FUNCTION APPLY_RETURN_SYNC
+    STR_VAR portal_master_area_variable = 0
+        master_areas_ref = 0
+        this_cutscene = 0
+        next_cutscene = 0
+BEGIN 
+    OUTER_SPRINT return_sync_script ~~
+
+    ACTION_PHP_EACH ~%master_areas_ref%~ AS master_area_name => master_area_index BEGIN 
+        OUTER_SPRINT return_sync_block ~~~~~
+            IF
+                Global("%portal_master_area_variable%", "GLOBAL", %master_area_index%)
+            THEN
+                RESPONSE #100
+                    CutSceneId(Player1)
+
+                    SetMasterArea("%master_area_name%")
+                    MultiPlayerSync()
+            END
+        ~~~~~
+
+        OUTER_SPRINT return_sync_script ~~~~~
+            %return_sync_script%
+            %return_sync_block%
+        ~~~~~
+    END
+
+    LAF APPEND_BCS STR_VAR resource = ~%this_cutscene%~ script = ~%return_sync_script%~ END
+    LAF START_NEXT_CUTSCENE STR_VAR this_cutscene next_cutscene END
+END

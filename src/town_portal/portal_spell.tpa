@@ -1,7 +1,10 @@
 DEFINE_ACTION_FUNCTION APPLY_PORTAL_SPELL
-    STR_VAR portal_cutscene_name = 0
+    STR_VAR portal_cutscene = 0
+    RET portal_onwer_local_varable
 BEGIN     
-    LAF EXTEND_CUT250_WITH_CUTSCENE STR_VAR cutscene_name = ~%portal_cutscene_name%~
+    OUTER_SPRINT portal_onwer_local_varable ~%LOCALS_PORTAL_OWNER%~
+
+    LAF EXTEND_CUT250_WITH_CUTSCENE STR_VAR cutscene = ~%portal_cutscene%~
         RET cut250_index
         END
 
@@ -30,14 +33,20 @@ BEGIN
             STR_VAR icon_resource = ~SPWI402C~
             RET ability_index 
             END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
+                opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
+                target = EFF_TARGET_SELF
+                parameter1 = 1
+            STR_VAR resource = ~%portal_onwer_local_varable%~
+            END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_SCRIPT_MODIFY_GLOBAL_VAR
-            target = EFF_TARGET_SELF
-            parameter1 = cut250_index
+                opcode = EFF_OPCODE_SCRIPT_MODIFY_GLOBAL_VAR
+                target = EFF_TARGET_SELF
+                parameter1 = cut250_index
             STR_VAR resource = ~CUT250~
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_EXECUTE_CUT250
-            target = EFF_TARGET_SELF
+                opcode = EFF_OPCODE_EXECUTE_CUT250
+                target = EFF_TARGET_SELF
             END
 END

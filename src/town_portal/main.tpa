@@ -6,6 +6,10 @@ INCLUDE ~%COMPONENT_FOLDER%/portal_cutscene.tpa~
 
 LOAD_TRA ~%tra%/%LANGUAGE%/%COMPONENT%.tra~
 
-LAF APPLY_PORTAL_CUTSCENE RET portal_cutscene_name END
+OUTER_SPRINT portal_begin_cutscene ~%RESREF_BCS_PORTAL_BEGIN%~
 
-LAF APPLY_PORTAL_SPELL STR_VAR portal_cutscene_name END
+LAF APPLY_PORTAL_SPELL STR_VAR portal_cutscene = ~%portal_begin_cutscene%~
+    RET portal_onwer_local_varable
+    END
+
+LAF APPLY_PORTAL_CUTSCENE STR_VAR portal_begin_cutscene portal_onwer_local_varable END

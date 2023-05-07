@@ -1,6 +1,6 @@
 DEFINE_ACTION_FUNCTION START_NEXT_CUTSCENE 
-    STR_VAR this_cutscene_name = 0
-        next_cutscene_name = 0
+    STR_VAR this_cutscene = 0
+        next_cutscene = 0
 BEGIN 
     <<<<<<<< .../start_next_cutscene.baf
     IF
@@ -8,10 +8,10 @@ BEGIN
     THEN
         RESPONSE #100
             CutSceneId(Player1)
-            StartCutSceneEx("%next_cutscene_name%", TRUE)
+            StartCutSceneEx("%next_cutscene%", TRUE)
     END
     >>>>>>>>
 
-    EXTEND_BOTTOM ~%this_cutscene_name%.BCS~ ~.../start_next_cutscene.baf~
+    EXTEND_BOTTOM ~%this_cutscene%.BCS~ ~.../start_next_cutscene.baf~
         EVALUATE_BUFFER
 END

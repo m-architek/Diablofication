@@ -14,13 +14,13 @@ LAF APPLY_SCRIPTS_ADJUSTMENTS RET kill_player1_variable END
 
 LAF APPLY_DEATH_PREVENTION END
 
-LAF APPLY_RESPAWN_PENALTY RET penalty_cutscene_name END
+LAF APPLY_RESPAWN_PENALTY RET penalty_cutscene END
 
 LAF APPLY_RESPAWN_PROCESS 
-    STR_VAR penalty_cutscene_name patrification_state_variable instant_death_variable kill_player1_variable maze_state_variable
-    RET respawn_cutscene_name
+    STR_VAR penalty_cutscene patrification_state_variable instant_death_variable kill_player1_variable maze_state_variable
+    RET respawn_cutscene = respawn_begin_cutscene
     END
 
 LAF APPLY_RESPAWN_TRIGGER 
-    STR_VAR respawn_cutscene_name patrification_state_variable instant_death_variable kill_player1_variable maze_state_variable
+    STR_VAR respawn_cutscene patrification_state_variable instant_death_variable kill_player1_variable maze_state_variable
     END

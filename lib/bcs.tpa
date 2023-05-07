@@ -1,0 +1,32 @@
+DEFINE_ACTION_FUNCTION APPEND_BCS 
+    STR_VAR resource = 0 
+        script = 0
+BEGIN 
+    ACTION_IF (resource STR_EQ ~0~) BEGIN 
+        FAIL ~APPEND_BCS: resource not defined.~
+    END
+
+    <<<<<<<< .../APPEND_BCS.baf
+    %script%
+    >>>>>>>> 
+
+    EXTEND_BOTTOM ~%resource%.BCS~ ~.../APPEND_BCS.baf~ 
+        EVALUATE_BUFFER
+END
+
+
+DEFINE_ACTION_FUNCTION APPEND_BCS_TOP 
+    STR_VAR resource = 0 
+        script = 0
+BEGIN 
+    ACTION_IF (resource STR_EQ ~0~) BEGIN 
+        FAIL ~APPEND_BCS_TOP: resource not defined.~
+    END
+
+    <<<<<<<< .../APPEND_BCS_TOP.baf
+    %script%
+    >>>>>>>> 
+
+    EXTEND_TOP ~%resource%.BCS~ ~.../APPEND_BCS_TOP.baf~ 
+        EVALUATE_BUFFER
+END

@@ -1,50 +1,55 @@
 DEFINE_ACTION_FUNCTION APPLY_RESPAWN_PROCESS 
-    STR_VAR penalty_cutscene_name = 0
+    STR_VAR penalty_cutscene = 0
         patrification_state_variable = 0
         instant_death_variable = 0
         kill_player1_variable = 0
         maze_state_variable = 0
-    RET respawn_cutscene_name
+    RET respawn_begin_cutscene
 BEGIN
-    OUTER_SET respawn_portal_next_cutscene_variable_value = 2
+    OUTER_SPRINT respawn_begin_cutscene ~%RESREF_BCS_RESPAWN_BEGIN%~
+    OUTER_SPRINT respawn_end_cutscene ~%RESREF_BCS_RESPAWN_END%~
 
-    LAF APPLY_RESPAWN_HEAL_CUTSCENE STR_VAR next_cutscene_name = ~%penalty_cutscene_name%~
-        RET respawn_heal_cutscene_name 
+    OUTER_SET portal_next_cutscene_index = 2
+
+    LAF APPLY_RESPAWN_PORTAL INT_VAR next_cutscene_index = ~%portal_next_cutscene_index%~
+        STR_VAR next_cutscene = ~%respawn_end_cutscene%~
+        RET portal_cutscene
+            portal_owner_variable
+            portal_next_cutscene_variable = next_cutscene_variable
         END
 
-    LAF APPLY_RESPAWN_PORTAL INT_VAR next_cutscene_variable_value = ~%respawn_portal_next_cutscene_variable_value%~
-        STR_VAR next_cutscene_name = ~%respawn_heal_cutscene_name%~
-        RET respawn_portal_cutscene_name
-            respawn_portal_next_cutscene_variable_name = next_cutscene_variable_name
+    LAF APPLY_RESPAWN_BEGIN INT_VAR portal_next_cutscene_index
+        STR_VAR patrification_state_variable
+            instant_death_variable
+            kill_player1_variable
+            maze_state_variable
+            portal_owner_variable
+            portal_next_cutscene_variable
+            this_cutscene = ~%respawn_begin_cutscene%~
+            next_cutscene = ~%portal_cutscene%~
         END
 
-    LAF APPLY_RESPAWN_RESURRECTION_CUTSCENE INT_VAR respawn_portal_next_cutscene_variable_value
-        STR_VAR respawn_portal_cutscene_name
-            patrification_state_variable = ~%patrification_state_variable%~
-            instant_death_variable = ~%instant_death_variable%~
-            kill_player1_variable = ~%kill_player1_variable%~
-            maze_state_variable = ~%maze_state_variable%~
-            respawn_portal_next_cutscene_variable_name
-        RET respawn_cutscene_name = respawn_resurrection_cutscene_name 
+    LAF APPLY_RESPAWN_END
+        STR_VAR this_cutscene = ~%respawn_end_cutscene%~
+            next_cutscene = ~%penalty_cutscene%~
         END
 END
 
 
-DEFINE_ACTION_FUNCTION APPLY_RESPAWN_RESURRECTION_CUTSCENE 
-    INT_VAR respawn_portal_next_cutscene_variable_value = ~~
-    STR_VAR respawn_portal_cutscene_name = 0
-        patrification_state_variable = 0
+DEFINE_ACTION_FUNCTION APPLY_RESPAWN_BEGIN 
+    INT_VAR portal_next_cutscene_index = ~~
+    STR_VAR patrification_state_variable = 0
         instant_death_variable = 0
         kill_player1_variable = 0
         maze_state_variable = 0
-        respawn_portal_next_cutscene_variable_name = 0
-    RET respawn_resurrection_cutscene_name
+        portal_owner_variable = 0
+        portal_next_cutscene_variable = 0
+        this_cutscene = 0
+        next_cutscene = 0
 BEGIN 
-    OUTER_SPRINT respawn_resurrection_cutscene_name ~%RESREF_BCS_RESPAWN_RESURRECTION_CUTSCENE%~
-
     LAF APPLY_RESPAWN_RESURRECTION RET resurrection_spl END
     
-    <<<<<<<< .../respawn_resurrection_cutscene.baf
+    <<<<<<<< .../respawn_begin.baf
     IF
         True()
     THEN
@@ -73,25 +78,24 @@ BEGIN
             ActionOverride(Player5, SetSequence(SEQ_READY))
             ActionOverride(Player6, SetSequence(SEQ_READY)) 
 
-            SetGlobal("%respawn_portal_next_cutscene_variable_name%", "GLOBAL", %respawn_portal_next_cutscene_variable_value%)
-            StartCutSceneEx("%respawn_portal_cutscene_name%",TRUE)      
+            SetGlobal("%portal_next_cutscene_variable%", "GLOBAL", %portal_next_cutscene_index%)
+            SetGlobal("%portal_owner_variable%", "GLOBAL", 0)
+            StartCutSceneEx("%next_cutscene%",TRUE)      
     END
     >>>>>>>>
 
-    EXTEND_BOTTOM ~%respawn_resurrection_cutscene_name%.BCS~ ~.../respawn_resurrection_cutscene.baf~ 
+    EXTEND_BOTTOM ~%this_cutscene%.BCS~ ~.../respawn_begin.baf~ 
         EVALUATE_BUFFER
 END
 
 
-DEFINE_ACTION_FUNCTION APPLY_RESPAWN_HEAL_CUTSCENE 
-    STR_VAR next_cutscene_name = 0
-    RET respawn_heal_cutscene_name
+DEFINE_ACTION_FUNCTION APPLY_RESPAWN_END
+    STR_VAR this_cutscene = 0
+        next_cutscene = 0
 BEGIN 
-    OUTER_SPRINT respawn_heal_cutscene_name ~%RESREF_BCS_RESPAWN_HEAL_CUTSCENE%~
-
     LAF APPLY_RESPAWN_HEAL RET heal_spl END
     
-    <<<<<<<< .../respawn_heal_cutscene.baf
+    <<<<<<<< .../respawn_end.baf
     IF
         True()
     THEN
@@ -109,11 +113,11 @@ BEGIN
             SmallWait(15)
             FadeFromColor([30.0], 0)
             SmallWait(30)
-            StartCutSceneEx("%next_cutscene_name%", TRUE)
+            StartCutSceneEx("%next_cutscene%", TRUE)
     END
     >>>>>>>>
 
-    EXTEND_BOTTOM ~%respawn_heal_cutscene_name%.BCS~ ~.../respawn_heal_cutscene.baf~
+    EXTEND_BOTTOM ~%this_cutscene%.BCS~ ~.../respawn_end.baf~
         EVALUATE_BUFFER
 END
 

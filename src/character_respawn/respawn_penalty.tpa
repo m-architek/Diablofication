@@ -1,11 +1,11 @@
-DEFINE_ACTION_FUNCTION APPLY_RESPAWN_PENALTY RET penalty_cutscene_name BEGIN
+DEFINE_ACTION_FUNCTION APPLY_RESPAWN_PENALTY RET penalty_cutscene BEGIN
     LAF APPLY_RESPAWN_PENALTY_XP RET 
-        xp_check_cutscene_name = check_cutscene_name
-        xp_penalty_cutscene_name = penalty_cutscene_name
+        xp_check_cutscene = check_cutscene
+        xp_penalty_cutscene = penalty_cutscene
         END
     LAF APPLY_RESPAWN_PENALTY_GOLD RET 
-        gold_check_cutscene_name = check_cutscene_name
-        gold_penalty_cutscene_name = penalty_cutscene_name
+        gold_check_cutscene = check_cutscene
+        gold_penalty_cutscene = penalty_cutscene
         END
 
     <<<<<<<< .../start_next_cutscene.baf
@@ -14,22 +14,22 @@ DEFINE_ACTION_FUNCTION APPLY_RESPAWN_PENALTY RET penalty_cutscene_name BEGIN
     THEN
         RESPONSE #100
             CutSceneId(Player1)
-            StartCutSceneEx("%next_cutscene_name%", TRUE)
+            StartCutSceneEx("%next_cutscene%", TRUE)
     END
     >>>>>>>>
 
-    OUTER_SPRINT penalty_cutscene_name ~%xp_check_cutscene_name%~
+    OUTER_SPRINT penalty_cutscene ~%xp_check_cutscene%~
 
-    EXTEND_BOTTOM ~%xp_check_cutscene_name%.bcs~ ~.../start_next_cutscene.baf~
-        SPRINT next_cutscene_name ~%xp_penalty_cutscene_name%~
+    EXTEND_BOTTOM ~%xp_check_cutscene%.bcs~ ~.../start_next_cutscene.baf~
+        SPRINT next_cutscene ~%xp_penalty_cutscene%~
         EVALUATE_BUFFER
 
-    EXTEND_BOTTOM ~%xp_penalty_cutscene_name%.bcs~ ~.../start_next_cutscene.baf~
-        SPRINT next_cutscene_name ~%gold_check_cutscene_name%~
+    EXTEND_BOTTOM ~%xp_penalty_cutscene%.bcs~ ~.../start_next_cutscene.baf~
+        SPRINT next_cutscene ~%gold_check_cutscene%~
         EVALUATE_BUFFER
 
-    EXTEND_BOTTOM ~%gold_check_cutscene_name%.bcs~ ~.../start_next_cutscene.baf~
-        SPRINT next_cutscene_name ~%gold_penalty_cutscene_name%~
+    EXTEND_BOTTOM ~%gold_check_cutscene%.bcs~ ~.../start_next_cutscene.baf~
+        SPRINT next_cutscene ~%gold_penalty_cutscene%~
         EVALUATE_BUFFER
 
 
@@ -43,11 +43,11 @@ DEFINE_ACTION_FUNCTION APPLY_RESPAWN_PENALTY RET penalty_cutscene_name BEGIN
     END
     >>>>>>>>
 
-    EXTEND_BOTTOM ~%gold_penalty_cutscene_name%.bcs~ ~.../end_cutscene_chain.baf~
+    EXTEND_BOTTOM ~%gold_penalty_cutscene%.bcs~ ~.../end_cutscene_chain.baf~
 END
 
 
-DEFINE_ACTION_FUNCTION APPLY_RESPAWN_PENALTY_XP RET check_cutscene_name penalty_cutscene_name BEGIN
+DEFINE_ACTION_FUNCTION APPLY_RESPAWN_PENALTY_XP RET check_cutscene penalty_cutscene BEGIN
     COPY - ~%config%/respawn_penalty_xp.2da~ ~~
         LPF READ_2DA_ROW_NAMES RET_ARRAY respawn_penalty_xp_thresholds = out END
         PHP_EACH respawn_penalty_xp_thresholds AS respawn_penalty_xp_threshold => _ BEGIN
@@ -67,14 +67,14 @@ DEFINE_ACTION_FUNCTION APPLY_RESPAWN_PENALTY_XP RET check_cutscene_name penalty_
     END
     >>>>>>>>
 
-    OUTER_SPRINT check_cutscene_name ~%RESREF_BCS_XP_PENALTY_CHECK%~
+    OUTER_SPRINT check_cutscene ~%RESREF_BCS_XP_PENALTY_CHECK%~
 
     ACTION_PHP_EACH respawn_penalty_xp_thresholds AS respawn_penalty_xp_threshold => _ BEGIN
         OUTER_SPRINT respawn_penalty_xp_threshold_ref ~respawn_penalty_xp_threshold_%respawn_penalty_xp_threshold%~
         OUTER_SPRINT xp_gt $~%respawn_penalty_xp_threshold_ref%~(XP_GT)
 
         ACTION_PHP_EACH players AS _ => player BEGIN
-            EXTEND_BOTTOM ~%check_cutscene_name%.BCS~ ~.../check_respawn_penalty_xp.baf~
+            EXTEND_BOTTOM ~%check_cutscene%.BCS~ ~.../check_respawn_penalty_xp.baf~
                 EVALUATE_BUFFER
         END
     END
@@ -90,21 +90,21 @@ DEFINE_ACTION_FUNCTION APPLY_RESPAWN_PENALTY_XP RET check_cutscene_name penalty_
     END
     >>>>>>>>
 
-    OUTER_SPRINT penalty_cutscene_name ~%RESREF_BCS_XP_PENALTY_APPLY%~
+    OUTER_SPRINT penalty_cutscene ~%RESREF_BCS_XP_PENALTY_APPLY%~
 
     ACTION_PHP_EACH respawn_penalty_xp_thresholds AS respawn_penalty_xp_threshold => _ BEGIN
         OUTER_SPRINT respawn_penalty_xp_threshold_ref ~respawn_penalty_xp_threshold_%respawn_penalty_xp_threshold%~
         OUTER_SPRINT xp_penalty $~%respawn_penalty_xp_threshold_ref%~(XP_PENALTY)
 
         ACTION_PHP_EACH players AS _ => player BEGIN
-            EXTEND_TOP ~%penalty_cutscene_name%.BCS~ ~.../apply_respawn_penalty_xp.baf~
+            EXTEND_TOP ~%penalty_cutscene%.BCS~ ~.../apply_respawn_penalty_xp.baf~
                 EVALUATE_BUFFER
         END
     END
 END
 
 
-DEFINE_ACTION_FUNCTION APPLY_RESPAWN_PENALTY_GOLD RET check_cutscene_name penalty_cutscene_name BEGIN
+DEFINE_ACTION_FUNCTION APPLY_RESPAWN_PENALTY_GOLD RET check_cutscene penalty_cutscene BEGIN
     COPY - ~%config%/respawn_penalty_gold.2da~ ~~
         LPF READ_2DA_ROW_NAMES RET_ARRAY respawn_penalty_gold_thresholds = out END
         PHP_EACH respawn_penalty_gold_thresholds AS respawn_penalty_gold_threshold => _ BEGIN
@@ -122,12 +122,12 @@ DEFINE_ACTION_FUNCTION APPLY_RESPAWN_PENALTY_GOLD RET check_cutscene_name penalt
     END
     >>>>>>>>
 
-    OUTER_SPRINT check_cutscene_name ~%RESREF_BCS_GOLD_PENALTY_CHECK%~
+    OUTER_SPRINT check_cutscene ~%RESREF_BCS_GOLD_PENALTY_CHECK%~
 
     ACTION_PHP_EACH respawn_penalty_gold_thresholds AS respawn_penalty_gold_threshold => _ BEGIN
         OUTER_SPRINT respawn_penalty_gold_threshold_ref ~respawn_penalty_gold_threshold_%respawn_penalty_gold_threshold%~
         OUTER_SPRINT gold_gt $~%respawn_penalty_gold_threshold_ref%~(GOLD_GT)
-        EXTEND_BOTTOM ~%check_cutscene_name%.BCS~ ~.../check_respawn_penalty_gold.baf~
+        EXTEND_BOTTOM ~%check_cutscene%.BCS~ ~.../check_respawn_penalty_gold.baf~
             EVALUATE_BUFFER
     END
 
@@ -142,12 +142,12 @@ DEFINE_ACTION_FUNCTION APPLY_RESPAWN_PENALTY_GOLD RET check_cutscene_name penalt
     END
     >>>>>>>>
 
-    OUTER_SPRINT penalty_cutscene_name ~%RESREF_BCS_GOLD_PENALTY_APPLY%~
+    OUTER_SPRINT penalty_cutscene ~%RESREF_BCS_GOLD_PENALTY_APPLY%~
 
     ACTION_PHP_EACH respawn_penalty_gold_thresholds AS respawn_penalty_gold_threshold => _ BEGIN
         OUTER_SPRINT respawn_penalty_gold_threshold_ref ~respawn_penalty_gold_threshold_%respawn_penalty_gold_threshold%~
         OUTER_SPRINT gold_penalty $~%respawn_penalty_gold_threshold_ref%~(GOLD_PENALTY)
-        EXTEND_TOP ~%penalty_cutscene_name%.BCS~ ~.../apply_respawn_penalty_gold.baf~
+        EXTEND_TOP ~%penalty_cutscene%.BCS~ ~.../apply_respawn_penalty_gold.baf~
             EVALUATE_BUFFER
     END
 END

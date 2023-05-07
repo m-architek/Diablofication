@@ -1,6 +1,7 @@
 INCLUDE ~%lib%/vendor/extend_cut250.tpa~
 INCLUDE ~%lib%/vendor/joinable_npc_array.tpa~
 INCLUDE ~%lib%/2da.tpa~
+INCLUDE ~%lib%/bcs.tpa~
 INCLUDE ~%lib%/box_array.tpa~
 INCLUDE ~%lib%/cre.tpa~
 INCLUDE ~%lib%/eff.tpa~

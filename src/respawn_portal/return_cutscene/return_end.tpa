@@ -1,0 +1,77 @@
+DEFINE_ACTION_FUNCTION APPLY_RETURN_END
+    STR_VAR return_begin_spell = 0
+        portal_marker_dv = 0
+        portal_open_variable = 0
+        remove_return_spell = 0
+        this_cutscene = 0
+BEGIN 
+    LAF APPLY_RETURN_END_SPELL STR_VAR return_begin_spell
+        RET return_end_spell
+        END
+
+    <<<<<<<< .../return_end.baf
+    IF
+        True()
+    THEN
+        RESPONSE #100
+            CutSceneId(Player1)
+            SmallWait(5)
+
+            MoveGlobalObject(Player1, "%portal_marker_dv%") 
+            MoveGlobalObject(Player2, "%portal_marker_dv%") 
+            MoveGlobalObject(Player3, "%portal_marker_dv%") 
+            MoveGlobalObject(Player4, "%portal_marker_dv%") 
+            MoveGlobalObject(Player5, "%portal_marker_dv%") 
+            MoveGlobalObject(Player6, "%portal_marker_dv%") 
+            
+            MoveViewObject("%portal_marker_dv%", INSTANT)
+            ActionOverride("%portal_marker_dv%", DestroySelf())
+
+            SetGlobal("%portal_open_variable%", "GLOBAL", 0)
+            ApplySpellRES("%remove_return_spell%", Player1)
+            ApplySpellRES("%remove_return_spell%", Player2)
+            ApplySpellRES("%remove_return_spell%", Player3)
+            ApplySpellRES("%remove_return_spell%", Player4)
+            ApplySpellRES("%remove_return_spell%", Player5)
+            ApplySpellRES("%remove_return_spell%", Player6)
+
+            ApplySpellRES("%return_end_spell%", Player1)
+            ApplySpellRES("%return_end_spell%", Player2)
+            ApplySpellRES("%return_end_spell%", Player3)
+            ApplySpellRES("%return_end_spell%", Player4)
+            ApplySpellRES("%return_end_spell%", Player5)
+            ApplySpellRES("%return_end_spell%", Player6)
+            
+            SmallWait(5)
+
+            CreateVisualEffectObject("spdimndr", Player1)
+            CreateVisualEffectObject("spdimndr", Player2)
+            CreateVisualEffectObject("spdimndr", Player3)
+            CreateVisualEffectObject("spdimndr", Player4)
+            CreateVisualEffectObject("spdimndr", Player5)
+            CreateVisualEffectObject("spdimndr", Player6)
+            SmallWait(15)
+            FadeFromColor([30.0],0)
+            SmallWait(30)
+            EndCutSceneMode()
+    END
+    >>>>>>>>
+
+    EXTEND_BOTTOM ~%this_cutscene%.BCS~ ~.../return_end.baf~ 
+        EVALUATE_BUFFER
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_RETURN_END_SPELL 
+    STR_VAR return_begin_spell = 0
+    RET return_end_spell
+BEGIN 
+    OUTER_SPRINT return_end_spell ~%RESREF_SPL_RETURN_END%~
+
+    CREATE ~SPL~ ~%return_end_spell%~
+        LPF ADD_SPL_ABILITY RET ability_index END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_REMOVE_EFFECTS_BY_RESOURCE
+            STR_VAR resource = ~%return_begin_spell%~
+            END
+END

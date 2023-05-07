@@ -1,0 +1,95 @@
+
+INCLUDE ~%COMPONENT_FOLDER%/portal_cutscene/portal_master_area_resolving.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/portal_cutscene/portal_area_resolving.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/portal_cutscene/portal_point_resolving.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/portal_cutscene/portal_execution.tpa~
+
+
+DEFINE_ACTION_FUNCTION APPLY_PORTAL_CUTSCENE
+    STR_VAR portal_open_variable = 0
+        portal_owner_variable = 0
+        portal_marker_dv = 0
+        give_return_spell = 0
+        candlekeep_enter_variable = 0
+        portal_begin_cutscene = 0
+        portal_end_cutscene = 0
+    RET portal_area_variable
+        portal_master_area_variable
+    RET_ARRAY all_areas 
+        master_areas
+BEGIN
+    OUTER_SPRINT portal_master_area_resolving_prefix ~%RESREF_BCS_PORTAL_MASTER_AREA_RESOLVING_PREFIX%~
+    OUTER_SPRINT portal_area_resolving_prefix ~%RESREF_BCS_PORTAL_AREA_RESOLVING_PREFIX%~
+    OUTER_SPRINT portal_point_resolving_cutscene ~%RESREF_BCS_PORTAL_POINT_RESOLVING%~
+    OUTER_SPRINT portal_execution_cutscene ~%RESREF_BCS_PORTAL_EXECUTION%~
+
+    LAF APPLY_PORTAL_CUTSCENE_BEGIN
+        STR_VAR portal_marker_dv
+            portal_open_variable
+            portal_owner_variable
+            give_return_spell
+            this_cutscene = ~%portal_begin_cutscene%~
+            next_cutscene_prefix = ~%portal_master_area_resolving_prefix%~
+        END
+
+    LAF APPLY_PORTAL_MASTER_AREA_RESOLVING
+        STR_VAR this_cutscene_prefix = ~%portal_master_area_resolving_prefix%~
+            next_cutscene_prefix = ~%portal_area_resolving_prefix%~
+        RET portal_master_area_variable
+        RET_ARRAY master_areas
+        END
+
+    LAF APPLY_PORTAL_AREA_RESOLVING
+        STR_VAR this_cutscene_prefix = ~%portal_area_resolving_prefix%~
+            next_cutscene = ~%portal_point_resolving_cutscene%~
+        RET portal_area_variable
+        RET_ARRAY all_areas
+        END
+
+    LAF APPLY_PORTAL_POINT_RESOLVING
+        STR_VAR candlekeep_enter_variable
+            this_cutscene = ~%portal_point_resolving_cutscene%~
+            next_cutscene = ~%portal_execution_cutscene%~
+        RET respawn_point_variable
+        RET_ARRAY respawn_points
+        END
+
+    LAF APPLY_PORTAL_EXECUTION
+        STR_VAR respawn_point_variable
+            respawn_ponts_ref = respawn_points
+            this_cutscene = ~%portal_execution_cutscene%~
+            next_cutscene = ~%portal_end_cutscene%~
+        END
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_PORTAL_CUTSCENE_BEGIN
+    STR_VAR portal_marker_dv = 0
+        portal_open_variable = 0
+        portal_owner_variable = 0
+        give_return_spell = 0
+        this_cutscene = 0
+        next_cutscene_prefix = 0
+BEGIN
+    <<<<<<<< .../portal_begin.baf
+    IF
+        Global("%portal_owner_variable%", "GLOBAL", %player_index%)
+    THEN
+        RESPONSE #100
+            CutSceneId(Player1)
+
+            SetGlobal("%portal_open_variable%", "GLOBAL", 1)
+            MoveGlobalObject("%portal_marker_dv%", %player%) 
+            ApplySpellRES("%give_return_spell%", %player%)
+            
+            StartCutSceneEx("%next_cutscene%", TRUE)
+    END
+    >>>>>>>>
+
+    ACTION_PHP_EACH PLAYERS AS player_index => player BEGIN 
+
+        EXTEND_BOTTOM ~%this_cutscene%.BCS~ ~.../portal_begin.baf~
+            SPRINT next_cutscene ~%next_cutscene_prefix%%player_index%~
+            EVALUATE_BUFFER
+    END 
+END

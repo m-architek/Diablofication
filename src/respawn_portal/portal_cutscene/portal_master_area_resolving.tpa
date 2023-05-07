@@ -1,0 +1,100 @@
+
+DEFINE_ACTION_FUNCTION APPLY_PORTAL_MASTER_AREA_RESOLVING
+    STR_VAR this_cutscene_prefix = 0
+        next_cutscene_prefix = 0
+    RET portal_master_area_variable
+    RET_ARRAY master_areas
+BEGIN 
+    ACTION_CLEAR_ARRAY master_areas
+
+    COPY_EXISTING - ~mastarea.2da~ ~~
+        LPF READ_2DA_ROW_NAMES RET_ARRAY master_areas = out END
+        BUT_ONLY
+
+    LAF APPLY_CURRENT_MASTER_AREA_DETECTION 
+        STR_VAR master_areas_ref = master_areas
+        RET current_master_area_variable_prefix
+        END
+
+    LAF APPLY_PORTAL_MASTER_AREA_RESOLVING_CUTSCENES 
+        STR_VAR current_master_area_variable_prefix
+            master_areas_ref = master_areas
+            this_cutscene_prefix
+            next_cutscene_prefix
+        RET portal_master_area_variable
+        END
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_CURRENT_MASTER_AREA_DETECTION 
+    STR_VAR master_areas_ref = 0
+    RET current_master_area_variable_prefix
+BEGIN 
+    OUTER_SPRINT current_master_area_variable_prefix ~%GLOBAL_CURRENT_MASTER_AREA_PREFIX%~  
+
+    ACTION_PHP_EACH ~%master_areas_ref%~ AS master_area_name => master_area_index BEGIN
+        OUTER_SPRINT master_area_detection_script ~~
+
+        ACTION_PHP_EACH PLAYERS AS _ => player BEGIN
+            OUTER_SPRINT current_master_area_variable ~%current_master_area_variable_prefix%%player%~
+            
+            OUTER_SPRINT master_area_detection_block ~~~~~
+                IF
+                    InMyArea(%player%)
+                    !Global("%current_master_area_variable%", "GLOBAL", %master_area_index%)
+                THEN
+                    RESPONSE #100
+                        SetGlobal("%current_master_area_variable%", "GLOBAL", %master_area_index%)
+                        Continue()
+                END
+            ~~~~~
+                
+            OUTER_SPRINT master_area_detection_script ~~~~~
+                %master_area_detection_script%
+                %master_area_detection_block%
+            ~~~~~
+        END
+
+        LAF APPEND_BCS_TOP STR_VAR resource = ~%master_area_name%~ script = ~%master_area_detection_script%~ END
+    END
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_PORTAL_MASTER_AREA_RESOLVING_CUTSCENES
+    STR_VAR current_master_area_variable_prefix = 0
+        master_areas_ref = 0
+        this_cutscene_prefix = 0
+        next_cutscene_prefix = 0
+    RET portal_master_area_variable
+BEGIN 
+    OUTER_SPRINT portal_master_area_variable ~%GLOBAL_PORTAL_MASTER_AREA%~
+
+    ACTION_PHP_EACH PLAYERS AS player_index => player BEGIN
+        OUTER_SPRINT this_cutscene ~%this_cutscene_prefix%%player_index%~
+        OUTER_SPRINT next_cutscene ~%next_cutscene_prefix%%player_index%~
+
+        OUTER_SPRINT portal_master_area_script ~~
+        
+        ACTION_PHP_EACH ~%master_areas_ref%~ AS master_area_name => master_area_index BEGIN
+            OUTER_SPRINT current_master_area_variable ~%current_master_area_variable_prefix%%player%~
+            
+            OUTER_SPRINT portal_master_area_block ~~~~~
+                IF
+                    Global("%current_master_area_variable%", "GLOBAL", %master_area_index%)
+                THEN
+                    RESPONSE #100
+                        CutSceneId(Player1)
+                        SetGlobal("%portal_master_area_variable%", "GLOBAL", %master_area_index%)
+                END
+            ~~~~~
+
+            OUTER_SPRINT portal_master_area_script ~~~~~
+                %portal_master_area_script%
+                %portal_master_area_block%
+            ~~~~~
+        END
+
+        LAF APPEND_BCS STR_VAR resource = ~%this_cutscene%~ script = ~%portal_master_area_script%~ END
+        LAF START_NEXT_CUTSCENE STR_VAR this_cutscene next_cutscene END
+    END
+END

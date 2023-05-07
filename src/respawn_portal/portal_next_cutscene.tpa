@@ -1,0 +1,21 @@
+DEFINE_ACTION_FUNCTION APPLY_PORTAL_NEXT_CUTSCENE
+    INT_VAR next_cutscene_index = ~~
+    STR_VAR portal_end_cutscene = 0
+        next_cutscene = 0
+    RET next_cutscene_variable
+BEGIN 
+    OUTER_SPRINT next_cutscene_variable ~%GLOBAL_PORTAL_NEXT_CUTSCENE%~
+
+    <<<<<<<< .../next_cutscene_rule.baf
+    IF
+        Global("%next_cutscene_variable%", "GLOBAL", %next_cutscene_index%)
+    THEN
+        RESPONSE #100
+            CutSceneId(Player1)
+            StartCutSceneEx("%next_cutscene%", TRUE)
+    END
+    >>>>>>>>
+
+    EXTEND_BOTTOM ~%portal_end_cutscene%.BCS~ ~.../next_cutscene_rule.baf~
+        EVALUATE_BUFFER
+END

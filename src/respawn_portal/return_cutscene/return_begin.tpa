@@ -1,0 +1,60 @@
+DEFINE_ACTION_FUNCTION APPLY_RETURN_BEGIN
+    STR_VAR this_cutscene = 0
+        next_cutscene = 0
+    RET return_begin_spell
+BEGIN 
+    LAF APPLY_RETURN_BEGIN_SPELL RET return_begin_spell END
+
+    <<<<<<<< .../return_begin.baf
+    IF
+        True()
+    THEN
+        RESPONSE #100
+            CutSceneId(Player1)
+            ClearAllActions()
+
+            ApplySpell(Player1, DRYAD_TELEPORT)
+            ApplySpell(Player2, DRYAD_TELEPORT)
+            ApplySpell(Player3, DRYAD_TELEPORT)
+            ApplySpell(Player4, DRYAD_TELEPORT)
+            ApplySpell(Player5, DRYAD_TELEPORT)
+            ApplySpell(Player6, DRYAD_TELEPORT)
+  
+            SmallWait(45)
+            FadeToColor([30.0],0)
+            SmallWait(30)
+
+            ApplySpellRES("%return_begin_spell%", Player1)
+            ApplySpellRES("%return_begin_spell%", Player2)
+            ApplySpellRES("%return_begin_spell%", Player3)
+            ApplySpellRES("%return_begin_spell%", Player4)
+            ApplySpellRES("%return_begin_spell%", Player5)
+            ApplySpellRES("%return_begin_spell%", Player6) 
+            
+            SmallWait(5)
+            StartCutSceneEx("%next_cutscene%", TRUE)           
+    END
+    >>>>>>>>
+
+    EXTEND_BOTTOM ~%this_cutscene%.BCS~ ~.../return_begin.baf~
+        EVALUATE_BUFFER
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_RETURN_BEGIN_SPELL 
+    RET return_begin_spell
+BEGIN 
+    OUTER_SPRINT return_begin_spell ~%RESREF_SPL_RETURN_BEGIN%~
+
+    CREATE ~SPL~ ~%return_begin_spell%~
+        LPF ADD_SPL_ABILITY RET ability_index END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_STAT_VISUAL_RANGE
+            parameter1 = 0
+            parameter2 = 1 // Flat modifier
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
+            opcode = EFF_OPCODE_SANCTUARY 
+            parameter2 = 1 // Custom overlay
+            END
+END

@@ -1,7 +1,7 @@
 DEFINE_ACTION_FUNCTION APPLY_PORTAL_POINT_RESOLVING
     STR_VAR candlekeep_enter_variable = 0
-        this_cutscene_name = 0
-        next_cutscene_name = 0
+        this_cutscene = 0
+        next_cutscene = 0
     RET respawn_point_variable
     RET_ARRAY respawn_points
 BEGIN
@@ -30,7 +30,7 @@ BEGIN
         END
 
     ACTION_PHP_EACH respawn_points AS _ => respawn_point_index BEGIN
-        EXTEND_BOTTOM ~%this_cutscene_name%.BCS~ ~.../respawn_point_rule.baf~ 
+        EXTEND_BOTTOM ~%this_cutscene%.BCS~ ~.../respawn_point_rule.baf~ 
             SPRINT respawn_point_filter ~Global("%nearest_respawn_point_variable%", "GLOBAL", %respawn_point_index%)~
             EVALUATE_BUFFER
     END
@@ -38,14 +38,14 @@ BEGIN
 
     // Apply plot critical rules
 
-    EXTEND_BOTTOM ~%this_cutscene_name%.BCS~ ~.../respawn_point_rule.baf~ 
+    EXTEND_BOTTOM ~%this_cutscene%.BCS~ ~.../respawn_point_rule.baf~ 
         SPRINT respawn_point_filter ~~~~~
             Global("Chapter", "GLOBAL", 0)
         ~~~~~
         SPRINT respawn_point_index $respawn_points(CANDLEKEEP_PROLOGUE)
         EVALUATE_BUFFER
 
-    EXTEND_BOTTOM ~%this_cutscene_name%.BCS~ ~.../respawn_point_rule.baf~ 
+    EXTEND_BOTTOM ~%this_cutscene%.BCS~ ~.../respawn_point_rule.baf~ 
         SPRINT respawn_point_filter ~~~~~
             Global("Chapter", "GLOBAL", 6)
             Global("%candlekeep_enter_variable%", "GLOBAL", 1)
@@ -54,7 +54,7 @@ BEGIN
         SPRINT respawn_point_index $respawn_points(CANDLEKEEP)
         EVALUATE_BUFFER
 
-    EXTEND_BOTTOM ~%this_cutscene_name%.BCS~ ~.../respawn_point_rule.baf~ 
+    EXTEND_BOTTOM ~%this_cutscene%.BCS~ ~.../respawn_point_rule.baf~ 
         SPRINT respawn_point_filter ~~~~~
             Global("Chapter", "GLOBAL", 6)
             Global("Criminal", "GLOBAL", 1)
@@ -63,7 +63,7 @@ BEGIN
         SPRINT respawn_point_index $respawn_points(CANDLEKEEP_PRISON)
         EVALUATE_BUFFER
 
-    EXTEND_BOTTOM ~%this_cutscene_name%.BCS~ ~.../respawn_point_rule.baf~ 
+    EXTEND_BOTTOM ~%this_cutscene%.BCS~ ~.../respawn_point_rule.baf~ 
         SPRINT respawn_point_filter ~~~~~
             Global("Chapter", "GLOBAL", 6)
             Global("Criminal", "GLOBAL", 1)
@@ -72,7 +72,7 @@ BEGIN
         SPRINT respawn_point_index $respawn_points(CANDLEKEEP_CATACOMBS)
         EVALUATE_BUFFER
 
-    EXTEND_BOTTOM ~%this_cutscene_name%.BCS~ ~.../respawn_point_rule.baf~ 
+    EXTEND_BOTTOM ~%this_cutscene%.BCS~ ~.../respawn_point_rule.baf~ 
         SPRINT respawn_point_filter ~~~~~
             Global("EnteredAR1008", "GLOBAL", 1)
             Global("iceisle", "GLOBAL", 0)
@@ -81,7 +81,7 @@ BEGIN
         EVALUATE_BUFFER
 
 
-    LAF START_NEXT_CUTSCENE STR_VAR this_cutscene_name next_cutscene_name END
+    LAF START_NEXT_CUTSCENE STR_VAR this_cutscene next_cutscene END
 END
 
 
@@ -98,8 +98,8 @@ BEGIN
 
     <<<<<<<< .../nearest_respawn_point.baf
     IF
+        InMyArea(Player1)
         !Global("%nearest_respawn_point_variable%", "GLOBAL", %respawn_point_index%)
-        Exists(Player1)
     THEN
         RESPONSE #100
             SetGlobal("%nearest_respawn_point_variable%", "GLOBAL", %respawn_point_index%)

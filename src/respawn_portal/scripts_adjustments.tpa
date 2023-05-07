@@ -1,10 +1,18 @@
 DEFINE_ACTION_FUNCTION APPLY_SCRIPTS_ADJUSTMENTS 
-    STR_VAR portal_open_variable = 0 remove_return_spell = 0
+    STR_VAR portal_open_variable = 0 
+        portal_owner_variable = 0
+        return_spell = 0
+        remove_return_spell = 0
     RET candlekeep_enter_variable
 BEGIN 
     OUTER_SPRINT close_portal_action ~~~~~
         SetGlobal("%portal_open_variable%", "GLOBAL", 0)
         ApplySpellRES("%remove_return_spell%", Player1)
+        ApplySpellRES("%remove_return_spell%", Player2)
+        ApplySpellRES("%remove_return_spell%", Player3)
+        ApplySpellRES("%remove_return_spell%", Player4)
+        ApplySpellRES("%remove_return_spell%", Player5)
+        ApplySpellRES("%remove_return_spell%", Player6)
     ~~~~~
 
     LAF APPLY_CANDLEKEEP_PROLOGUE_END_EXTENSION STR_VAR close_portal_action END
@@ -18,16 +26,23 @@ BEGIN
     LAF APPLY_ICE_ISLAND_EXIT_EXTENSION STR_VAR close_portal_action END
     LAF APPLY_BALDURAN_ISLAND_ENTER_EXTENSION STR_VAR close_portal_action END
     LAF APPLY_BALDURAN_ISLAND_EXIT_EXTENSION STR_VAR close_portal_action END
+    
+    LAF APPLY_GLOBAL_SCRIPT_EXTENSION 
+        STR_VAR portal_open_variable 
+            portal_owner_variable
+            return_spell 
+            remove_return_spell 
+        END
 END
 
 
 DEFINE_ACTION_FUNCTION APPLY_CANDLEKEEP_PROLOGUE_END_EXTENSION
     STR_VAR close_portal_action = 0
 BEGIN 
-    COPY_EXISTING ~CH1CUT04.BCS~ ~override~
+    COPY_EXISTING ~CH1CUT01.BCS~ ~override~
         DECOMPILE_AND_PATCH BEGIN
-            REPLACE_TEXTUALLY CASE_INSENSITIVE EXACT_MATCH ~EndCutSceneMode()~ ~~~~~
-                EndCutSceneMode()
+            REPLACE_TEXTUALLY CASE_INSENSITIVE EXACT_MATCH ~SetGlobal("TalkedToGorion","GLOBAL",1)~ ~~~~~
+                SetGlobal("TalkedToGorion","GLOBAL",1)
                 %close_portal_action%
             ~~~~~
         END
@@ -164,4 +179,30 @@ BEGIN
             ~~~~~
         END
         BUT_ONLY
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_GLOBAL_SCRIPT_EXTENSION
+    STR_VAR portal_open_variable = 0 
+        portal_owner_variable = 0
+        return_spell = 0
+        remove_return_spell = 0
+BEGIN 
+    <<<<<<<< .../remove_return_spell.baf
+    IF
+        OR(2)
+            Global("%portal_open_variable%", "GLOBAL", 0)
+            !Global("%portal_owner_variable%", "GLOBAL", %player_index%)
+        Exists(%player%)
+        TriggerOverride(%player%, HaveSpellRES("%return_spell%"))
+    THEN
+        RESPONSE #100
+            ApplySpellRES("%remove_return_spell%", %player%)
+    END
+    >>>>>>>>
+
+    ACTION_PHP_EACH PLAYERS AS player_index => player BEGIN 
+        EXTEND_BOTTOM ~baldur.bcs~ ~.../remove_return_spell.baf~
+            EVALUATE_BUFFER
+    END
 END

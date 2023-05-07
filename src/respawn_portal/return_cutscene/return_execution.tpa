@@ -1,0 +1,35 @@
+DEFINE_ACTION_FUNCTION APPLY_RETURN_EXECUTION
+    STR_VAR portal_area_variable = 0
+        all_areas_ref = 0
+        this_cutscene = 0
+        next_cutscene = 0
+BEGIN 
+    OUTER_SPRINT return_execution_script ~~
+
+    ACTION_PHP_EACH ~%all_areas_ref%~ AS area_name => area_index BEGIN 
+        OUTER_SPRINT return_execution_block ~~~~~
+            IF
+                Global("%portal_area_variable%", "GLOBAL", %area_index%)
+            THEN
+                RESPONSE #100
+                    CutSceneId(Player1)
+                    
+                    LeaveAreaLUAPanic("%area_name%", "", [1.1], SSW)
+                    LeaveAreaLUA("%area_name%", "", [1.1] , SSW)
+                    ActionOverride(Player2, LeaveAreaLUA("%area_name%", "", [1.1], SSW))
+                    ActionOverride(Player3, LeaveAreaLUA("%area_name%", "", [1.1], SSW))
+                    ActionOverride(Player4, LeaveAreaLUA("%area_name%", "", [1.1], SSW))
+                    ActionOverride(Player5, LeaveAreaLUA("%area_name%", "", [1.1], SSW))
+                    ActionOverride(Player6, LeaveAreaLUA("%area_name%", "", [1.1], SSW))
+            END
+        ~~~~~
+
+        OUTER_SPRINT return_execution_script ~~~~~
+            %return_execution_script%
+            %return_execution_block%
+        ~~~~~
+    END
+
+    LAF APPEND_BCS STR_VAR resource = ~%this_cutscene%~ script = ~%return_execution_script%~ END
+    LAF START_NEXT_CUTSCENE STR_VAR this_cutscene next_cutscene END
+END

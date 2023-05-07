@@ -11,6 +11,7 @@ ALWAYS
     CLEAR_EVERYTHING
     OUTER_SET is_EEex = MOD_IS_INSTALLED ~EEex.tp2~ ~0~
     OUTER_SPRINT s ~[%TAB% %LNL%%MNL%%WNL%]~
+    ACTION_DEFINE_ARRAY PLAYERS BEGIN Player1 Player2 Player3 Player4 Player5 Player6 END
     
     <<<<<<<< .../blank
     >>>>>>>>
