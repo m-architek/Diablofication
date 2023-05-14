@@ -4,9 +4,11 @@
 
 Level: 1
 Range: 0
-Duration: Instant
+Duration: Special
 Casting Time: 9
-Area of Effect: The caster
+Area of Effect: Special
 Saving Throw: None
 
-When the spell is cast, a dimensional portal opens up in front of the caster and all of <PRO_HISHER> companions, and takes them to the nearest temple (or other place of safety, if temple is currently unreachable). The caster can maintain channel between destination and origin locations to be able to open reverse portal, that will bring party back where their been before the spell cast.~
+This spell opens a dimensional portal for the caster and all <PRO_HISHER> companions, which takes them to the nearest temple (or other safe place if the temple is unreachable). At the same time, the caster gains a special ability that allows <PRO_HISHER> to open a return portal for <PRO_HISHER>self and the entire party. This ability will be lost once <PRO_HESHE> enters any dimensional portal, whether a return portal summoned by it or any other, including use of Town Portal spell by another party member.
+
+This spell can be cast from a scroll by anyone who can read, regardless of their magical abilities.~

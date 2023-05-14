@@ -1,2 +1,4 @@
-@1 = ~Return with Town Portal~
-@2 = ~Return with Town Portal to origin place.~
+@1 = ~Return Portal~
+@2 = ~Return Portal
+
+This ability allows to open a return portal for the entire party, leading to the location of last use of Town Portal spell or similar type of magic.~

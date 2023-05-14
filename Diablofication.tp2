@@ -33,6 +33,7 @@ END
 
 
 LANGUAGE ~English~ ~english~
+LANGUAGE ~Polish~ ~polish~
 
 
 BEGIN "Town Portal" 
