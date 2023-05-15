@@ -1,0 +1,72 @@
+DEFINE_ACTION_FUNCTION APPLY_PORTAL_SCROLL
+    STR_VAR portal_spell = 0
+BEGIN  
+    LAF APPLY_PORTAL_SCROLL_ITEM STR_VAR portal_spell
+        RET portal_scroll 
+        END
+
+    LAF APPLY_PORTAL_SCROLL_STORES STR_VAR portal_scroll END
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_PORTAL_SCROLL_ITEM
+    STR_VAR portal_spell = 0
+    RET portal_scroll
+BEGIN  
+    OUTER_SPRINT portal_scroll ~%RESREF_ITM_PORTAL_SCROLL%~
+
+    CREATE ~ITM~ ~%portal_scroll%~
+        WRITE_LONG NAME1 7222 // Scroll
+        SAY NAME2 @1
+        SAY IDENTIFIED_DESC @2
+        LPF ADD_ITM_HEADER
+            INT_VAR type = ITM_TYPE_SCROLL
+                flags = BIT2 | BIT3 | BIT6
+                min_int = 9
+                price = 100
+                stack = 50
+            STR_VAR icon = ~ISCRL1V~
+                ground_icon = ~GSCRL01~
+                description_image = ~CSCRL01~
+            END
+        LPF ADD_ITM_ABILITY
+            INT_VAR type = ITM_SPL_ABILITY_TYPE_MAGICAL
+                location = ITM_SPL_ABILITY_LOCATION_ITEM
+                target = ITM_SPL_ABILITY_TARGET_CASTER
+                charges = 1
+                when_drained = 1 // vanish
+            STR_VAR icon = ~ISCRL1V~
+            RET learn_ability_index = ability_index
+            END
+        LPF ADD_ITM_ABILITY_EFFECT INT_VAR ability_index = learn_ability_index
+            opcode = EFF_OPCODE_LEARN_SPELL
+            target = EFF_TARGET_SELF
+            STR_VAR resource = ~%portal_spell%~
+            END
+        LPF ADD_ITM_ABILITY
+            INT_VAR type = ITM_SPL_ABILITY_TYPE_MAGICAL
+                location = ITM_SPL_ABILITY_LOCATION_ITEM
+                target = ITM_SPL_ABILITY_TARGET_CASTER
+                charges = 1
+                when_drained = 1 // vanish
+            STR_VAR icon = ~ISCRL1V~
+            RET cast_ability_index = ability_index
+            END
+        LPF ADD_ITM_ABILITY_EFFECT INT_VAR ability_index = cast_ability_index
+            opcode = EFF_OPCODE_CAST_SPELL
+            parameter2 = 0 // Cast Normally
+            STR_VAR resource = ~%portal_spell%~
+            END
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_PORTAL_SCROLL_STORES
+    STR_VAR portal_scroll = 0
+BEGIN 
+    COPY_EXISTING_REGEXP GLOB ~^.+\.sto$~ ~override~
+        LPF READ_STO_TYPE RET type END
+        PATCH_IF (type = STO_TYPE_TEMPLE) BEGIN 
+            ADD_STORE_ITEM ~%portal_scroll%~ AFTER ~SCRLPET~ #1 #0 #0 ~IDENTIFIED~ #0 ~UNLIMITED~
+        END
+        BUT_ONLY
+END 

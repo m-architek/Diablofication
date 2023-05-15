@@ -6,6 +6,81 @@ OUTER_SET ITM_SPL_GLOBAL_EFFECTS_COUNT_OFFSET = 0x70
 OUTER_SET ITM_SPL_ABILITY_EFFECTS_COUNT_OFFSET = 0x1e
 OUTER_SET ITM_SPL_ABILITY_EFFECTS_INDEX_OFFSET = 0x20
 
+OUTER_SET ITM_SPL_ABILITY_TYPE_MELEE = 1
+OUTER_SET ITM_SPL_ABILITY_TYPE_RANGED = 2
+OUTER_SET ITM_SPL_ABILITY_TYPE_MAGICAL = 3
+
+OUTER_SET ITM_SPL_ABILITY_LOCATION_NONE = 0
+OUTER_SET ITM_SPL_ABILITY_LOCATION_WEAPON = 1
+OUTER_SET ITM_SPL_ABILITY_LOCATION_SPELL = 2
+OUTER_SET ITM_SPL_ABILITY_LOCATION_ITEM = 3
+OUTER_SET ITM_SPL_ABILITY_LOCATION_INNATE = 4
+
+OUTER_SET ITM_SPL_ABILITY_TARGET_CASTER = 5
+
+
+DEFINE_PATCH_FUNCTION ADD_ITM_SPL_ABILITY_EFFECT
+    INT_VAR ability_size = ~~
+        ability_index = ~~
+        opcode = ~~
+        target = ~~
+        power = ~~
+        parameter1 = ~~
+        parameter2 = ~~
+        timing = ~~
+        dispel_resistance = ~~
+        duration = ~~
+        probability1 = ~~
+        probability2 = ~~
+        max_level = ~~
+        min_level = ~~
+    STR_VAR resource = 0
+    RET ability_effect_index
+BEGIN
+    READ_LONG ITM_SPL_EFFECTS_OFFSET effects_offset
+    READ_LONG ITM_SPL_ABILITIES_OFFSET abilities_offset
+    READ_SHORT ITM_SPL_ABILITIES_COUNT_OFFSET abilities_count
+    READ_SHORT ITM_SPL_GLOBAL_EFFECTS_INDEX_OFFSET global_effects_index
+    READ_SHORT ITM_SPL_GLOBAL_EFFECTS_COUNT_OFFSET global_effects_count
+    SET are_abilities_after_effects = abilities_offset > effects_offset
+    SET are_global_effects_after_ability_effects = global_effects_index != 0
+
+    SET ability_offset = abilities_offset + ability_index * ability_size
+    READ_SHORT (ability_offset + ITM_SPL_ABILITY_EFFECTS_COUNT_OFFSET) ability_effects_count
+    READ_SHORT (ability_offset + ITM_SPL_ABILITY_EFFECTS_INDEX_OFFSET) ability_effects_index
+
+    SET ability_effect_index = ability_effects_count
+    SET ability_effect_offset = effects_offset + (ability_effects_index + ability_effect_index) * EFF_V1_SIZE
+    
+    INSERT_BYTES ability_effect_offset EFF_V1_SIZE
+    LPF WRITE_EFF_V1_OPCODE INT_VAR offset_shift = ability_effect_offset opcode END
+    LPF WRITE_EFF_V1_TARGET INT_VAR offset_shift = ability_effect_offset target END
+    LPF WRITE_EFF_V1_POWER INT_VAR offset_shift = ability_effect_offset power END
+    LPF WRITE_EFF_V1_PARAMETER1 INT_VAR offset_shift = ability_effect_offset parameter1 END
+    LPF WRITE_EFF_V1_PARAMETER2 INT_VAR offset_shift = ability_effect_offset parameter2 END
+    LPF WRITE_EFF_V1_TIMING_MODE INT_VAR offset_shift = ability_effect_offset timing_mode = timing END
+    LPF WRITE_EFF_V1_DISPEL_RESISTANCE INT_VAR offset_shift = ability_effect_offset dispel_resistance END
+    LPF WRITE_EFF_V1_DURATION INT_VAR offset_shift = ability_effect_offset duration END
+    LPF WRITE_EFF_V1_PROBABILITY1 INT_VAR offset_shift = ability_effect_offset probability1 END
+    LPF WRITE_EFF_V1_PROBABILITY2 INT_VAR offset_shift = ability_effect_offset probability2 END
+    LPF WRITE_EFF_V1_MAX_LEVEL INT_VAR offset_shift = ability_effect_offset max_level END
+    LPF WRITE_EFF_V1_MIN_LEVEL INT_VAR offset_shift = ability_effect_offset min_level END
+    LPF WRITE_EFF_V1_RESOURCE INT_VAR offset_shift = ability_effect_offset STR_VAR resource END
+
+    LPF ADJUST_ITM_SPL_AFTER_ABILITY_EFFECTS_COUNT_CHANGE 
+        INT_VAR effects_count_diff = 1
+            abilities_offset
+            abilities_count
+            global_effects_index
+            ability_size
+            ability_offset
+            ability_index
+            are_abilities_after_effects
+            are_global_effects_after_ability_effects
+        RET abilities_offset global_effects_index
+        END
+END
+
 
 DEFINE_PATCH_FUNCTION PATCH_ITM_SPL_EFFECTS
     INT_VAR ability_size = ~~

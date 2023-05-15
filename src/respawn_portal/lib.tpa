@@ -29,15 +29,14 @@ BEGIN
             LAF APPLY_PORTAL_MARKER RET portal_marker_dv END
             
             LAF APPLY_RETURN_SPELL STR_VAR return_cutscene = ~%return_begin_cutscene%~
-                RET return_spell give_return_spell remove_return_spell
+                RET give_return_spell remove_return_spell
                 END
 
             LAF APPLY_SCRIPTS_ADJUSTMENTS 
                 STR_VAR portal_open_variable 
-                    portal_owner_variable
-                    return_spell 
                     remove_return_spell
                 RET candlekeep_enter_variable
+                    close_portal_action
                 END
             
             LAF APPLY_PORTAL_CUTSCENE
@@ -46,6 +45,7 @@ BEGIN
                     portal_marker_dv
                     give_return_spell
                     candlekeep_enter_variable
+                    close_portal_action
                     portal_begin_cutscene
                     portal_end_cutscene
                 RET portal_area_variable
@@ -56,13 +56,13 @@ BEGIN
 
             LAF APPLY_RETURN_CUTSCENE
                 STR_VAR return_begin_cutscene
-                    portal_open_variable
                     portal_marker_dv
                     portal_area_variable
                     portal_master_area_variable
                     all_areas_ref = all_areas
                     master_areas_ref = master_areas
-                    remove_return_spell
+                    portal_open_variable
+                    close_portal_action
                 END
         END
 

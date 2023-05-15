@@ -110,13 +110,55 @@ BEGIN
             ActionOverride(Player4, SetGlobal("%portal_onwer_local_varable%", "LOCALS", 0))
             ActionOverride(Player5, SetGlobal("%portal_onwer_local_varable%", "LOCALS", 0))
             ActionOverride(Player6, SetGlobal("%portal_onwer_local_varable%", "LOCALS", 0))
-            
+
             CreateVisualEffectObject("spdimndr", Player1)
+    END
+
+    IF
+        !StateCheck(Player2, STATE_REALLY_DEAD)
+    THEN
+        RESPONSE #100
+            CutSceneId(Player1)
             CreateVisualEffectObject("spdimndr", Player2)
+    END
+
+    IF
+        !StateCheck(Player3, STATE_REALLY_DEAD)
+    THEN
+        RESPONSE #100
+            CutSceneId(Player1)
             CreateVisualEffectObject("spdimndr", Player3)
+    END
+
+    IF
+        !StateCheck(Player4, STATE_REALLY_DEAD)
+    THEN
+        RESPONSE #100
+            CutSceneId(Player1)
             CreateVisualEffectObject("spdimndr", Player4)
+    END
+
+    IF
+        !StateCheck(Player5, STATE_REALLY_DEAD)
+    THEN
+        RESPONSE #100
+            CutSceneId(Player1)
             CreateVisualEffectObject("spdimndr", Player5)
+    END
+
+    IF
+        !StateCheck(Player6, STATE_REALLY_DEAD)
+    THEN
+        RESPONSE #100
+            CutSceneId(Player1)
             CreateVisualEffectObject("spdimndr", Player6)
+    END
+
+    IF
+        True()
+    THEN
+        RESPONSE #100
+            CutSceneId(Player1)
             SmallWait(15)
             FadeFromColor([30.0],0)
             SmallWait(30)

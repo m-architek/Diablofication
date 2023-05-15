@@ -1,6 +1,6 @@
 DEFINE_ACTION_FUNCTION APPLY_PORTAL_SPELL
     STR_VAR portal_cutscene = 0
-    RET portal_onwer_local_varable
+    RET portal_spell portal_onwer_local_varable
 BEGIN     
     OUTER_SPRINT portal_onwer_local_varable ~%LOCALS_PORTAL_OWNER%~
 
@@ -10,10 +10,10 @@ BEGIN
 
     LAF SPELL_IDS_ADD_SPELL INT_VAR spell_type = IDS_SPELL_TYPE_WIZARD spell_level = 1
         STR_VAR ids_name = ~%SPELL_IDS_TOWN_PORTAL%~
-        RET spell_resource
+        RET portal_spell = spell_resource
         END
 
-    CREATE ~SPL~ ~%spell_resource%~
+    CREATE ~SPL~ ~%portal_spell%~
         SAY NAME1 @1
         SAY UNIDENTIFIED_DESC @2
         LPF ADD_SPL_HEADER INT_VAR spell_type = SPL_SPELL_TYPE_WIZARD
@@ -22,15 +22,15 @@ BEGIN
                 school = SPL_SCHOOL_TRANSMUTER
                 secondary_type = SPL_SECONDARY_TYPE_NON_COMBAT
                 level = 1
-            STR_VAR sound_resource = ~CAS_M08~
-                icon_resource = ~SPWI402C~
+            STR_VAR sound = ~CAS_M08~
+                icon = ~SPWI402C~
             END
-        LPF ADD_SPL_ABILITY INT_VAR location = SPL_ABILITY_LOCATION_SPELL
-                target = SPL_ABILITY_TARGET_CASTER
+        LPF ADD_SPL_ABILITY INT_VAR location = ITM_SPL_ABILITY_LOCATION_SPELL
+                target = ITM_SPL_ABILITY_TARGET_CASTER
                 range = 0
                 level_required = 1
                 casting_time = 9
-            STR_VAR icon_resource = ~SPWI402C~
+            STR_VAR icon = ~SPWI402C~
             RET ability_index 
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index

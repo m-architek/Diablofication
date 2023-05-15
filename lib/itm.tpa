@@ -1,4 +1,115 @@
+OUTER_SET ITM_TYPE_SCROLL = 11
+
+OUTER_SET ITM_FLAGS_OFFSET = 0x18
+OUTER_SET ITM_TYPE_OFFSET = 0x1c
+OUTER_SET ITM_MIN_INT_OFFSET = 0x2a
+OUTER_SET ITM_PRICE_OFFSET = 0x34
+OUTER_SET ITM_STACK_OFFSET = 0x38
+OUTER_SET ITM_ICON_OFFSET = 0x3a
+OUTER_SET ITM_GROUND_ICON_OFFSET = 0x44	
+OUTER_SET ITM_DESCRIPTION_IMAGE_OFFSET = 0x58
+
 OUTER_SET ITM_ABILITY_SIZE = 56
+OUTER_SET ITM_ABILITY_TYPE_OFFSET = 0x00
+OUTER_SET ITM_ABILITY_LOCATION_OFFSET = 0x02
+OUTER_SET ITM_ABILITY_ICON_OFFSET = 0x04
+OUTER_SET ITM_ABILITY_TARGET_OFFSET = 0x0c
+OUTER_SET ITM_ABILITY_CHARGES_OFFSET = 0x22
+OUTER_SET ITM_ABILITY_WHEN_DRAINED_OFFSET = 0x24
+
+
+DEFINE_PATCH_FUNCTION ADD_ITM_HEADER 
+    INT_VAR flags = 0
+        type = 0
+        min_int = 0
+        price = 0
+        stack = 0
+    STR_VAR icon = ~~
+        ground_icon = ~~
+        description_image = ~~
+BEGIN 
+    WRITE_LONG ITM_FLAGS_OFFSET flags
+    WRITE_SHORT ITM_TYPE_OFFSET type
+    WRITE_BYTE ITM_MIN_INT_OFFSET min_int
+    WRITE_LONG ITM_PRICE_OFFSET price
+    WRITE_SHORT ITM_STACK_OFFSET stack
+    WRITE_ASCII ITM_ICON_OFFSET ~%icon%~ #8 
+    WRITE_ASCII ITM_GROUND_ICON_OFFSET ~%ground_icon%~ #8 
+    WRITE_ASCII ITM_DESCRIPTION_IMAGE_OFFSET ~%description_image%~ #8 
+END
+
+
+DEFINE_PATCH_FUNCTION ADD_ITM_ABILITY
+    INT_VAR type = ITM_SPL_ABILITY_TYPE_MELEE
+        location = ITM_SPL_ABILITY_LOCATION_NONE
+        target = 0
+        charges = 0
+        when_drained = 0
+    STR_VAR icon = ~~
+    RET ability_index
+BEGIN
+    READ_LONG ITM_SPL_EFFECTS_OFFSET effects_offset
+    READ_LONG ITM_SPL_ABILITIES_OFFSET abilities_offset
+    READ_SHORT ITM_SPL_ABILITIES_COUNT_OFFSET abilities_count
+    READ_SHORT ITM_SPL_GLOBAL_EFFECTS_INDEX_OFFSET global_effects_index
+    READ_SHORT ITM_SPL_GLOBAL_EFFECTS_COUNT_OFFSET global_effects_count
+    SET are_abilities_after_effects = abilities_offset > effects_offset
+    SET are_global_effects_after_ability_effects = global_effects_index != 0
+
+    SET ability_index = abilities_count
+    SET ability_offset = abilities_offset + (ability_index * ITM_ABILITY_SIZE)
+
+    INSERT_BYTES ability_offset ITM_ABILITY_SIZE
+    WRITE_BYTE (ability_offset + ITM_ABILITY_TYPE_OFFSET) type
+    WRITE_SHORT (ability_offset + ITM_ABILITY_LOCATION_OFFSET) location
+    WRITE_ASCII (ability_offset + ITM_ABILITY_ICON_OFFSET) ~%icon%~ #8 
+    WRITE_BYTE (ability_offset + ITM_ABILITY_TARGET_OFFSET) target
+    WRITE_SHORT (ability_offset + ITM_ABILITY_CHARGES_OFFSET) charges
+    WRITE_SHORT (ability_offset + ITM_ABILITY_WHEN_DRAINED_OFFSET) when_drained
+
+    WRITE_SHORT ITM_SPL_ABILITIES_COUNT_OFFSET (abilities_count + 1)
+    PATCH_IF (NOT are_abilities_after_effects) BEGIN 
+        WRITE_LONG ITM_SPL_EFFECTS_OFFSET (effects_offset + ITM_ABILITY_SIZE)
+    END
+END
+
+
+DEFINE_PATCH_FUNCTION ADD_ITM_ABILITY_EFFECT
+    INT_VAR ability_index = ~~
+        opcode = ~~
+        target = EFF_TARGET_PRESET
+        power = 0
+        parameter1 = 0
+        parameter2 = 0
+        timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+        dispel_resistance = EFF_NATURAL_NONMAGICAL
+        duration = 0
+        probability1 = 100
+        probability2 = 0
+        max_level = 0
+        min_level = 0
+    STR_VAR resource = ~~
+    RET ability_effect_index
+BEGIN
+    LPF ADD_ITM_SPL_ABILITY_EFFECT
+        INT_VAR ability_size = ITM_ABILITY_SIZE
+            ability_index
+            opcode
+            target
+            power
+            parameter1
+            parameter2
+            timing
+            dispel_resistance
+            duration
+            probability1
+            probability2
+            max_level
+            min_level
+        STR_VAR resource
+        RET ability_effect_index
+        END
+END
 
 
 DEFINE_PATCH_FUNCTION PATCH_ITM_EFFECTS

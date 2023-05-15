@@ -1,5 +1,7 @@
 DEFINE_ACTION_FUNCTION APPLY_RETURN_BEGIN
-    STR_VAR this_cutscene = 0
+    STR_VAR portal_open_variable = 0
+        close_portal_action = 0
+        this_cutscene = 0
         next_cutscene = 0
     RET return_begin_spell
 BEGIN 
@@ -7,7 +9,16 @@ BEGIN
 
     <<<<<<<< .../return_begin.baf
     IF
-        True()
+        !Global("%portal_open_variable%", "GLOBAL", 1)
+    THEN
+        RESPONSE #100
+            CutSceneId(Player1)
+            %close_portal_action%
+            EndCutSceneMode()
+    END
+
+    IF
+        Global("%portal_open_variable%", "GLOBAL", 1)
     THEN
         RESPONSE #100
             CutSceneId(Player1)
@@ -31,7 +42,6 @@ BEGIN
             ApplySpellRES("%return_begin_spell%", Player5)
             ApplySpellRES("%return_begin_spell%", Player6) 
             
-            SmallWait(5)
             StartCutSceneEx("%next_cutscene%", TRUE)           
     END
     >>>>>>>>

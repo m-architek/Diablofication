@@ -6,20 +6,22 @@ INCLUDE ~%COMPONENT_FOLDER%/return_cutscene/return_end.tpa~
 
 DEFINE_ACTION_FUNCTION APPLY_RETURN_CUTSCENE
     STR_VAR return_begin_cutscene = 0
-        portal_open_variable = 0
         portal_marker_dv = 0
         portal_area_variable = 0
         portal_master_area_variable = 0
         all_areas_ref = 0
         master_areas_ref = 0
-        remove_return_spell = 0
+        portal_open_variable = 0
+        close_portal_action = 0
 BEGIN 
     OUTER_SPRINT return_execution_cutscene ~%RESREF_BCS_RETURN_EXECUTION%~
     OUTER_SPRINT return_sync_cutscene ~%RESREF_BCS_RETURN_SYNC%~
     OUTER_SPRINT return_end_cutscene ~%RESREF_BCS_RETURN_END%~
 
     LAF APPLY_RETURN_BEGIN
-        STR_VAR this_cutscene = ~%return_begin_cutscene%~
+        STR_VAR portal_open_variable
+            close_portal_action
+            this_cutscene = ~%return_begin_cutscene%~
             next_cutscene = ~%return_execution_cutscene%~
         RET return_begin_spell
         END
@@ -41,8 +43,7 @@ BEGIN
     LAF APPLY_RETURN_END
         STR_VAR return_begin_spell
             portal_marker_dv
-            portal_open_variable
-            remove_return_spell
+            close_portal_action
             this_cutscene = ~%return_end_cutscene%~
         END
 END

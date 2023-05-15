@@ -11,6 +11,7 @@ DEFINE_ACTION_FUNCTION APPLY_PORTAL_CUTSCENE
         portal_marker_dv = 0
         give_return_spell = 0
         candlekeep_enter_variable = 0
+        close_portal_action = 0
         portal_begin_cutscene = 0
         portal_end_cutscene = 0
     RET portal_area_variable
@@ -28,6 +29,7 @@ BEGIN
             portal_open_variable
             portal_owner_variable
             give_return_spell
+            close_portal_action
             this_cutscene = ~%portal_begin_cutscene%~
             next_cutscene_prefix = ~%portal_master_area_resolving_prefix%~
         END
@@ -68,27 +70,41 @@ DEFINE_ACTION_FUNCTION APPLY_PORTAL_CUTSCENE_BEGIN
         portal_open_variable = 0
         portal_owner_variable = 0
         give_return_spell = 0
+        close_portal_action = 0
         this_cutscene = 0
         next_cutscene_prefix = 0
 BEGIN
     <<<<<<<< .../portal_begin.baf
     IF
+        True()
+    THEN
+        RESPONSE #100
+            CutSceneId(Player1)
+            %close_portal_action%
+
+            SetGlobal("%portal_open_variable%", "GLOBAL", 1)
+    END
+    >>>>>>>>
+
+    EXTEND_BOTTOM ~%this_cutscene%.BCS~ ~.../portal_begin.baf~
+        EVALUATE_BUFFER
+
+    <<<<<<<< .../portal_owner_resolving.baf
+    IF
         Global("%portal_owner_variable%", "GLOBAL", %player_index%)
     THEN
         RESPONSE #100
             CutSceneId(Player1)
-
-            SetGlobal("%portal_open_variable%", "GLOBAL", 1)
+            
             MoveGlobalObject("%portal_marker_dv%", %player%) 
             ApplySpellRES("%give_return_spell%", %player%)
-            
             StartCutSceneEx("%next_cutscene%", TRUE)
     END
     >>>>>>>>
 
     ACTION_PHP_EACH PLAYERS AS player_index => player BEGIN 
 
-        EXTEND_BOTTOM ~%this_cutscene%.BCS~ ~.../portal_begin.baf~
+        EXTEND_BOTTOM ~%this_cutscene%.BCS~ ~.../portal_owner_resolving.baf~
             SPRINT next_cutscene ~%next_cutscene_prefix%%player_index%~
             EVALUATE_BUFFER
     END 

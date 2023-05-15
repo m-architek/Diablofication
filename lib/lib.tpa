@@ -15,3 +15,4 @@ INCLUDE ~%lib%/joinable_npc_array.tpa~
 INCLUDE ~%lib%/patch_existing_effects.tpa~
 INCLUDE ~%lib%/spl.tpa~
 INCLUDE ~%lib%/start_next_cutscene.tpa~
+INCLUDE ~%lib%/sto.tpa~

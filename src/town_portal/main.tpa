@@ -2,6 +2,7 @@ INCLUDE ~%src%/respawn_portal/lib.tpa~
 
 INCLUDE ~%COMPONENT_FOLDER%/resources.tpa~
 INCLUDE ~%COMPONENT_FOLDER%/portal_spell.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/portal_scroll.tpa~
 INCLUDE ~%COMPONENT_FOLDER%/portal_cutscene.tpa~
 
 LOAD_TRA ~%tra%/%LANGUAGE%/%COMPONENT%.tra~
@@ -9,7 +10,9 @@ LOAD_TRA ~%tra%/%LANGUAGE%/%COMPONENT%.tra~
 OUTER_SPRINT portal_begin_cutscene ~%RESREF_BCS_PORTAL_BEGIN%~
 
 LAF APPLY_PORTAL_SPELL STR_VAR portal_cutscene = ~%portal_begin_cutscene%~
-    RET portal_onwer_local_varable
+    RET portal_spell portal_onwer_local_varable
     END
+
+LAF APPLY_PORTAL_SCROLL STR_VAR portal_spell END
 
 LAF APPLY_PORTAL_CUTSCENE STR_VAR portal_begin_cutscene portal_onwer_local_varable END
