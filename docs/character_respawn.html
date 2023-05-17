@@ -52,9 +52,9 @@
         <p>All possible respawn points are configured in <a href="../config/respawn_points.2da">respawn_points.2da</a>
             table.
             Configuration includes areas and players position after respawn. Plot related respawn points are hardcoded
-            and always take precedence, however you can configure nearest respawn point for master areas with <a
+            and always take precedence, however you can configure nearest respawn point for areas with <a
                 href="../config/respawn_points_nearest.2da">respawn_points_nearest.2da</a> table. If newly visited
-            master area do not have respawn point configured here, the value of previously visited master area would be used.
+            area do not have respawn point configured here, the value of previously visited area would be used.
             Note that all changes to those 2da tables must be performed before component is installed.</p>
 
         <p>During respawn process all party members are resurrected and healed. Healing process include
@@ -65,10 +65,8 @@
 
         <p>After respawn, protagonist should have all equipment that was possessed in moment of "death", however
             equipment of dead companions is still on battlefield (unless it was picked up meanwhile by protagonist or
-            other party member). Please note, that in case when battlefield is far enough from respawn point, this can
-            cause equipment disappear before you will be able to recover it. Some equipment loss can also take place in
-            case when you cannot go back to place of party member death (e.g. fight with Iron Throne leaders in
-            Candlekeep).</p>
+            other party member). Please note, that in case you cannot go back to place of party member death 
+            (e.g. fight with Iron Throne leaders in Candlekeep), this can cause loss of this equipment.</p>
 
         <p>Each respawn has consequence in certain penalty of gold and XP. Amount of gold that is taken from the party
             depends on current party gold and it is configured in <a
@@ -79,6 +77,10 @@
             In case you change configuration, you should also avoid reducing character's XP below 0, 
             which is not handled properly by the engine. XP penalty does not affect character level,
             it just delays getting next level.</p>
+
+        <p>After respawn, protagonist receives innate ability that allows for teleport entire party back to the place of last "death".
+            This is reusing <a href="town_portal.html">Town Portal</a> return mechanics, 
+            so it overwrites eventual return ability that exists after casting Town Portal spell.</p>
 
         <hr />
 

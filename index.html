@@ -17,18 +17,18 @@
         href="https://github.com/m-architek/Diablofication/releases">Download</a>)<br />
       <strong>Game</strong>: BG1 EE v2.6 without SoD<br />
       <strong>Platform:</strong> Windows<br />
-      <strong>Language:</strong> Universal (no new lines added)
+      <strong>Language:</strong> English, Polish
     </p>
 
     <h2 id="overview">Overview</h2>
 
     <p>Diablofication is Infinity Engine modification that aims to implement some of the mechanics known from Diablo games
-      into Baldur's Gate games series.</p>
+      into Baldur's Gate Enhanced Edition.</p>
 
     <p>Diablofication doesn't try to be total conversion mod. Instead, it tries to understand why certain mechanic is fun in Diablo 
-      and introduce some changes to Baldur's Gate to obtain similar result, without turning game upside down.</p>
+      and introduce some changes to obtain similar result, without turning game upside down.</p>
 
-    <p>Consequently, Diablofication is collection of tweaks that focus on following aspects of the game:</p>
+    <p>Consequently, Diablofication is collection of components that focus on following aspects of the game:</p>
     <ul>
       <li>
         <p>Improvements for “no reload” gameplay, including ones that make this style of playing available for less
@@ -38,15 +38,11 @@
         <p>Randomization and diversification of game content.</p>
       </li>
       <li>
-        <p>Various hack'n'slash flavored changes, especially focused on solo playthrough.</p>
+        <p>Various hack'n'slash flavored changes, especially focused on increasing game dynamics.</p>
       </li>
     </ul>
 
     <p>See <a href="#components">components list</a> for more details about mod content.</p>
-
-    <p>Diablofication tries to maintain compatibility with other mods by following best modding practices. 
-      Also, it tries to provide maximum effect at minimum cost by avoiding risky changes when it is not justified. 
-      See <a href="#compatibility">compatibility section</a> for more details.</p>
 
     <h2 id="installation">Installation</h2>
 
@@ -61,30 +57,31 @@
       For getting access to all those additional features it is advised to install EEex before Diablofication. 
       Diablofication was tested with EEex version v0.9.19-alpha, please use this version of EEex or later.</p>
 
-    <p>Some of mod components require starting new game to work properly. This also means that after mod
-      deinstallation, using saves made when those components was yet installed can lead to unexpected issues.
-      For details, see descriptions of particular component.</p>
-
     <h2 id="compatibility">Compatibility</h2>
 
     <p>Diablofication is using <a href="https://weidu.org/~thebigg/README-WeiDU.html">WeiDU</a> 
       for patching game files in a way that will be compatible with patches done by other WeiDU based modifications. 
-      However, this “technical” compatibility not guarantee flawless in-game experience so please read 
-      following notes about cross-mod compatibility and installation order.</p>
+      However, this not guarantee flawless in-game experience in every setup, 
+      so if you plan to install Diablofication together with other mods, 
+      please read following notes about cross-mod compatibility and installation order.</p>
 
-    <p>Diablofication is tweak collection mod and should be installed possibly late in mod installation process
-      (preferably as the last mod). It tries to detect changes done by other modifications and act accordingly to
-      provide best possible compatibility.</p>
+    <p>Diablofication should be installed possibly late in mods installation process (preferably as the last mod). 
+      It tries to detect changes done by other modifications and act accordingly to provide best possible compatibility.</p>
 
-    <p>Each Diablofication component makes changes in different aspect of the game, detail compatibility notes are
-      maintained per each component individually, please read them before installation.</p>
+    <p>Each Diablofication component makes changes in different aspect of the game. 
+      Most common source of incompatibility could be to install Diablofication component together with other mod that changes same thing in different way.
+      Detail compatibility notes are maintained per each component individually, please read them before installation.</p>
+
+    <p>Most of Diablofication components do not require starting new game to work properly and can be safely installed or uninstalled during playthrough. 
+      Exceptions from this behavior are stated in compatibility notes of particular components.</p>
 
     <h2 id="components">Components</h2>
 
-    <p>Diablofication mod consists of following components. All components are optional and can be installed 
-      independent from each other.</p>
+    <p>Diablofication consists of several components. All components are optional and can be installed independent from each other. 
+      However, it is also possible to install them all, what allows to enjoy full Diablofication experiance.</p>
 
     <ul>
+      <li><a href="#town-portal">Town Portal (Beta)</a></li>
       <li><a href="#character-respawn">Character Respawn (Beta)</a></li>
       <li><a href="#noncombat-xp">Remove Non-Combat Experience</a></li>
       <li><a href="#spells-regen">Spells Regeneration (Beta)</a></li>
@@ -94,32 +91,31 @@
 
     <br />
 
+    <h3 id="town-portal">Town Portal (Beta)</h3>
+
+    <p>Town Portal is new level one arcane spell that teleports entire party to the nearest temple (or other safe place, if temple is unreachable). 
+      Character that casted Town Portal receives special ability, that can be used to teleport party back to place where spell was casted. 
+      Town Portal spell scrolls are added to store of every temple. Those scrolls can be used to cast Town Portal spell be every character 
+      that meet standard requirements for using scrolls (regardless of ability to use arcane magic).</p>
+            
+    <p><strong>Compatibility:</strong> This component should be installed after every mod that add new areas. 
+      Besides that there is no other compatibility restriction.</p>
+      
+    <p>See <a href="./docs/town_portal.html">here</a> for more details (this can include spoilers).</p> 
+
+    <br />
+
     <h3 id="character-respawn">Character Respawn (Beta)</h3>
 
-    <p>In case of protagonist death, entire party will be resurrected in nearest temple (or in other sensible place, if
-      temple is currently unavailable). This will however has consequence in certain amount of gold and experience
-      points loss.</p>
+    <p>In case of protagonist death, entire party will be resurrected in the nearest temple (or other safe place, if temple is unreachable). 
+      This will however has consequence in certain amount of gold and experience points loss.
+      After respawn, protagonist receives special ability, that can be used to teleport party back to the place where respawn was triggered.</p>
 
-    <p><strong>Motivation:</strong> Allowing for "no reload" playthrough in more forgivable manner.</p>
-
-    <p><strong>Installation:</strong> This component should be installed after every mod that add new areas, items or
-      spells. Starting new game is required for this component to work properly.</p>
-
-    <p><strong>Compatibility:</strong> Resolving respawn place cannot work perfect in mod-added areas, it is advised to
-      visit closest non-mod area before traveling there. Sometimes this component can produce strange results together with mods
-      that add complex plot (e.g. when you die in mod-added area that is no longer reachable from nearest temple, what makes
-      impossible to finish your quest). In case of such problems, you can always fallback to standard “reload” approach
-      for this part of the game.
-      In general, it is still advised to save game once in a while, and just not reload it, unless some unexpected problem occurs.
-      This component is not compatible with mods that make changes related to protagonist death like “Death Cam” component of <a
-        href="https://www.gibberlings3.net/mods/tweaks/tweaks/">Tweaks Anthology</a> or <a
-        href="https://www.gibberlings3.net/forums/topic/28910-protagonist-can-die/page/2/#comment-280191">Protagonist
-        Can Die</a> tweak.</p>
-
-    <p><strong>Tip:</strong> Protagonist doesn't drop equipment in the moment of death. However, enemies and party
-      members still do.
-      In case that battlefield is inaccessible or far away from respawn point, it can result with loot or equipment
-      lose.</p>
+    <p><strong>Compatibility:</strong> This component should be installed after every mod that add new areas, items or spells. 
+      Deinstalltion of this component during playthrough is not recommended, it will leave your saved games in invalid state.
+      This component is not compatible with other mods that make changes related to protagonist death 
+      like “Death Cam” component of <a href="https://www.gibberlings3.net/mods/tweaks/tweaks/">Tweaks Anthology</a> 
+      or <a href="https://www.gibberlings3.net/forums/topic/28910-protagonist-can-die/page/2/#comment-280191">Protagonist Can Die</a> tweak.</p>
 
     <p>See <a href="./docs/character_respawn.html">here</a> for more details (this can include spoilers).</p>
 
@@ -129,15 +125,10 @@
 
     <p>Removes experience points rewards from quests, dialogues, thief ability usages and spells learning.</p>
 
-    <p><strong>Motivation:</strong> Removal of "free" XP in early parts of the game. Reducing overall XP amount for solo playthroughs. 
-      Increased freedom in picking dialogue options for powergamers.</p>
-
-    <p><strong>Installation:</strong> This component should be installed after every mod that adds new quests and dialogues.
-      Starting new game is not required.</p>
-
-    <p><strong>Compatibility:</strong> This component will not be compatible with every modification that alters XP rewards, 
-      like XP adjustments components from <a href="https://rawgit.com/K4thos/EET_Tweaks/master/EET_Tweaks/readme-EET_Tweaks.html"
-      >EET Tweaks</a> (excluding those related to combat XP).</p>
+    <p><strong>Compatibility:</strong> This component should be installed after every mod that adds new quests and dialogues. 
+      It is not compatible with every modification that alters XP rewards, like XP adjustments components from 
+      <a href="https://rawgit.com/K4thos/EET_Tweaks/master/EET_Tweaks/readme-EET_Tweaks.html">EET Tweaks</a> 
+      (excluding those related to combat XP).</p>
 
     <p>See <a href="./docs/noncombat_xp.html">here</a> for more details (this can include spoilers).</p>
 
@@ -146,11 +137,6 @@
     <h3 id="spells-regen">Spells Regeneration (Beta)</h3>
 
     <p>Grants out of combat regeneration of one spell (arcane and divine) per round for all party members (including familiars).</p>
-
-    <p><strong>Motivation:</strong> Making playthrough with casters more dynamic by reducing number of required resting.</p>
-
-    <p><strong>Installation:</strong> This component has no installation order restrictions.
-      Starting new game is not required.</p>
 
     <p><strong>Compatibility:</strong> This component has no compatibility restrictions.</p>
 
@@ -164,12 +150,10 @@
       At the same time, amount of HP gained with every level is decreased, so difference between HP from
       original rules and those applied by this component is getting smaller and smaller with every level up.</p>
 
-    <p><strong>Motivation:</strong> Adding more hack'n'slash flavor to early portion of Baldur's Gate.</p>
-
-    <p><strong>Installation:</strong> This component should be installed after every mod that adds new companions.
-      Starting new game is required for this component to work properly.</p>
-
-    <p><strong>Compatibility:</strong> This component will not be compatible with every modification that alters HP
+    <p><strong>Compatibility:</strong> This component should be installed after every mod that adds new companions.
+      Starting new game is required for this component to work properly. 
+      Also deinstalltion of this component during playthrough is not recommended, it will leave your saved games in invalid state. 
+      This component will not be compatible with every modification that alters HP
       progression rules or HP of companions, like "Max HP at Level One", "Higher HP on Level Up", "Allow HP Rolls Through Level 20 [Angel]", 
       "Maximum HP Creatures [the bigg]" (in "all" or "party-joinable NPCs" variants) from <a
         href="https://www.gibberlings3.net/mods/tweaks/tweaks/">Tweaks Anthology</a>.</p>
@@ -187,15 +171,8 @@
       keeping character always in the center of the screen. 
       You can unlock camera using right click on "select all" button.</p>
 
-    <p><strong>Motivation:</strong> Moving camera automatically together with character movement saves tedious view
-      scrolling, especially when playing solo.
-      It also brings additional immersion by allowing you to experience game more from your character perspective.</p>
-
-    <p><strong>Installation:</strong> This component should be installed after UI overhaul mods and after every mod 
-      that add new cutscenes. Starting new game is not required.</p>
-
-    <p><strong>Compatibility:</strong> This component most likely wouldn't be compatible with other mods that change
-      game camera behavior.</p>
+    <p><strong>Compatibility:</strong> This component should be installed after UI overhaul mods and after every mod 
+      that add new cutscenes. Besides that there is no other compatibility restriction.</p>
 
     <p><strong>Limitations:</strong> If <a href="https://eeex-docs.readthedocs.io/en/latest/">EEex</a> not installed, 
       camera lock is performed using character action list. That means, if character is in the middle of some action, 
@@ -285,6 +262,12 @@
     <hr />
 
     <h2 id="changelog">Changelog</h2>
+
+    <h3 id="v0_6">v0.6</h3>
+    <ul>
+      <li>Town Portal (Beta) for BG1 EE v2.6 (no SoD support)</li>
+      <li>Character Respawn (Beta): added possibility for quick travel to place of death after respawn.</li>
+    </ul>
 
     <h3 id="v0_5">v0.5</h3>
     <ul>
