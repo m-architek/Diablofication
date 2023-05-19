@@ -1,0 +1,44 @@
+LOAD_TRA ~%tra%/%LANGUAGE%/%COMPONENT%.tra~
+
+
+DEFINE_PATCH_FUNCTION PATCH_INDENTIFY_DESCRPTION
+    INT_VAR description_strref = ~~
+BEGIN 
+    INNER_ACTION BEGIN 
+        ACTION_GET_STRREF description_strref description
+        OUTER_SPRINT expected_spell_name @1
+        ACTION_IF (INDEX (CASE_INSENSITIVE EXACT_MATCH ~%expected_spell_name%~ ~%description%~) = 0) BEGIN 
+            OUTER_SPRINT description_extension @2
+            OUTER_SPRINT description ~%description%~ ^ ~%description_extension%~
+            STRING_SET_EVALUATE description_strref ~%description%~
+        END
+    END
+END
+
+
+OUTER_SPRINT indentify_spell ~SPWI110~
+OUTER_SPRINT indentify_scroll ~SCRL75~
+
+COPY_EXISTING ~%indentify_spell%.SPL~ ~override~
+    READ_LONG UNIDENTIFIED_DESC description_strref
+    LPF PATCH_INDENTIFY_DESCRPTION INT_VAR description_strref END
+    BUT_ONLY
+
+COPY_EXISTING ~%indentify_scroll%.ITM~ ~override~
+    READ_LONG IDENTIFIED_DESC description_strref
+    LPF PATCH_INDENTIFY_DESCRPTION INT_VAR description_strref END
+    LPF PATCH_ITM_USAGE_RESTRICTIONS
+        INT_VAR class_restrictions = 0
+            kit1_restrictions = 0
+            kit2_restrictions = 0
+            kit3_restrictions = 0
+            kit4_restrictions = 0
+        END
+    BUT_ONLY
+
+COPY_EXISTING_REGEXP GLOB ~^.+\.sto$~ ~override~
+    LPF READ_STO_TYPE RET type END
+    PATCH_IF (type = STO_TYPE_TEMPLE) BEGIN 
+        ADD_STORE_ITEM ~%indentify_scroll%~ AFTER ~SCRLPET~ #1 #0 #0 ~IDENTIFIED~ #0 ~UNLIMITED~
+    END
+    BUT_ONLY
