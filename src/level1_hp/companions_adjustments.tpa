@@ -3,20 +3,49 @@ DEFINE_ACTION_FUNCTION APPLY_COMPANIONS_ADJUSTMENTS
         hp_lvl1_values_ref = 0
         hp_static_increment_values_ref = 0
 BEGIN
+    LAF APPLY_KITS_READ RET_ARRAY kits END
+
     LAF JOINABLE_NPC_ARRAY RET_ARRAY JOINABLE_NPC_ARRAY END
     
     ACTION_PHP_EACH JOINABLE_NPC_ARRAY AS cre => dv BEGIN
         COPY_EXISTING ~%cre%~ ~override~
-            LPF PATCH_COMPANION_CRE STR_VAR hpclass_table_ref 
-                hp_lvl1_values_ref 
-                hp_static_increment_values_ref 
+            LPF PATCH_COMPANION_CRE 
+                STR_VAR kits_ref = kits
+                    hpclass_table_ref 
+                    hp_lvl1_values_ref 
+                    hp_static_increment_values_ref 
                 END
             BUT_ONLY
     END
 END
 
+DEFINE_ACTION_FUNCTION APPLY_KITS_READ
+    RET_ARRAY kits
+BEGIN 
+    ACTION_CLEAR_ARRAY kits
+
+    COPY_EXISTING - ~kitlist.2da~ ~~
+        CLEAR_ARRAY kitlist_rowname
+        LPF READ_2DA_COLUMN STR_VAR column_name = ~ROWNAME~
+            RET_ARRAY kitlist_rowname = out
+            END
+        CLEAR_ARRAY kitlist_kitids
+        LPF READ_2DA_COLUMN STR_VAR column_name = ~KITIDS~
+            RET_ARRAY kitlist_kitids = out
+            END
+        PHP_EACH kitlist_kitids AS kit_index => kit_ids BEGIN 
+            PATCH_IF (NOT ~%kit_ids%~ STR_EQ ~*~) BEGIN 
+                SET kit_ids = ~%kit_ids%~ // align formattting
+                SPRINT kit_name $kitlist_rowname(~%kit_index%~)
+                TO_UPPER kit_name
+                SPRINT $kits(~%kit_ids%~) ~%kit_name%~
+            END
+        END
+END
+
 DEFINE_PATCH_FUNCTION PATCH_COMPANION_CRE   
-    STR_VAR hpclass_table_ref = 0 
+    STR_VAR kits_ref = 0
+        hpclass_table_ref = 0 
         hp_lvl1_values_ref = 0
         hp_static_increment_values_ref = 0
 BEGIN
@@ -26,7 +55,7 @@ BEGIN
     LOOKUP_IDS_SYMBOL_OF_INT class_name ~class~ class_id
 
     LPF READ_CRE_KIT RET kit_id END
-    LOOKUP_IDS_SYMBOL_OF_INT kit_name ~kit~ kit_id
+    SPRINT kit_name $~%kits_ref%~(~%kit_id%~)
 
     SPRINT hp_table $~%hpclass_table_ref%~(~%class_name%~)
     PATCH_IF (

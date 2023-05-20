@@ -1,0 +1,2 @@
+@1 = ~Hit Die: d~
+@2 = ~Hit Points: %hp_lvl1% + %hp_static_increment% per level.~

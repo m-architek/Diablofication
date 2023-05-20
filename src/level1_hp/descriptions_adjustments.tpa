@@ -1,0 +1,58 @@
+DEFINE_ACTION_FUNCTION APPLY_DESCRIPTIONS_ADJUSTMENTS
+    STR_VAR hpclass_table_ref = 0
+        hp_lvl1_values_ref = 0
+        hp_static_increment_values_ref = 0
+BEGIN
+    ACTION_CLEAR_ARRAY description_strref_table
+    
+    COPY_EXISTING - ~clastext.2da~ ~~
+        CLEAR_ARRAY clastext_descstr
+        LPF READ_2DA_COLUMN STR_VAR column_name = ~DESCSTR~
+            RET_ARRAY clastext_descstr = out
+            END
+        PHP_EACH clastext_descstr AS class_name => description_strref BEGIN 
+            SET class_id = IDS_OF_SYMBOL (CLASS ~%class_name%~)
+            PATCH_IF (class_id != "-1") BEGIN 
+                SPRINT $description_strref_table(~%description_strref%~) ~%class_name%~
+            END
+        END
+
+    COPY_EXISTING - ~kitlist.2da~ ~~
+        CLEAR_ARRAY kitlist_rowname
+        LPF READ_2DA_COLUMN STR_VAR column_name = ~ROWNAME~
+            RET_ARRAY kitlist_rowname = out
+            END
+        CLEAR_ARRAY kitlist_help
+        LPF READ_2DA_COLUMN STR_VAR column_name = ~HELP~
+            RET_ARRAY kitlist_help = out
+            END
+        PHP_EACH kitlist_help AS kit_index => description_strref BEGIN 
+            PATCH_IF (NOT ~%description_strref%~ STR_EQ ~*~) BEGIN 
+                SPRINT kit_name $kitlist_rowname(~%kit_index%~)
+                TO_UPPER kit_name
+                SPRINT $description_strref_table(~%description_strref%~) ~%kit_name%~
+            END
+        END
+
+    ACTION_PHP_EACH description_strref_table AS description_strref => class_name BEGIN 
+        ACTION_IF VARIABLE_IS_SET $~%hpclass_table_ref%~(~%class_name%~) BEGIN 
+            OUTER_SPRINT hp_table $~%hpclass_table_ref%~(~%class_name%~)
+            OUTER_SET hp_lvl1 = $~%hp_lvl1_values_ref%~(~%hp_table%~)
+            OUTER_SET hp_static_increment = $~%hp_static_increment_values_ref%~(~%hp_table%~)
+
+            ACTION_GET_STRREF description_strref description
+            OUTER_SPRINT hp_dice_line @1
+            OUTER_SPRINT hp_lvl1_line @2
+            
+            ACTION_IF (INDEX (CASE_INSENSITIVE EVALUATE_REGEXP ~%hp_dice_line%~ ~%description%~) != "-1") BEGIN 
+                LOG ~Patching %class_name% description (strref %description_strref%) with line: "%hp_lvl1_line%" (%hp_table%).~
+                OUTER_PATCH_SAVE description ~%description%~ BEGIN
+                    REPLACE_TEXTUALLY CASE_INSENSITIVE EVALUATE_REGEXP ~%hp_dice_line%[0-9]+$~ ~%hp_lvl1_line%~
+                END
+                STRING_SET_EVALUATE description_strref ~%description%~
+            END
+        END ELSE BEGIN 
+            LOG ~Skipping descprtion strref %description_strref%: cannot resolve hp table for class %class_name%~
+        END
+    END
+END
