@@ -14,7 +14,7 @@ BEGIN
         ActionOverride(Player6, UnlockScroll())
     ~~~~~
 
-    ACTION_IF (is_EEex) BEGIN 
+    ACTION_IF (IS_EEEX) BEGIN 
         OUTER_SPRINT lock_scroll_action ~~~~~
             EEex_LuaAction("%lock_scroll_on_leader_lua_fn%()")
             ActionOverride(Player1, EEex_LuaAction("%lock_scroll_on_leader_lua_fn%()"))

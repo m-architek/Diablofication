@@ -13,6 +13,8 @@ BEGIN
 
     COPY ~%COMPONENT_FOLDER%/ui_adjustments.lua~ ~override/%RESREF_LUA_FILE%.lua~
         EVALUATE_BUFFER
+
+    LAF APPLY_HELPTUTORIAL_ADJUSTMENTS END
 END
 
 DEFINE_PATCH_FUNCTION APPLY_LOCK_ON_PORTRAIT_DBLCLICK 
@@ -54,4 +56,26 @@ BEGIN
     PATCH_IF (NOT ok) BEGIN 
         PATCH_WARN ~Cannot extend "select all" button with "unlock scroll" alt action.~
     END
+END
+
+DEFINE_ACTION_FUNCTION APPLY_HELPTUTORIAL_ADJUSTMENTS BEGIN
+    OUTER_SPRINT language_lua @1
+
+    COPY_EXISTING ~%language_lua%.LUA~ ~override~
+        SPRINT portrait_description @11
+        SPRINT portrait_description_extension @12
+        SPRINT portrait_description_extended ~%portrait_description%~ ^ ~%portrait_description_extension%~
+        REPLACE_TEXTUALLY CASE_SENSITIVE EXACT_MATCH ~%portrait_description%~ ~%portrait_description_extended%~
+
+        SPRINT select_all_description @21
+        SPRINT select_all_description_extension @22
+        SPRINT select_all_description_extended ~%select_all_description%~ ^ ~%select_all_description_extension%~
+        REPLACE_TEXTUALLY CASE_SENSITIVE EXACT_MATCH ~%select_all_description%~ ~%select_all_description_extended%~
+
+        PATCH_IF (IS_EEEX) BEGIN 
+            SPRINT select_all_dclick_line @31
+            SPRINT select_all_dclick_line_extended @32
+            REPLACE_TEXTUALLY CASE_SENSITIVE EXACT_MATCH ~%select_all_dclick_line%~ ~%select_all_dclick_line_extended%~
+        END
+        BUT_ONLY
 END
