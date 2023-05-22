@@ -42,7 +42,6 @@ BEGIN
     READ_SHORT ITM_SPL_GLOBAL_EFFECTS_INDEX_OFFSET global_effects_index
     READ_SHORT ITM_SPL_GLOBAL_EFFECTS_COUNT_OFFSET global_effects_count
     SET are_abilities_after_effects = abilities_offset > effects_offset
-    SET are_global_effects_after_ability_effects = global_effects_index != 0
 
     SET ability_offset = abilities_offset + ability_index * ability_size
     READ_SHORT (ability_offset + ITM_SPL_ABILITY_EFFECTS_COUNT_OFFSET) ability_effects_count
@@ -73,9 +72,11 @@ BEGIN
             ability_size
             ability_offset
             ability_index
+            ability_effects_index
+            ability_effects_count
             are_abilities_after_effects
-            are_global_effects_after_ability_effects
-        RET abilities_offset global_effects_index
+        RET abilities_offset 
+            global_effects_index
         END
 END
 
@@ -90,7 +91,6 @@ BEGIN
     READ_SHORT ITM_SPL_GLOBAL_EFFECTS_INDEX_OFFSET global_effects_index
     READ_SHORT ITM_SPL_GLOBAL_EFFECTS_COUNT_OFFSET global_effects_count
     SET are_abilities_after_effects = abilities_offset > effects_offset
-    SET are_global_effects_after_ability_effects = global_effects_index != 0
 
     FOR (ability_index = 0; ability_index < abilities_count; ++ability_index) BEGIN
         SET ability_offset = abilities_offset + (ability_index * ability_size)
@@ -112,9 +112,11 @@ BEGIN
                 ability_size
                 ability_offset
                 ability_index
+                ability_effects_index
+                ability_effects_count
                 are_abilities_after_effects
-                are_global_effects_after_ability_effects
-            RET abilities_offset global_effects_index
+            RET abilities_offset 
+                global_effects_index
             END
     END
 
@@ -130,9 +132,11 @@ BEGIN
             abilities_offset
             abilities_count
             ability_size
+            global_effects_index
+            global_effects_count
             are_abilities_after_effects
-            are_global_effects_after_ability_effects
         RET abilities_offset
+            global_effects_count
         END
 END
 
@@ -164,8 +168,9 @@ DEFINE_PATCH_FUNCTION ADJUST_ITM_SPL_AFTER_ABILITY_EFFECTS_COUNT_CHANGE
         ability_size = ~~
         ability_offset = ~~
         ability_index = ~~
+        ability_effects_index = ~~
+        ability_effects_count = ~~
         are_abilities_after_effects = ~~
-        are_global_effects_after_ability_effects = ~~
     RET abilities_offset 
         global_effects_index
 BEGIN 
@@ -176,18 +181,22 @@ BEGIN
             WRITE_LONG ITM_SPL_ABILITIES_OFFSET abilities_offset
         END
 
-        // TODO: handing of mixed effects
-        PATCH_IF (are_global_effects_after_ability_effects) BEGIN 
+        PATCH_IF (global_effects_index > ability_effects_index) BEGIN 
             SET global_effects_index = global_effects_index + effects_count_diff
             WRITE_SHORT ITM_SPL_GLOBAL_EFFECTS_INDEX_OFFSET global_effects_index
         END
 
-        WRITE_SHORT (ability_offset + ITM_SPL_ABILITY_EFFECTS_COUNT_OFFSET) (THIS + effects_count_diff)
+        SET ability_effects_count = ability_effects_count + effects_count_diff
+        WRITE_SHORT (ability_offset + ITM_SPL_ABILITY_EFFECTS_COUNT_OFFSET) ability_effects_count
 
-        // TODO: handing of mixed effects and when later ability uses lower index
-        FOR (next_ability_index = ability_index + 1; next_ability_index < abilities_count; ++next_ability_index) BEGIN
-            SET next_ability_offset = abilities_offset + (next_ability_index * ability_size)
-            WRITE_SHORT (next_ability_offset + ITM_SPL_ABILITY_EFFECTS_INDEX_OFFSET) (THIS + effects_count_diff)
+        FOR (existing_ability_index = 0; existing_ability_index < abilities_count; ++existing_ability_index) BEGIN 
+            SET existing_ability_offset = abilities_offset + (existing_ability_index * ability_size)
+            READ_SHORT (existing_ability_offset + ITM_SPL_ABILITY_EFFECTS_INDEX_OFFSET) existing_ability_effects_index
+
+            PATCH_IF (existing_ability_effects_index > ability_effects_index) BEGIN 
+                SET existing_ability_effects_index = existing_ability_effects_index + effects_count_diff
+                WRITE_SHORT (existing_ability_offset + ITM_SPL_ABILITY_EFFECTS_INDEX_OFFSET) existing_ability_effects_index
+            END
         END
     END
 END
@@ -197,9 +206,11 @@ DEFINE_PATCH_FUNCTION ADJUST_ITM_SPL_AFTER_GLOBAL_EFFECTS_COUNT_CHANGE
         abilities_offset = ~~
         abilities_count = ~~
         ability_size = ~~
+        global_effects_index = ~~
+        global_effects_count = ~~
         are_abilities_after_effects = ~~
-        are_global_effects_after_ability_effects = ~~
     RET abilities_offset
+        global_effects_count
 BEGIN 
     PATCH_IF (effects_count_diff != 0) BEGIN 
 
@@ -208,14 +219,17 @@ BEGIN
             WRITE_LONG ITM_SPL_ABILITIES_OFFSET abilities_offset
         END
 
-        // TODO: handing of mixed effects
-        PATCH_IF (NOT are_global_effects_after_ability_effects) BEGIN 
-            FOR (ability_index = 0; ability_index < abilities_count; ++ability_index) BEGIN 
-                SET ability_offset = abilities_offset + (ability_index * ability_size)
-                WRITE_SHORT (ability_offset + ITM_SPL_ABILITY_EFFECTS_INDEX_OFFSET) (THIS + effects_count_diff)
+        FOR (ability_index = 0; ability_index < abilities_count; ++ability_index) BEGIN 
+            SET ability_offset = abilities_offset + (ability_index * ability_size)
+            READ_SHORT (ability_offset + ITM_SPL_ABILITY_EFFECTS_INDEX_OFFSET) ability_effects_index
+
+            PATCH_IF (ability_effects_index > global_effects_index) BEGIN 
+                SET ability_effects_index = ability_effects_index + effects_count_diff
+                WRITE_SHORT (ability_offset + ITM_SPL_ABILITY_EFFECTS_INDEX_OFFSET) ability_effects_index
             END
         END
 
-        WRITE_SHORT ITM_SPL_GLOBAL_EFFECTS_COUNT_OFFSET (THIS + effects_count_diff)
+        SET global_effects_count = global_effects_count + effects_count_diff
+        WRITE_SHORT ITM_SPL_GLOBAL_EFFECTS_COUNT_OFFSET global_effects_count
     END
 END
