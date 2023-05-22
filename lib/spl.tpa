@@ -23,8 +23,8 @@ OUTER_SET SPL_SCHOOL_TRANSMUTER = 8
 OUTER_SET SPL_SECONDARY_TYPE_NON_COMBAT = 13
 
 OUTER_SET SPL_ABILITY_SIZE = 40
-OUTER_SET ITM_SPL_ABILITY_TYPE_OFFSET = 0x0
-OUTER_SET ITM_SPL_ABILITY_LOCATION_OFFSET = 0x2
+OUTER_SET SPL_ABILITY_TYPE_OFFSET = 0x0
+OUTER_SET SPL_ABILITY_LOCATION_OFFSET = 0x2
 OUTER_SET SPL_ABILITY_ICON_OFFSET = 0x4
 OUTER_SET SPL_ABILITY_TARGET_OFFSET = 0xc
 OUTER_SET SPL_ABILITY_RANGE_OFFSET = 0xe
@@ -69,19 +69,25 @@ BEGIN
     READ_SHORT ITM_SPL_GLOBAL_EFFECTS_INDEX_OFFSET global_effects_index
     READ_SHORT ITM_SPL_GLOBAL_EFFECTS_COUNT_OFFSET global_effects_count
     SET are_abilities_after_effects = abilities_offset > effects_offset
-    SET are_global_effects_after_ability_effects = global_effects_index != 0
 
     SET ability_index = abilities_count
     SET ability_offset = abilities_offset + (ability_index * SPL_ABILITY_SIZE)
 
     INSERT_BYTES ability_offset SPL_ABILITY_SIZE
-    WRITE_BYTE (ability_offset + ITM_SPL_ABILITY_TYPE_OFFSET) type
-    WRITE_SHORT (ability_offset + ITM_SPL_ABILITY_LOCATION_OFFSET) location
+    WRITE_BYTE (ability_offset + SPL_ABILITY_TYPE_OFFSET) type
+    WRITE_SHORT (ability_offset + SPL_ABILITY_LOCATION_OFFSET) location
     WRITE_ASCII (ability_offset + SPL_ABILITY_ICON_OFFSET) ~%icon%~ #8 
     WRITE_BYTE (ability_offset + SPL_ABILITY_TARGET_OFFSET) target
     WRITE_SHORT (ability_offset + SPL_ABILITY_RANGE_OFFSET) range
     WRITE_SHORT (ability_offset + SPL_ABILITY_LEVEL_REQUIRED_OFFSET) level_required
     WRITE_SHORT (ability_offset + SPL_ABILITY_CASTING_TIME_OFFSET) casting_time
+
+    LPF ADJUST_ITM_SPL_NEW_ABILITY_EFFECTS_INDEX 
+        INT_VAR abilities_offset
+            ability_size = SPL_ABILITY_SIZE
+            ability_index
+            ability_offset
+        END
 
     WRITE_SHORT ITM_SPL_ABILITIES_COUNT_OFFSET (abilities_count + 1)
     PATCH_IF (NOT are_abilities_after_effects) BEGIN 
@@ -105,7 +111,6 @@ DEFINE_PATCH_FUNCTION ADD_SPL_ABILITY_EFFECT
         max_level = 0
         min_level = 0
     STR_VAR resource = ~~
-    RET ability_effect_index
 BEGIN
     LPF ADD_ITM_SPL_ABILITY_EFFECT
         INT_VAR ability_size = SPL_ABILITY_SIZE
@@ -123,7 +128,6 @@ BEGIN
             max_level
             min_level
         STR_VAR resource
-        RET ability_effect_index
         END
 END
 

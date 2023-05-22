@@ -36,11 +36,11 @@ BEGIN
                 charges = 1
                 when_drained = 1 // vanish
             STR_VAR icon = ~ISCRL1V~
-            RET learn_ability_index = ability_index
+            RET cast_ability_index = ability_index
             END
-        LPF ADD_ITM_ABILITY_EFFECT INT_VAR ability_index = learn_ability_index
-            opcode = EFF_OPCODE_LEARN_SPELL
-            target = EFF_TARGET_SELF
+        LPF ADD_ITM_ABILITY_EFFECT INT_VAR ability_index = cast_ability_index
+            opcode = EFF_OPCODE_CAST_SPELL
+            parameter2 = 0 // Cast Normally
             STR_VAR resource = ~%portal_spell%~
             END
         LPF ADD_ITM_ABILITY
@@ -50,11 +50,11 @@ BEGIN
                 charges = 1
                 when_drained = 1 // vanish
             STR_VAR icon = ~ISCRL1V~
-            RET cast_ability_index = ability_index
+            RET learn_ability_index = ability_index
             END
-        LPF ADD_ITM_ABILITY_EFFECT INT_VAR ability_index = cast_ability_index
-            opcode = EFF_OPCODE_CAST_SPELL
-            parameter2 = 0 // Cast Normally
+        LPF ADD_ITM_ABILITY_EFFECT INT_VAR ability_index = learn_ability_index
+            opcode = EFF_OPCODE_LEARN_SPELL
+            target = EFF_TARGET_SELF
             STR_VAR resource = ~%portal_spell%~
             END
 END
