@@ -76,6 +76,8 @@ BEGIN
             ability_size = ITM_ABILITY_SIZE
             ability_index
             ability_offset
+            global_effects_index
+            global_effects_count
         END
 
     WRITE_SHORT ITM_SPL_ABILITIES_COUNT_OFFSET (abilities_count + 1)

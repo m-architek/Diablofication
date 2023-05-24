@@ -145,16 +145,22 @@ DEFINE_PATCH_FUNCTION ADJUST_ITM_SPL_NEW_ABILITY_EFFECTS_INDEX
         ability_size = ~~
         ability_index = ~~
         ability_offset = ~~
+        global_effects_index = ~~
+        global_effects_count = ~~
 BEGIN 
     SET ability_effects_index = 0
+    SET ability_effects_index_candidate = global_effects_index + global_effects_count
+    PATCH_IF (ability_effects_index_candidate > ability_effects_index) BEGIN 
+        SET ability_effects_index = ability_effects_index_candidate
+    END
     FOR (existing_ability_index = 0; existing_ability_index < ability_index; ++existing_ability_index) BEGIN 
         SET existing_ability_offset = abilities_offset + (existing_ability_index * ability_size)
         READ_SHORT (existing_ability_offset + ITM_SPL_ABILITY_EFFECTS_COUNT_OFFSET) existing_ability_effects_count
         READ_SHORT (existing_ability_offset + ITM_SPL_ABILITY_EFFECTS_INDEX_OFFSET) existing_ability_effects_index
         
-        SET next_ability_effects_index = existing_ability_effects_index + existing_ability_effects_count
-        PATCH_IF (next_ability_effects_index > ability_effects_index) BEGIN 
-            SET ability_effects_index = next_ability_effects_index
+        SET ability_effects_index_candidate = existing_ability_effects_index + existing_ability_effects_count
+        PATCH_IF (ability_effects_index_candidate > ability_effects_index) BEGIN 
+            SET ability_effects_index = ability_effects_index_candidate
         END
     END
     WRITE_SHORT (ability_offset + ITM_SPL_ABILITY_EFFECTS_INDEX_OFFSET) ability_effects_index
