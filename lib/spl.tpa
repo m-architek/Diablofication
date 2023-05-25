@@ -112,6 +112,7 @@ DEFINE_PATCH_FUNCTION ADD_SPL_ABILITY_EFFECT
         probability2 = 0
         max_level = 0
         min_level = 0
+        special = 0
     STR_VAR resource = ~~
 BEGIN
     LPF ADD_ITM_SPL_ABILITY_EFFECT
@@ -129,6 +130,7 @@ BEGIN
             probability2
             max_level
             min_level
+            special
         STR_VAR resource
         END
 END

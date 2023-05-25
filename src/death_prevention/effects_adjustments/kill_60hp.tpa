@@ -1,6 +1,8 @@
 DEFINE_ACTION_FUNCTION APPLY_KILL_60HP_PATCHES
     STR_VAR patches_ref = 0
-    RET_ARRAY ~%patches_ref%~ patch_KILL_60HP patch_KILL_60HP_IMMUNITY
+    RET_ARRAY ~%patches_ref%~ 
+        patch_KILL_60HP 
+        patch_KILL_60HP_IMMUNITY
 BEGIN
     ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_KILL_60HP BEGIN
         patch_type => ~CLONE~
@@ -22,13 +24,13 @@ BEGIN
     END
 
     ACTION_DEFINE_ASSOCIATIVE_ARRAY ~%patches_ref%~ BEGIN 
-        ~%CHARACTER_RESPAWN_PREFIX%_KILL_60HP~ => patch_KILL_60HP
-        ~%CHARACTER_RESPAWN_PREFIX%_KILL_60HP_IMMUNITY~ => patch_KILL_60HP_IMMUNITY
+        ~%DEATH_PREVENTION_PREFIX%_KILL_60HP~ => patch_KILL_60HP
+        ~%DEATH_PREVENTION_PREFIX%_KILL_60HP_IMMUNITY~ => patch_KILL_60HP_IMMUNITY
     END
 END
 
 DEFINE_ACTION_FUNCTION APPLY_KILL_60HP_RESOURCES 
-    STR_VAR instant_death_variable = 0
+    STR_VAR kill_player_variable = 0
 BEGIN
     CREATE ~SPL~ ~%RESREF_SPL_KILL_60HP%~
         LPF ADD_SPL_ABILITY RET ability_index END
@@ -41,6 +43,6 @@ BEGIN
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
             parameter1 = 1
-            STR_VAR resource = ~%instant_death_variable%~
+            STR_VAR resource = ~%kill_player_variable%~
             END
 END

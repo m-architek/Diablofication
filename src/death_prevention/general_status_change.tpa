@@ -1,0 +1,126 @@
+DEFINE_ACTION_FUNCTION APPLY_GENERAL_STATUS_CHANGE
+    STR_VAR players_ref = 0 
+        death_state_variable = 0
+        fake_death_spell = 0
+BEGIN
+    OUTER_SPRINT general_status_variable ~%LOCALS_GENERAL_STATUS%~
+
+    ACTION_CLEAR_ARRAY general_ids
+    COPY_EXISTING - ~GENERAL.IDS~ ~~
+        READ_2DA_ENTRIES_NOW rows 2
+        FOR (row = 0; row < rows; ++row) BEGIN 
+            SPRINT ids_id $rows(~%row%~ 0)
+            SPRINT ids_name $rows(~%row%~ 1)
+            SPRINT $general_ids(~%ids_id%~) ~%ids_name%~
+        END
+
+    LAF APPLY_GENERAL_STATUS_DEAD
+        STR_VAR general_ids_ref = general_ids
+            players_ref
+            fake_death_spell
+            general_status_variable
+        END
+    
+    LAF APPLY_GENERAL_STATUS_REVERT
+        STR_VAR general_ids_ref = general_ids
+            players_ref
+            death_state_variable
+            general_status_variable
+        END
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_GENERAL_STATUS_DEAD
+    STR_VAR general_ids_ref = 0
+        players_ref = 0 
+        fake_death_spell = 0
+        general_status_variable = 0
+BEGIN
+    OUTER_SET dead_ids = IDS_OF_SYMBOL (GENERAL ~DEAD~)
+
+    COPY_EXISTING ~%fake_death_spell%.SPL~ ~override~
+        PHP_EACH ~%general_ids_ref%~ AS ids_id => ids_name BEGIN 
+            PATCH_IF (ids_id AND ids_id != dead_ids) BEGIN 
+                SPRINT save_general_status_eff ~%RESREF_EFF_SAVE_GENERAL_STATUS_PREFIX%%ids_id%~
+            
+                LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index = 0
+                    opcode = EFF_OPCODE_USE_EFF_FILE
+                    parameter1 = ~%ids_id%~
+                    parameter2 = 3 // GENERAL
+                    STR_VAR resource = ~%save_general_status_eff%~
+                    END
+
+                INNER_ACTION BEGIN 
+                    CREATE ~EFF~ ~%save_general_status_eff%~
+                        LPF ALTER_EFF_V2_EFFECT
+                            INT_VAR opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
+                                parameter1 = ~%ids_id%~
+                            STR_VAR resource = ~%general_status_variable%~
+                            END
+                END
+            END
+        END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index = 0
+            opcode = EFF_OPCODE_SET_IDS_STATE 
+            parameter1 = 3 // DEAD
+            parameter2 = 1 // GENERAL
+            END
+        BUT_ONLY
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_GENERAL_STATUS_REVERT
+    STR_VAR general_ids_ref = 0
+        players_ref = 0 
+        death_state_variable = 0
+        general_status_variable = 0
+BEGIN
+    OUTER_SET dead_ids = IDS_OF_SYMBOL (GENERAL ~DEAD~)
+
+    <<<<<<<< .../revert_general_death_status.baf
+    IF
+        Exists(%player%)
+        !StateCheck(%player%, STATE_REALLY_DEAD)
+        General(%player%, DEAD)
+        TriggerOverride(%player%, Global("%death_state_variable%", "LOCALS", 0))
+        !TriggerOverride(%player%, Global("%general_status_variable%", "LOCALS", 0))
+        !TriggerOverride(%player%, Global("%general_status_variable%", "LOCALS", %dead_ids%))
+    THEN
+        RESPONSE #100
+            StartCutSceneEx("%revert_general_status_cutscene%", TRUE)
+    END
+    >>>>>>>>
+
+    ACTION_PHP_EACH ~%players_ref%~ AS player_index => player BEGIN 
+        OUTER_SPRINT revert_general_status_cutscene ~%RESREF_BCS_REVERT_GENERAL_STATUS_PREFIX%%player_index%~
+        OUTER_SPRINT revert_general_status_script ~~
+
+        ACTION_PHP_EACH general_ids AS ids_id => ids_name BEGIN 
+
+            OUTER_SET message_ref = RESOLVE_STR_REF (~Setting GENERAL to %ids_id%~) // TODO remove
+
+            OUTER_SPRINT revert_general_status_block ~~~~~
+                IF
+                    TriggerOverride(%player%, Global("%general_status_variable%", "LOCALS", %ids_id%))
+                THEN
+                    RESPONSE #100
+                        CutSceneId(%player%)
+                        DisplayString(Myself,%message_ref%)
+                        ChangeGeneral(%player%, %ids_id%)
+                END
+            ~~~~~
+            OUTER_SPRINT revert_general_status_script ~~~~~
+                %revert_general_status_script%
+                %revert_general_status_block%
+            ~~~~~
+        END
+
+        LAF APPEND_BCS 
+            STR_VAR resource = ~%revert_general_status_cutscene%~ 
+                script = ~%revert_general_status_script%~ 
+            END
+
+        EXTEND_BOTTOM ~baldur.bcs~ ~.../revert_general_death_status.baf~ 
+            EVALUATE_BUFFER
+    END
+END

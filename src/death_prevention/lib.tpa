@@ -1,0 +1,103 @@
+DEFINE_ACTION_FUNCTION APPLY_DEATH_PREVENTION 
+    STR_VAR players_ref = 0
+    RET game_over_variable
+        death_state_variable
+        petrification_state_variable
+        imprisonment_state_variable
+        revive_death_spell
+        revive_petrification_spell
+        revive_imprisonment_spell
+        revive_cooldown_timer
+BEGIN 
+    OUTER_SPRINT COMPONENT ~death_prevention~
+    OUTER_SPRINT COMPONENT_FOLDER ~%src%/%COMPONENT%~
+
+    INCLUDE ~%COMPONENT_FOLDER%/resources.tpa~
+    INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments.tpa~
+    INCLUDE ~%COMPONENT_FOLDER%/areas_adjustments.tpa~
+    INCLUDE ~%COMPONENT_FOLDER%/scripts_adjustments.tpa~
+    INCLUDE ~%COMPONENT_FOLDER%/death_prevention_spell.tpa~
+    INCLUDE ~%COMPONENT_FOLDER%/fake_death.tpa~
+    INCLUDE ~%COMPONENT_FOLDER%/general_status_change.tpa~
+    INCLUDE ~%COMPONENT_FOLDER%/game_over_trigger.tpa~
+    INCLUDE ~%COMPONENT_FOLDER%/revive_spell.tpa~
+
+    OUTER_SPRINT game_over_variable ~%GLOBAL_GAME_OVER%~
+    OUTER_SPRINT kill_player_variable ~%LOCALS_KILL_PLAYER%~
+    OUTER_SPRINT petrify_player_variable ~%LOCALS_PETRIFY_PLAYER%~
+    OUTER_SPRINT imprison_player_variable ~%LOCALS_IMPRISON_PLAYER%~
+    OUTER_SPRINT death_state_variable ~%LOCALS_STATE_DEATH%~
+    OUTER_SPRINT petrification_state_variable ~%LOCALS_STATE_PETRIFICATION%~
+    OUTER_SPRINT imprisonment_state_variable ~%LOCALS_STATE_IMPRISONMENT%~
+    OUTER_SPRINT maze_state_variable ~%LOCALS_STATE_MAZE%~
+    OUTER_SPRINT revive_death_spell ~%RESREF_SPL_REVIVE_DEATH%~
+    OUTER_SPRINT revive_petrification_spell ~%RESREF_SPL_REVIVE_PETRIFICATION%~
+    OUTER_SPRINT revive_imprisonment_spell ~%RESREF_SPL_REVIVE_IMPRISONMENT%~
+    OUTER_SPRINT revive_cooldown_timer ~%LOCALS_REVIVE_COOLDOWN_TIMER%~
+
+    ACTION_IF (NOT FILE_EXISTS_IN_GAME ~%revive_death_spell%.SPL~) BEGIN 
+
+        LAF APPLY_EFFECTS_ADJUSTMENTS 
+            STR_VAR kill_player_variable
+                    petrify_player_variable
+                    imprison_player_variable
+                    revive_death_spell 
+                    revive_petrification_spell
+                    revive_imprisonment_spell
+                    maze_state_variable
+            END
+        
+        LAF APPLY_AREAS_ADJUSTMENTS END
+
+        LAF APPLY_DEATH_PREVENTION_SCRIPTS_ADJUSTMENTS 
+            STR_VAR players_ref
+                    kill_player_variable
+            END
+
+        LAF APPLY_DEATH_PREVENTION_SPELL STR_VAR players_ref END
+        
+        LAF APPLY_FAKE_DEATH
+            STR_VAR players_ref
+                    kill_player_variable
+                    petrify_player_variable
+                    imprison_player_variable
+                    death_state_variable
+                    petrification_state_variable
+                    imprisonment_state_variable
+                    revive_cooldown_timer
+            RET fake_death_spell
+                fake_petrification_spell
+                fake_imprisonment_spell
+            END
+
+        LAF APPLY_GENERAL_STATUS_CHANGE
+            STR_VAR players_ref
+                    death_state_variable
+                    fake_death_spell
+            END
+
+        LAF APPLY_GAME_OVER_TRIGGER
+            STR_VAR players_ref
+                    game_over_variable
+                    death_state_variable
+                    petrification_state_variable
+                    imprisonment_state_variable
+                    maze_state_variable
+            END
+
+        LAF APPLY_REVIVE_SPELL 
+            STR_VAR revive_death_spell
+                    revive_petrification_spell
+                    revive_imprisonment_spell
+                    fake_death_spell
+                    fake_petrification_spell
+                    fake_imprisonment_spell
+                    death_state_variable
+                    petrification_state_variable
+                    imprisonment_state_variable
+                    kill_player_variable
+                    petrify_player_variable
+                    imprison_player_variable
+            END
+    END
+END

@@ -1,6 +1,8 @@
 DEFINE_ACTION_FUNCTION APPLY_INSTANT_DEATH_PATCHES
     STR_VAR patches_ref = 0
-    RET_ARRAY ~%patches_ref%~ patch_INSTANT_DEATH patch_INSTANT_DEATH_IMMUNITY
+    RET_ARRAY ~%patches_ref%~ 
+        patch_INSTANT_DEATH 
+        patch_INSTANT_DEATH_IMMUNITY
 BEGIN
     ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_INSTANT_DEATH BEGIN
         patch_type => ~CLONE~
@@ -22,20 +24,20 @@ BEGIN
     END
 
     ACTION_DEFINE_ASSOCIATIVE_ARRAY ~%patches_ref%~ BEGIN 
-        ~%CHARACTER_RESPAWN_PREFIX%_INSTANT_DEATH~ => patch_INSTANT_DEATH
-        ~%CHARACTER_RESPAWN_PREFIX%_INSTANT_DEATH_IMMUNITY~ => patch_INSTANT_DEATH_IMMUNITY
+        ~%DEATH_PREVENTION_PREFIX%_INSTANT_DEATH~ => patch_INSTANT_DEATH
+        ~%DEATH_PREVENTION_PREFIX%_INSTANT_DEATH_IMMUNITY~ => patch_INSTANT_DEATH_IMMUNITY
     END
 END
 
 DEFINE_ACTION_FUNCTION APPLY_INSTANT_DEATH_RESOURCES 
-    STR_VAR instant_death_variable = 0
+    STR_VAR kill_player_variable = 0
 BEGIN
     CREATE ~EFF~ ~%RESREF_EFF_INSTANT_DEATH%~
         LPF ALTER_EFF_V2_EFFECT
             INT_VAR opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
                 parameter1 = 1
                 parent_resource_type = EFF_V2_PARENT_RESOURCE_TYPE_SPELL
-            STR_VAR resource = ~%instant_death_variable%~
+            STR_VAR resource = ~%kill_player_variable%~
                 parent_resource = ~%RESREF_EFF_INSTANT_DEATH%~
             END
 END

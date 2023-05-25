@@ -1,18 +1,33 @@
-DEFINE_ACTION_FUNCTION APPLY_DEATH_PREVENTION BEGIN
-    LAF APPLY_PLAYER1_CAN_DIE_FLAG END
-    LAF APPLY_DEATH_PREVENTION_SPL END
+DEFINE_ACTION_FUNCTION APPLY_DEATH_PREVENTION_SPELL 
+    STR_VAR players_ref = 0
+BEGIN
+    LAF APPLY_DEATH_PREVENTION_SPELL_RESOURCE RET death_prevention_spell END
+    
+    <<<<<<<< .../apply_death_prevention_spell.baf
+    IF
+        Exists(%player%)
+        TriggerOverride(%player%, Global("%LOCALS_DEATH_PREVENTION_ON%", "LOCALS", 0))
+    THEN
+        RESPONSE #100
+            ApplySpellRES("%death_prevention_spell%", %player%)
+            ActionOverride(%player%, SetGlobal("%LOCALS_DEATH_PREVENTION_ON%", "LOCALS", 1))
+            Continue()
+    END
+    >>>>>>>>
+
+    ACTION_PHP_EACH ~%players_ref%~ AS _ => player BEGIN 
+        
+        EXTEND_TOP ~baldur.bcs~ ~.../apply_death_prevention_spell.baf~
+            EVALUATE_BUFFER
+    END
 END
 
+DEFINE_ACTION_FUNCTION APPLY_DEATH_PREVENTION_SPELL_RESOURCE 
+    RET death_prevention_spell
+BEGIN
+    OUTER_SPRINT death_prevention_spell ~%RESREF_SPL_DEATH_PREVENTION%~
 
-DEFINE_ACTION_FUNCTION APPLY_PLAYER1_CAN_DIE_FLAG BEGIN
-    COPY_EXISTING_REGEXP GLOB ~^.+\.are$~ ~override~
-        WRITE_LONG 0x14 (THIS | BIT4)
-        BUT_ONLY
-END
-
-
-DEFINE_ACTION_FUNCTION APPLY_DEATH_PREVENTION_SPL BEGIN
-    CREATE ~SPL~ ~%RESREF_SPL_DEATH_PREVENTION%~
+    CREATE ~SPL~ ~%death_prevention_spell%~
         LPF ADD_SPL_ABILITY RET ability_index END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_HP_MINIMUM
@@ -69,19 +84,4 @@ DEFINE_ACTION_FUNCTION APPLY_DEATH_PREVENTION_SPL BEGIN
             parameter2 = 1
             timing = EFF_TIMING_INSTANT_PERMANENT
             END
-
-    <<<<<<<< .../enable_death_prevention.baf
-    IF
-        OnCreation()
-        Global("%GLOBAL_DEATH_PREVENTION_ON%", "GLOBAL", 0)
-    THEN
-        RESPONSE #100
-            ApplySpellRES("%RESREF_SPL_DEATH_PREVENTION%", Player1)
-            SetGlobal("%GLOBAL_DEATH_PREVENTION_ON%", "GLOBAL", 1)
-            Continue()
-    END
-    >>>>>>>>
-    
-    EXTEND_TOP ~baldur.bcs~ ~.../enable_death_prevention.baf~
-        EVALUATE_BUFFER
 END

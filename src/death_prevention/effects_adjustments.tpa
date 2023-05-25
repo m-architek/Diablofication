@@ -1,0 +1,123 @@
+INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments/raise_dead.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments/petrification.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments/harm_damage.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments/disintegrate.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments/kill_creature.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments/kill_60hp.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments/level_drain.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments/stat_drain.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments/replace_creature.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments/instant_death.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments/imprisonment.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments/maze.tpa~
+
+DEFINE_ACTION_FUNCTION APPLY_EFFECTS_ADJUSTMENTS
+    STR_VAR kill_player_variable = 0
+            petrify_player_variable = 0
+            imprison_player_variable = 0
+            revive_death_spell = 0
+            revive_petrification_spell = 0        
+            revive_imprisonment_spell = 0
+            maze_state_variable = 0
+BEGIN
+    ACTION_CLEAR_ARRAY patches
+
+    LAF APPLY_RAISE_DEAD_PATCHES 
+        STR_VAR patches_ref = patches 
+                revive_death_spell
+        RET_ARRAY patches 
+                  patch_RAISE_DEAD 
+                  patch_MASS_RAISE_DEAD
+        END
+
+    LAF APPLY_PETRIFICATION_PATCHES 
+        STR_VAR patches_ref = patches 
+                revive_petrification_spell
+        RET_ARRAY patches 
+                  patch_PETRIFICATION 
+                  patch_PETRIFICATION_IMMUNITY 
+                  patch_PETRIFICATION_CURE 
+                  patch_PETRIFICATION_REMOVE
+        END
+
+    LAF APPLY_HARM_DAMAGE_PATCHES STR_VAR patches_ref = patches
+        RET_ARRAY patches 
+                  patch_HARM_DMG
+        END
+
+    LAF APPLY_DISINTEGRATE_PATCHES STR_VAR patches_ref = patches
+        RET_ARRAY patches 
+                  patch_DISINTEGRATE 
+                  patch_DISINTEGRATE_IMMUNITY
+        END
+
+    LAF APPLY_KILL_CREATURE_PATCHES STR_VAR patches_ref = patches
+        RET_ARRAY patches 
+                  patch_KILL_CREATURE
+                  patch_KILL_CREATURE_IMMUNITY
+        END
+
+    LAF APPLY_KILL_60HP_PATCHES STR_VAR patches_ref = patches
+        RET_ARRAY patches 
+                  patch_KILL_60HP
+                  patch_KILL_60HP_IMMUNITY
+        END
+
+    LAF APPLY_LEVEL_DRAIN_PATCHES STR_VAR patches_ref = patches
+        RET_ARRAY patches 
+                  patch_LEVEL_DRAIN_KILL
+                  patch_LEVEL_DRAIN
+                  patch_LEVEL_DRAIN_IMMUNITY
+        END
+
+    LAF APPLY_STAT_DRAIN_PATCHES STR_VAR patches_ref = patches 
+        RET_ARRAY patches_box
+        END
+    OUTER_SPRINT UNBOX_ARRAY patches
+    LAM UNBOX_ARRAY
+
+    LAF APPLY_REPLACE_CREATURE_PATCHES STR_VAR patches_ref = patches
+        RET_ARRAY patches 
+                  patch_REPLACE_CREATURE_1
+                  patch_REPLACE_CREATURE_2
+                  patch_REPLACE_CREATURE_IMMUNITY
+        END
+
+    LAF APPLY_INSTANT_DEATH_PATCHES STR_VAR patches_ref = patches
+        RET_ARRAY patches 
+                  patch_INSTANT_DEATH
+                  patch_INSTANT_DEATH_IMMUNITY
+        END
+
+    LAF APPLY_IMPRISONMENT_PATCHES 
+        STR_VAR patches_ref = patches
+                revive_imprisonment_spell
+        RET_ARRAY patches 
+                  patch_IMPRISONMENT
+                  patch_IMPRISONMENT_IMMUNITY
+                  patch_IMPRISONMENT_FREEDOM
+        END
+
+    LAF APPLY_MAZE_PATCHES STR_VAR patches_ref = patches
+        RET_ARRAY patches 
+                  patch_MAZE_START
+                  patch_MAZE_END
+                  patch_MAZE_FIXED_START
+                  patch_MAZE_FIXED_END
+                  patch_MAZE_START_IMMUNITY
+                  patch_MAZE_END_IMMUNITY
+        END
+
+    LAF PATCH_EXISTING_EFFECTS STR_VAR patches_ref = patches END
+
+    LAF APPLY_PETRIFICATION_RESOURCES STR_VAR petrify_player_variable END
+    LAF APPLY_DISINTEGRATE_RESOURCES STR_VAR kill_player_variable END
+    LAF APPLY_KILL_CREATURE_RESOURCES STR_VAR kill_player_variable END
+    LAF APPLY_KILL_60HP_RESOURCES STR_VAR kill_player_variable END
+    LAF APPLY_LEVEL_DRAIN_RESOURCES STR_VAR kill_player_variable END
+    LAF APPLY_STAT_DRAIN_RESOURCES STR_VAR kill_player_variable END
+    LAF APPLY_REPLACE_CREATURE_RESOURCES STR_VAR kill_player_variable END
+    LAF APPLY_INSTANT_DEATH_RESOURCES STR_VAR kill_player_variable END
+    LAF APPLY_IMPRISONMENT_RESOURCES STR_VAR imprison_player_variable END
+    LAF APPLY_MAZE_RESOURCES STR_VAR maze_state_variable END
+END

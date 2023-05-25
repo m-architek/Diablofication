@@ -1,26 +1,45 @@
+INCLUDE ~%src%/death_prevention/lib.tpa~
 INCLUDE ~%src%/respawn_portal/lib.tpa~
 
 INCLUDE ~%COMPONENT_FOLDER%/resources.tpa~
-INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments.tpa~
 INCLUDE ~%COMPONENT_FOLDER%/scripts_adjustments.tpa~
-INCLUDE ~%COMPONENT_FOLDER%/death_prevention.tpa~
 INCLUDE ~%COMPONENT_FOLDER%/respawn_trigger.tpa~
 INCLUDE ~%COMPONENT_FOLDER%/respawn_process.tpa~
 INCLUDE ~%COMPONENT_FOLDER%/respawn_penalty.tpa~
 
-LAF APPLY_EFFECTS_ADJUSTMENTS RET patrification_state_variable instant_death_variable maze_state_variable END
+ACTION_DEFINE_ARRAY protagonist BEGIN Player1 END
 
-LAF APPLY_SCRIPTS_ADJUSTMENTS RET kill_player1_variable END
+OUTER_SET is_party_revive = MOD_IS_INSTALLED ~Diablofication.tp2~ (ID_OF_LABEL ~Diablofication.tp2~ ~party_revive~)
 
-LAF APPLY_DEATH_PREVENTION END
+LAF APPLY_DEATH_PREVENTION 
+    STR_VAR players_ref = protagonist
+    RET game_over_variable
+        death_state_variable
+        petrification_state_variable 
+        imprisonment_state_variable
+        revive_death_spell
+        revive_petrification_spell
+        revive_imprisonment_spell 
+        revive_cooldown_timer 
+    END
+
+LAF APPLY_SCRIPTS_ADJUSTMENTS RET respawn_trigger_variable END
 
 LAF APPLY_RESPAWN_PENALTY RET penalty_cutscene END
 
 LAF APPLY_RESPAWN_PROCESS 
-    STR_VAR penalty_cutscene patrification_state_variable instant_death_variable kill_player1_variable maze_state_variable
+    STR_VAR penalty_cutscene 
+            revive_death_spell
+            revive_petrification_spell
+            revive_imprisonment_spell
     RET respawn_cutscene = respawn_begin_cutscene
     END
 
-LAF APPLY_RESPAWN_TRIGGER 
-    STR_VAR respawn_cutscene patrification_state_variable instant_death_variable kill_player1_variable maze_state_variable
+LAF APPLY_RESPAWN_TRIGGER INT_VAR is_party_revive
+    STR_VAR respawn_cutscene 
+            game_over_variable
+            respawn_trigger_variable
+            death_state_variable
+            petrification_state_variable 
+            imprisonment_state_variable
     END

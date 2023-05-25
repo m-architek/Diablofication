@@ -34,6 +34,7 @@ DEFINE_PATCH_FUNCTION ADD_ITM_SPL_ABILITY_EFFECT
         probability2 = ~~
         max_level = ~~
         min_level = ~~
+        special = ~~
     STR_VAR resource = 0
 BEGIN
     READ_LONG ITM_SPL_EFFECTS_OFFSET effects_offset
@@ -63,6 +64,7 @@ BEGIN
     LPF WRITE_EFF_V1_MAX_LEVEL INT_VAR offset_shift = ability_effect_offset max_level END
     LPF WRITE_EFF_V1_MIN_LEVEL INT_VAR offset_shift = ability_effect_offset min_level END
     LPF WRITE_EFF_V1_RESOURCE INT_VAR offset_shift = ability_effect_offset STR_VAR resource END
+    LPF WRITE_EFF_V1_SPECIAL INT_VAR offset_shift = ability_effect_offset special END
 
     LPF ADJUST_ITM_SPL_AFTER_ABILITY_EFFECTS_COUNT_CHANGE 
         INT_VAR effects_count_diff = 1
@@ -118,6 +120,10 @@ BEGIN
             RET abilities_offset 
                 global_effects_index
             END
+
+        PATCH_IF (effects_count_diff < 0 AND ability_effects_count < 1) BEGIN 
+            PATCH_WARN ~PATCH_ITM_SPL_EFFECTS left %SOURCE_EXT% %SOURCE_RES% ability %ability_index% with no effects.~
+        END
     END
 
     SET global_effects_offset = effects_offset + (global_effects_index * EFF_V1_SIZE)

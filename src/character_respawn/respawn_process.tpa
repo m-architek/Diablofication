@@ -1,9 +1,8 @@
 DEFINE_ACTION_FUNCTION APPLY_RESPAWN_PROCESS 
     STR_VAR penalty_cutscene = 0
-        patrification_state_variable = 0
-        instant_death_variable = 0
-        kill_player1_variable = 0
-        maze_state_variable = 0
+            revive_death_spell = 0
+            revive_petrification_spell = 0
+            revive_imprisonment_spell = 0
     RET respawn_begin_cutscene
 BEGIN
     OUTER_SPRINT respawn_begin_cutscene ~%RESREF_BCS_RESPAWN_BEGIN%~
@@ -19,35 +18,38 @@ BEGIN
         END
 
     LAF APPLY_RESPAWN_BEGIN INT_VAR portal_next_cutscene_index
-        STR_VAR patrification_state_variable
-            instant_death_variable
-            kill_player1_variable
-            maze_state_variable
-            portal_owner_variable
-            portal_next_cutscene_variable
-            this_cutscene = ~%respawn_begin_cutscene%~
-            next_cutscene = ~%portal_cutscene%~
+        STR_VAR revive_death_spell
+                revive_petrification_spell
+                revive_imprisonment_spell
+                portal_owner_variable
+                portal_next_cutscene_variable
+                this_cutscene = ~%respawn_begin_cutscene%~
+                next_cutscene = ~%portal_cutscene%~
         END
 
     LAF APPLY_RESPAWN_END
         STR_VAR this_cutscene = ~%respawn_end_cutscene%~
-            next_cutscene = ~%penalty_cutscene%~
+                next_cutscene = ~%penalty_cutscene%~
         END
 END
 
 
 DEFINE_ACTION_FUNCTION APPLY_RESPAWN_BEGIN 
     INT_VAR portal_next_cutscene_index = ~~
-    STR_VAR patrification_state_variable = 0
-        instant_death_variable = 0
-        kill_player1_variable = 0
-        maze_state_variable = 0
-        portal_owner_variable = 0
-        portal_next_cutscene_variable = 0
-        this_cutscene = 0
-        next_cutscene = 0
+    STR_VAR revive_death_spell = 0
+            revive_petrification_spell = 0
+            revive_imprisonment_spell = 0
+            portal_owner_variable = 0
+            portal_next_cutscene_variable = 0
+            this_cutscene = 0
+            next_cutscene = 0
 BEGIN 
-    LAF APPLY_RESPAWN_RESURRECTION RET resurrection_spl END
+    LAF APPLY_RESPAWN_RESURRECTION 
+        STR_VAR revive_death_spell
+                revive_petrification_spell
+                revive_imprisonment_spell
+        RET resurrection_spl 
+        END
     
     <<<<<<<< .../respawn_begin.baf
     IF
@@ -65,11 +67,6 @@ BEGIN
             ApplySpellRES("%resurrection_spl%", Player4)
             ApplySpellRES("%resurrection_spl%", Player5)
             ApplySpellRES("%resurrection_spl%", Player6)
-
-            SetGlobal("%kill_player1_variable%", "GLOBAL", 0)
-            SetGlobal("%patrification_state_variable%", "LOCALS", 0)
-            SetGlobal("%maze_state_variable%", "LOCALS", 0)
-            SetGlobal("%instant_death_variable%", "LOCALS", 0)
 
             SetSequence(SEQ_READY)
             ActionOverride(Player2, SetSequence(SEQ_READY))
@@ -123,6 +120,9 @@ END
 
 
 DEFINE_ACTION_FUNCTION APPLY_RESPAWN_RESURRECTION 
+    STR_VAR revive_death_spell = 0
+            revive_petrification_spell = 0
+            revive_imprisonment_spell = 0
     RET resurrection_spl
 BEGIN
     OUTER_SPRINT resurrection_spl ~%RESREF_SPL_RESURRECTION%~
@@ -130,20 +130,22 @@ BEGIN
     CREATE ~SPL~ ~%resurrection_spl%~
         LPF ADD_SPL_ABILITY RET ability_index END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_RAISE_DEAD
-            parameter1 = 0
-            parameter2 = 0
+            opcode = EFF_OPCODE_CAST_SPELL
+            parameter1 = 0 // Casting Level
+            parameter2 = 1 // Cast Instantly at caster level
+            STR_VAR resource = ~%revive_death_spell%~
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_CAST_SPELL
             parameter1 = 0 // Casting Level
             parameter2 = 1 // Cast Instantly at caster level
-            STR_VAR resource = ~#RDREMOV~
+            STR_VAR resource = ~%revive_petrification_spell%~
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_REMOVE_OPCODE
-            parameter1 = "-1"
-            parameter2 = EFF_OPCODE_MAKE_UNSELECTABLE
+            opcode = EFF_OPCODE_CAST_SPELL
+            parameter1 = 0 // Casting Level
+            parameter2 = 1 // Cast Instantly at caster level
+            STR_VAR resource = ~%revive_imprisonment_spell%~
             END
 END
 
@@ -178,25 +180,6 @@ BEGIN
     CREATE ~SPL~ ~%heal_spl%~
         LPF ADD_SPL_ABILITY RET ability_index END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_CURE_INVISIBILITY
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
-            opcode = EFF_OPCODE_CURE_PAUSE
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_REMOVE_OPCODE
-            parameter1 = "-1"
-            parameter2 = EFF_OPCODE_GRAPHICS_REMOVE_SELECTION_CIRCLE
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_REMOVE_OPCODE
-            parameter1 = "-1"
-            parameter2 = EFF_OPCODE_FREEDOM
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_FREEDOM
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_REMOVE_OPCODE
             parameter1 = "-1"
             parameter2 = EFF_OPCODE_CHARM
@@ -205,16 +188,6 @@ BEGIN
             opcode = EFF_OPCODE_REMOVE_OPCODE
             parameter1 = "-1"
             parameter2 = EFF_OPCODE_ALTERNATIVE_CHARM
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_POLYMORPH // Empty resource = Natural form
-            parameter1 = 0 // Irrelevant
-            parameter2 = 0 // Gain Resistances/statistics
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_ENABLE_BUTTON
-            parameter1 = 0 // Irrelevant
-            parameter2 = 7 // Button: Talk
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
             opcode = EFF_OPCODE_CAST_SPELL

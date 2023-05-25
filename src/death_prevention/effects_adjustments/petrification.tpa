@@ -1,0 +1,67 @@
+DEFINE_ACTION_FUNCTION APPLY_PETRIFICATION_PATCHES
+    STR_VAR patches_ref = 0
+            revive_petrification_spell = 0
+    RET_ARRAY ~%patches_ref%~ 
+        patch_PETRIFICATION 
+        patch_PETRIFICATION_IMMUNITY 
+        patch_PETRIFICATION_CURE 
+        patch_PETRIFICATION_REMOVE
+BEGIN
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_PETRIFICATION BEGIN
+        patch_type => ~CLONE~
+        match_opcode => EFF_OPCODE_STATE_PETRIFICATION
+        opcode => EFF_OPCODE_USE_EFF_FILE
+        parameter1 => 2 // PC
+        parameter2 => 2 // EA
+        resource => ~%RESREF_EFF_PETRIFICATION%~
+    END
+
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_PETRIFICATION_IMMUNITY BEGIN
+        patch_type => ~CLONE~
+        match_opcode => EFF_OPCODE_PROTECTION_FROM_OPCODE
+        match_parameter2 => EFF_OPCODE_STATE_PETRIFICATION
+        opcode => EFF_OPCODE_PROTECTION_FROM_SPELL
+        parameter1 => 0
+        parameter2 => 0
+        resource => ~%RESREF_EFF_PETRIFICATION%~
+    END
+
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_PETRIFICATION_CURE BEGIN
+        patch_type => ~CLONE~
+        match_opcode => EFF_OPCODE_CURE_PETRIFICATION
+        opcode => EFF_OPCODE_CAST_SPELL
+        parameter1 => 0 // Casting Level
+        parameter2 => 1 // Cast Instantly at caster level
+        resource => ~%revive_petrification_spell%~
+    END
+
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_PETRIFICATION_REMOVE BEGIN
+        patch_type => ~CLONE~
+        match_opcode => EFF_OPCODE_REMOVE_OPCODE
+        match_parameter2 => EFF_OPCODE_STATE_PETRIFICATION
+        opcode => EFF_OPCODE_CAST_SPELL
+        parameter1 => 0 // Casting Level
+        parameter2 => 1 // Cast Instantly at caster level
+        resource => ~%revive_petrification_spell%~
+    END
+
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY ~%patches_ref%~ BEGIN 
+        ~%DEATH_PREVENTION_PREFIX%_PETRIFICATION~ => patch_PETRIFICATION
+        ~%DEATH_PREVENTION_PREFIX%_PETRIFICATION_IMMUNITY~ => patch_PETRIFICATION_IMMUNITY
+        ~%DEATH_PREVENTION_PREFIX%_PETRIFICATION_CURE~ => patch_PETRIFICATION_CURE
+        ~%DEATH_PREVENTION_PREFIX%_PETRIFICATION_REMOVE~ => patch_PETRIFICATION_REMOVE
+    END
+END
+
+DEFINE_ACTION_FUNCTION APPLY_PETRIFICATION_RESOURCES 
+    STR_VAR petrify_player_variable = 0
+BEGIN
+    CREATE ~EFF~ ~%RESREF_EFF_PETRIFICATION%~
+        LPF ALTER_EFF_V2_EFFECT
+            INT_VAR opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
+                parameter1 = 1
+                parent_resource_type = EFF_V2_PARENT_RESOURCE_TYPE_SPELL
+            STR_VAR resource = ~%petrify_player_variable%~
+                parent_resource = ~%RESREF_EFF_PETRIFICATION%~
+            END
+END

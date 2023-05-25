@@ -28,7 +28,7 @@ BEGIN
             parameter2 => 1 // Cast Instantly at caster level
         END
 
-        OUTER_SPRINT $~%patches_ref%~(~%CHARACTER_RESPAWN_PREFIX%_%patch_name%~) ~%patch_ref%~
+        OUTER_SPRINT $~%patches_ref%~(~%DEATH_PREVENTION_PREFIX%_%patch_name%~) ~%patch_ref%~
     END
 
     OUTER_SPRINT BOX_ARRAY ~%patches_ref%~
@@ -124,7 +124,7 @@ BEGIN
 END
 
 DEFINE_ACTION_FUNCTION APPLY_STAT_DRAIN_RESOURCES 
-    STR_VAR instant_death_variable = 0
+    STR_VAR kill_player_variable = 0
 BEGIN
     ACTION_DEFINE_ASSOCIATIVE_ARRAY stats_conditions BEGIN 
         ~STR~ => 124 // 124_STAT(STR)>=n
@@ -156,7 +156,7 @@ BEGIN
                 LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
                     opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
                     parameter1 = 1
-                    STR_VAR resource = ~%instant_death_variable%~
+                    STR_VAR resource = ~%kill_player_variable%~
                     END
         END
     END

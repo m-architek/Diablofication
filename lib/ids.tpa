@@ -1,3 +1,4 @@
+OUTER_SET IDS_SPELL_TYPE_PRIEST = 1
 OUTER_SET IDS_SPELL_TYPE_WIZARD = 2
 OUTER_SET IDS_SPELL_TYPE_INNATE = 3
 
@@ -9,10 +10,22 @@ DEFINE_ACTION_FUNCTION SPELL_IDS_ADD_SPELL
     RET spell_resource
 BEGIN 
     ADD_SPELL ~.../blank~ spell_type spell_level ~%ids_name%~
+    CLEAR_IDS_MAP
+    
+    LAF SPELL_IDS_RESOURCE_OF_SYMBOL 
+        STR_VAR ids_name
+        RET spell_resource
+        END
+END
 
+
+DEFINE_ACTION_FUNCTION SPELL_IDS_RESOURCE_OF_SYMBOL 
+    STR_VAR ids_name = 0
+    RET spell_resource
+BEGIN 
     OUTER_SET ids = IDS_OF_SYMBOL (SPELL ~%ids_name%~)
     ACTION_IF (ids == "-1") BEGIN 
-        FAIL ~SPELL_IDS_ADD_SPELL: Ids name %ids_name% not found back in SPELL.IDS.~
+        FAIL ~SPELL_IDS_RESOURCE_OF_SYMBOL: Ids name %ids_name% not found back in SPELL.IDS.~
     END
 
     LAF SUBSTRING INT_VAR start = 0 length = 1
@@ -25,14 +38,15 @@ BEGIN
         END
 
     ACTION_MATCH ~%ids_spell_type%~ WITH
+        ~%IDS_SPELL_TYPE_PRIEST%~ BEGIN 
+            OUTER_SPRINT spell_resource ~SPPR%ids_spell_value%~
+        END
         ~%IDS_SPELL_TYPE_WIZARD%~ BEGIN 
             OUTER_SPRINT spell_resource ~SPWI%ids_spell_value%~
         END
         ~%IDS_SPELL_TYPE_INNATE%~ BEGIN 
             OUTER_SPRINT spell_resource ~SPIN%ids_spell_value%~
         END
-        DEFAULT FAIL ~SPELL_IDS_ADD_SPELL: Unrecognized ids spell type: %ids_spell_type%.~
+        DEFAULT FAIL ~SPELL_IDS_RESOURCE_OF_SYMBOL: Unrecognized ids spell type: %ids_spell_type%.~
     END
-
-    CLEAR_IDS_MAP
 END

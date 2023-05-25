@@ -1,0 +1,20 @@
+DEFINE_ACTION_FUNCTION COUNT_EXISTING
+    STR_VAR glob = 0
+    RET count
+BEGIN 
+    OUTER_SET count = 0
+    COPY_EXISTING_REGEXP - GLOB ~%glob%~ ~~
+        SET count = count + 1
+END
+
+
+DEFINE_PATCH_FUNCTION PRINT_PROGRESS 
+    INT_VAR count = ~~ 
+            counter = ~~
+BEGIN 
+    SET step = (count / 20) + 1
+    PATCH_IF NOT (counter MODULO step) BEGIN 
+        SET progress = (counter * 100) / count
+        PATCH_PRINT ~> %counter% / %count% [%progress%%]~
+    END
+END

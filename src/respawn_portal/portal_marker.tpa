@@ -11,13 +11,17 @@ BEGIN
         WRITE_ASCII SCRIPT_OVERRIDE ~%portal_marker_script%~ #8
         LPF PATCH_CRE_HP INT_VAR current_hp = 1 max_hp = 1 END
         ADD_CRE_ITEM ~MINHP1~ #0 #0 #0 ~NONE~ ~AMULET~
-        LPF ADD_CRE_EFFECT INT_VAR opcode = EFF_OPCODE_SANCTUARY 
-            parameter2 = 1 // Custom overlay
-            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
-            END
         LPF ADD_CRE_EFFECT INT_VAR opcode = EFF_OPCODE_GRAPHICS_ANIMATION_REMOVAL 
             parameter2 = 1 // Stat Value
-            timing = EFF_TIMING_INSTANT_PERMANENT_UNTIL_DEATH
+            timing = EFF_TIMING_INSTANT_PERMANENT
+            END      
+        LPF ADD_CRE_EFFECT INT_VAR opcode = EFF_OPCODE_GRAPHICS_REMOVE_SELECTION_CIRCLE
+            timing = EFF_TIMING_INSTANT_PERMANENT
+            END
+        LPF ADD_CRE_EFFECT INT_VAR opcode = EFF_OPCODE_PROTECTION_FROM_CREATURE_TYPE 
+            parameter1 = 0 // ANYONE
+            parameter2 = 2 // EA
+            timing = EFF_TIMING_INSTANT_PERMANENT
             END
 
     LAF APPLY_PORTAL_MARKER_CREATION STR_VAR portal_marker_resource portal_marker_dv END

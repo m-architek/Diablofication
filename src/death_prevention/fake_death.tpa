@@ -1,0 +1,241 @@
+DEFINE_ACTION_FUNCTION APPLY_FAKE_DEATH
+    STR_VAR players_ref = 0 
+        kill_player_variable = 0
+        petrify_player_variable = 0
+        imprison_player_variable = 0
+        death_state_variable = 0
+        petrification_state_variable = 0
+        imprisonment_state_variable = 0
+        revive_cooldown_timer = 0
+    RET fake_death_spell
+        fake_petrification_spell
+        fake_imprisonment_spell
+BEGIN
+    LAF APPLY_FAKE_DEATH_SPELL STR_VAR death_state_variable
+        RET fake_death_spell 
+        END
+    LAF APPLY_FAKE_PETRIFICATION_SPELL STR_VAR petrification_state_variable
+        RET fake_petrification_spell 
+        END
+    LAF APPLY_FAKE_IMPRISONMENT_SPELL STR_VAR imprisonment_state_variable
+        RET fake_imprisonment_spell
+        END
+
+    <<<<<<<< .../apply_fake_death.baf
+    IF
+        Exists(%player%)
+        !StateCheck(%player%, STATE_REALLY_DEAD)
+        TriggerOverride(%player%, Global("%death_state_variable%", "LOCALS", 0))
+        TriggerOverride(%player%, Global("%petrification_state_variable%", "LOCALS", 0))
+        TriggerOverride(%player%, Global("%imprisonment_state_variable%", "LOCALS", 0))
+        OR(3)
+            HP(%player%, 1)
+            TriggerOverride(%player%, Global("%kill_player_variable%", "LOCALS", 1))
+            TriggerOverride(Player1, False())
+    THEN
+        RESPONSE #100
+            ActionOverride(%player%, SetInterrupt(FALSE))           
+            ActionOverride(%player%, ClearActions(Myself))           
+            ActionOverride(%player%, SetSequence(SEQ_SLEEP))           
+            ActionOverride(%player%, VerbalConstant(Myself, DYING))            
+            ActionOverride(%player%, ApplySpellRES("%fake_death_spell%", Myself))
+            ActionOverride(%player%, SetGlobalTimer("%revive_cooldown_timer%", "LOCALS", "ONE_ROUND"))
+            ActionOverride(%player%, SetInterrupt(TRUE))           
+    END
+
+    IF
+        Exists(%player%)
+        !StateCheck(%player%, STATE_REALLY_DEAD)
+        TriggerOverride(%player%, Global("%death_state_variable%", "LOCALS", 0))
+        TriggerOverride(%player%, Global("%petrification_state_variable%", "LOCALS", 0))
+        TriggerOverride(%player%, Global("%imprisonment_state_variable%", "LOCALS", 0))
+        TriggerOverride(%player%, Global("%petrify_player_variable%", "LOCALS", 1))
+    THEN
+        RESPONSE #100
+            ApplySpellRES("%fake_petrification_spell%", %player%)
+            ActionOverride(%player%, SetGlobalTimer("%revive_cooldown_timer%", "LOCALS", "ONE_ROUND"))         
+    END
+
+    IF
+        Exists(%player%)
+        !StateCheck(%player%, STATE_REALLY_DEAD)
+        TriggerOverride(%player%, Global("%death_state_variable%", "LOCALS", 0))
+        TriggerOverride(%player%, Global("%petrification_state_variable%", "LOCALS", 0))
+        TriggerOverride(%player%, Global("%imprisonment_state_variable%", "LOCALS", 0))
+        TriggerOverride(%player%, Global("%imprison_player_variable%", "LOCALS", 1))
+    THEN
+        RESPONSE #100
+            ApplySpellRES("%fake_imprisonment_spell%", %player%)
+            ActionOverride(%player%, SetGlobalTimer("%revive_cooldown_timer%", "LOCALS", "ONE_ROUND"))         
+    END
+    >>>>>>>>
+                   
+    ACTION_PHP_EACH ~%players_ref%~ AS player_index => player BEGIN 
+
+        EXTEND_BOTTOM ~baldur.bcs~ ~.../apply_fake_death.baf~ 
+            EVALUATE_BUFFER
+    END
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_FAKE_DEATH_SPELL 
+    STR_VAR death_state_variable = 0
+    RET fake_death_spell
+BEGIN 
+    OUTER_SPRINT fake_death_spell ~%RESREF_SPL_FAKE_DEATH%~
+
+    CREATE ~SPL~ ~%fake_death_spell%~
+        LPF ADD_SPL_ABILITY RET ability_index END
+        LPF ADD_FAKE_DEATH_COMMON_EFFECTS INT_VAR ability_index END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
+            parameter1 = 1
+            STR_VAR resource = ~%death_state_variable%~
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_PROTECTION_FROM_OPCODE
+            parameter2 = EFF_OPCODE_CURE_SLEEP
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_SLEEP
+            parameter2 = 1 // Not Wake on Damage
+            special = 51 // Dying
+            timing = EFF_TIMING_INSTANT_PERMANENT // Allows for removal
+            END
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_FAKE_PETRIFICATION_SPELL 
+    STR_VAR petrification_state_variable = 0
+    RET fake_petrification_spell
+BEGIN 
+    OUTER_SPRINT fake_petrification_spell ~%RESREF_SPL_FAKE_PETRIFICATION%~
+
+    CREATE ~SPL~ ~%fake_petrification_spell%~
+        LPF ADD_SPL_ABILITY RET ability_index END
+        LPF ADD_FAKE_DEATH_COMMON_EFFECTS INT_VAR ability_index END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
+            parameter1 = 1
+            STR_VAR resource = ~%petrification_state_variable%~
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_PROTECTION_FROM_OPCODE
+            parameter2 = EFF_OPCODE_CURE_HOLD
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_STATE_PARALYZE
+            parameter1 = 2 // PC
+            parameter2 = 2 // EA
+            timing = EFF_TIMING_INSTANT_PERMANENT // protect against op337
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_DISPLAY_ICON
+            parameter2 = 171 // Petrified (?)
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_DISPLAY_STRING
+            parameter1 = 14127 // Petrification
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_COLOUR_BY_PALETTE
+            parameter1 = 72 // Stone Dead Grey
+            parameter2 = 255 // Whole Body
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_PLAY_SOUND
+            STR_VAR resource = ~MISC_06B~
+            END
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_FAKE_IMPRISONMENT_SPELL 
+    STR_VAR imprisonment_state_variable = 0
+    RET fake_imprisonment_spell
+BEGIN 
+    OUTER_SPRINT fake_imprisonment_spell ~%RESREF_SPL_FAKE_IMPRISONMENT%~
+
+    CREATE ~SPL~ ~%fake_imprisonment_spell%~
+        LPF ADD_SPL_ABILITY RET ability_index END
+        LPF ADD_FAKE_DEATH_COMMON_EFFECTS INT_VAR ability_index END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
+            parameter1 = 1
+            STR_VAR resource = ~%imprisonment_state_variable%~
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_DISPLAY_ICON
+            parameter2 = 79 // Imprisonment
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_DISPLAY_STRING
+            parameter1 = 25069 // Imprisonment // TODO: verify 26002
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
+            opcode = EFF_OPCODE_GRAPHICS_ANIMATION_REMOVAL 
+            parameter2 = 1 // Stat Value
+            END   
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_GRAPHICS_REMOVE_SELECTION_CIRCLE
+            END
+END
+
+
+DEFINE_PATCH_FUNCTION ADD_FAKE_DEATH_COMMON_EFFECTS 
+    INT_VAR ability_index = ~~
+BEGIN 
+    LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+        opcode = EFF_OPCODE_CURE_INVISIBILITY
+        END
+    LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
+        opcode = EFF_OPCODE_CURE_PAUSE
+        END
+    LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+        opcode = EFF_OPCODE_REMOVE_OPCODE
+        parameter1 = "-1"
+        parameter2 = EFF_OPCODE_GRAPHICS_REMOVE_SELECTION_CIRCLE
+        END
+    LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+        opcode = EFF_OPCODE_REMOVE_OPCODE
+        parameter1 = "-1"
+        parameter2 = EFF_OPCODE_MAKE_UNSELECTABLE
+        END
+    LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+        opcode = EFF_OPCODE_REMOVE_OPCODE
+        parameter1 = "-1"
+        parameter2 = EFF_OPCODE_FREEDOM
+        END
+    LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+        opcode = EFF_OPCODE_FREEDOM
+        END
+    LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+        opcode = EFF_OPCODE_POLYMORPH // Empty resource = Natural form
+        parameter1 = 0 // Irrelevant
+        parameter2 = 0 // Gain Resistances/statistics
+        END
+    LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+        opcode = EFF_OPCODE_ENABLE_BUTTON
+        parameter1 = 0 // Irrelevant
+        parameter2 = 7 // Button: Talk
+        END
+    LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
+        opcode = EFF_OPCODE_MAKE_UNSELECTABLE
+        parameter1 = GAME_IS ~bgee~ // Dialogue disabled (BG:EE: 1, BG2:EE: 0)
+        parameter2 = 1 // AI enabled (cannot be disabled in BG:EE)
+        END      
+    LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
+        opcode = EFF_OPCODE_PROTECTION_FROM_CREATURE_TYPE 
+        parameter1 = 255 // ENEMY
+        parameter2 = 2 // EA
+        END      
+    LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
+        opcode = EFF_OPCODE_PROTECTION_FROM_CREATURE_TYPE 
+        parameter1 = 128 // NEUTRAL
+        parameter2 = 2 // EA
+        END
+    LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+        opcode = EFF_OPCODE_HP_DAMAGE
+        parameter1 = 1
+        parameter2 = 0x08000001 // STUNNING Set to Value
+        END
+END

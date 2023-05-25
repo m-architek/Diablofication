@@ -1,6 +1,9 @@
 DEFINE_ACTION_FUNCTION APPLY_LEVEL_DRAIN_PATCHES 
     STR_VAR patches_ref = 0
-    RET_ARRAY ~%patches_ref%~ patch_LEVEL_DRAIN_KILL patch_LEVEL_DRAIN patch_LEVEL_DRAIN_IMMUNITY
+    RET_ARRAY ~%patches_ref%~ 
+        patch_LEVEL_DRAIN_KILL 
+        patch_LEVEL_DRAIN 
+        patch_LEVEL_DRAIN_IMMUNITY
 BEGIN
     ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_LEVEL_DRAIN_KILL BEGIN
         patch_type => ~CLONE~
@@ -31,9 +34,9 @@ BEGIN
     END
 
     ACTION_DEFINE_ASSOCIATIVE_ARRAY ~%patches_ref%~ BEGIN 
-        ~%CHARACTER_RESPAWN_PREFIX%_LEVEL_DRAIN_KILL~ => patch_LEVEL_DRAIN_KILL
-        ~%CHARACTER_RESPAWN_PREFIX%_LEVEL_DRAIN~ => patch_LEVEL_DRAIN
-        ~%CHARACTER_RESPAWN_PREFIX%_LEVEL_DRAIN_IMMUNITY~ => patch_LEVEL_DRAIN_IMMUNITY
+        ~%DEATH_PREVENTION_PREFIX%_LEVEL_DRAIN_KILL~ => patch_LEVEL_DRAIN_KILL
+        ~%DEATH_PREVENTION_PREFIX%_LEVEL_DRAIN~ => patch_LEVEL_DRAIN
+        ~%DEATH_PREVENTION_PREFIX%_LEVEL_DRAIN_IMMUNITY~ => patch_LEVEL_DRAIN_IMMUNITY
     END
 END
 
@@ -77,7 +80,7 @@ BEGIN
 END
 
 DEFINE_ACTION_FUNCTION APPLY_LEVEL_DRAIN_RESOURCES 
-    STR_VAR instant_death_variable = 0
+    STR_VAR kill_player_variable = 0
 BEGIN
     CREATE ~SPL~ ~%RESREF_SPL_LEVEL_DRAIN_KILL%~
         LPF ADD_SPL_ABILITY RET ability_index END
@@ -89,6 +92,6 @@ BEGIN
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
             parameter1 = 1
-            STR_VAR resource = ~%instant_death_variable%~
+            STR_VAR resource = ~%kill_player_variable%~
             END
 END

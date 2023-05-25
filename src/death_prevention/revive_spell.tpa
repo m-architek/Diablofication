@@ -1,0 +1,144 @@
+DEFINE_ACTION_FUNCTION APPLY_REVIVE_SPELL
+    STR_VAR revive_death_spell = 0
+            revive_petrification_spell = 0
+            revive_imprisonment_spell = 0
+            fake_death_spell = 0
+            fake_petrification_spell = 0
+            fake_imprisonment_spell = 0
+            death_state_variable = 0
+            petrification_state_variable = 0
+            imprisonment_state_variable = 0
+            kill_player_variable = 0
+            petrify_player_variable = 0
+            imprison_player_variable = 0
+BEGIN
+    LAF APPLY_REVIVE_DEATH_SPELL 
+        STR_VAR revive_death_spell
+                fake_death_spell
+                death_state_variable
+                kill_player_variable
+        END
+    LAF APPLY_REVIVE_PETRIFICATION_SPELL 
+        STR_VAR revive_petrification_spell
+                fake_petrification_spell
+                petrification_state_variable
+                petrify_player_variable
+        END
+    LAF APPLY_REVIVE_IMPRISONMENT_SPELL 
+        STR_VAR revive_imprisonment_spell
+                fake_imprisonment_spell
+                imprisonment_state_variable
+                imprison_player_variable
+        END
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_REVIVE_DEATH_SPELL 
+    STR_VAR revive_death_spell = 0
+            fake_death_spell = 0
+            death_state_variable = 0
+            kill_player_variable = 0
+BEGIN 
+    CREATE ~SPL~ ~%revive_death_spell%~
+        LPF ADD_SPL_ABILITY RET ability_index END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_PROTECTION_FROM_RESOURCE
+            parameter1 = 3 // DEAD
+            parameter2 = 113 // GENERAL!=n
+            timing = EFF_TIMING_INSTANT_LIMITED
+            STR_VAR resource = ~%revive_death_spell%~
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_RAISE_DEAD
+            END
+        LPF ADD_REVIVE_COMMON_EFFECTS INT_VAR ability_index END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_REMOVE_EFFECTS_BY_RESOURCE
+            STR_VAR resource = ~%fake_death_spell%~
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
+            parameter1 = 0
+            STR_VAR resource = ~%death_state_variable%~
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
+            parameter1 = 0
+            STR_VAR resource = ~%kill_player_variable%~
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_CAST_SPELL
+            parameter1 = 0 // Casting Level
+            parameter2 = 1 // Cast Instantly at caster level
+            STR_VAR resource = ~#RDREMOV~
+            END
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_REVIVE_PETRIFICATION_SPELL 
+    STR_VAR revive_petrification_spell = 0
+            fake_petrification_spell = 0
+            petrification_state_variable = 0
+            petrify_player_variable = 0
+BEGIN 
+    CREATE ~SPL~ ~%revive_petrification_spell%~
+        LPF ADD_SPL_ABILITY RET ability_index END
+        LPF ADD_REVIVE_COMMON_EFFECTS INT_VAR ability_index END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_REMOVE_EFFECTS_BY_RESOURCE
+            STR_VAR resource = ~%fake_petrification_spell%~
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
+            parameter1 = 0
+            STR_VAR resource = ~%petrification_state_variable%~
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
+            parameter1 = 0
+            STR_VAR resource = ~%petrify_player_variable%~
+            END
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_REVIVE_IMPRISONMENT_SPELL 
+    STR_VAR revive_imprisonment_spell = 0
+            fake_imprisonment_spell = 0
+            imprisonment_state_variable = 0
+            imprison_player_variable = 0
+BEGIN 
+    CREATE ~SPL~ ~%revive_imprisonment_spell%~
+        LPF ADD_SPL_ABILITY RET ability_index END
+        LPF ADD_REVIVE_COMMON_EFFECTS INT_VAR ability_index END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_REMOVE_EFFECTS_BY_RESOURCE
+            STR_VAR resource = ~%fake_imprisonment_spell%~
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
+            parameter1 = 0
+            STR_VAR resource = ~%imprisonment_state_variable%~
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
+            parameter1 = 0
+            STR_VAR resource = ~%imprison_player_variable%~
+            END
+END
+
+
+DEFINE_PATCH_FUNCTION ADD_REVIVE_COMMON_EFFECTS 
+    INT_VAR ability_index = ~~
+BEGIN 
+    LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+        opcode = EFF_OPCODE_PROTECTION_FROM_RESOURCE
+        parameter1 = 2 // PC
+        parameter2 = 112 // EA!=n
+        timing = EFF_TIMING_INSTANT_LIMITED
+        STR_VAR resource = ~%SOURCE_RES%~
+        END
+    LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+        opcode = EFF_OPCODE_HP_CURRENT
+        parameter1 = 1
+        END
+END

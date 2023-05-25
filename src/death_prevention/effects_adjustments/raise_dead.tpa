@@ -1,0 +1,31 @@
+DEFINE_ACTION_FUNCTION APPLY_RAISE_DEAD_PATCHES
+    STR_VAR patches_ref = 0
+            revive_death_spell = 0
+    RET_ARRAY ~%patches_ref%~ 
+        patch_RAISE_DEAD
+        patch_MASS_RAISE_DEAD
+BEGIN 
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_RAISE_DEAD BEGIN
+        patch_type => ~CLONE~
+        match_opcode => EFF_OPCODE_RAISE_DEAD
+        opcode => EFF_OPCODE_APPLY_EFFECTS_LIST
+        parameter1 => 3 // DEAD
+        parameter2 => 103 // GENERAL=n
+        resource => ~%revive_death_spell%~
+    END
+
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_MASS_RAISE_DEAD BEGIN
+        patch_type => ~CLONE~
+        match_opcode => EFF_OPCODE_MASS_RAISE_DEAD
+        opcode => EFF_OPCODE_APPLY_EFFECTS_LIST
+        target => EFF_TARGET_CASTER_GROUP
+        parameter1 => 3 // DEAD
+        parameter2 => 103 // GENERAL=n
+        resource => ~%revive_death_spell%~
+    END
+
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY ~%patches_ref%~ BEGIN 
+        ~%DEATH_PREVENTION_PREFIX%_RAISE_DEAD~ => patch_RAISE_DEAD
+        ~%DEATH_PREVENTION_PREFIX%_MASS_RAISE_DEAD~ => patch_MASS_RAISE_DEAD
+    END
+END
