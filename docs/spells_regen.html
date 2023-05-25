@@ -15,8 +15,17 @@
 
         <p>This component extend global script to apply spells regeneration spell on characters that are actually outside combat. 
             Check is performed every round, for each player and familiar individually. 
-            Spells regeneration spell restores one arcane spell and one divine spell. 
+            Spells regeneration restores one arcane spell and one divine spell. 
             If more then one spell of type can be regenerated, higher level spell takes precedence.</p>
+
+        <p>Component is using ActuallyInCombat trigger to check for combat presence. 
+            Internally, this trigger using combat counter which count down 10 seconds after each attack. 
+            This can allow to regenerate spells during combat when running away from enemy, 
+            but this behavior is not completely deterministic.</p>
+            
+        <p>Spells regeneration is using opcode 261 to restore spells. 
+            It seems to not work properly with sorcerers after level up 
+            (rest is required to get access to new spell slots).</p>
 
         <hr />
 
