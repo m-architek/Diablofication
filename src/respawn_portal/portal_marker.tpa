@@ -10,7 +10,9 @@ BEGIN
         WRITE_ASCII DEATHVAR ~%portal_marker_dv%~ #32
         WRITE_ASCII SCRIPT_OVERRIDE ~%portal_marker_script%~ #8
         LPF PATCH_CRE_HP INT_VAR current_hp = 1 max_hp = 1 END
+        LPF PATCH_CRE_ANIMATION INT_VAR animation = IDS_OF_SYMBOL (Animate BIRD) END
         ADD_CRE_ITEM ~MINHP1~ #0 #0 #0 ~NONE~ ~AMULET~
+        ADD_CRE_ITEM ~MAGE01~ #0 #0 #0 ~NONE~ ~RING~
         LPF ADD_CRE_EFFECT INT_VAR opcode = EFF_OPCODE_GRAPHICS_ANIMATION_REMOVAL 
             parameter2 = 1 // Stat Value
             timing = EFF_TIMING_INSTANT_PERMANENT

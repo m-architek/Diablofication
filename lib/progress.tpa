@@ -15,6 +15,6 @@ BEGIN
     SET step = (count / 20) + 1
     PATCH_IF NOT (counter MODULO step) BEGIN 
         SET progress = (counter * 100) / count
-        PATCH_PRINT ~> %counter% / %count% [%progress%%]~
+        PATCH_PRINT ~%SOURCE_EXT% %counter% / %count% [%progress%%]~
     END
 END

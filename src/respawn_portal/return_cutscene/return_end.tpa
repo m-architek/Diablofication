@@ -82,6 +82,12 @@ BEGIN
     THEN
         RESPONSE #100
             CutSceneId(Player1)
+            SetSequence(SEQ_READY)
+            ActionOverride(Player2, SetSequence(SEQ_READY))
+            ActionOverride(Player3, SetSequence(SEQ_READY))
+            ActionOverride(Player4, SetSequence(SEQ_READY))
+            ActionOverride(Player5, SetSequence(SEQ_READY))
+            ActionOverride(Player6, SetSequence(SEQ_READY))
             SmallWait(15)
             FadeFromColor([30.0],0)
             SmallWait(30)

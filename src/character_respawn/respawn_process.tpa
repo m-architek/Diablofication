@@ -1,5 +1,9 @@
 DEFINE_ACTION_FUNCTION APPLY_RESPAWN_PROCESS 
     STR_VAR penalty_cutscene = 0
+            death_state_variable = 0
+            petrification_state_variable  = 0
+            imprisonment_state_variable = 0
+            maze_state_variable = 0
             revive_death_spell = 0
             revive_petrification_spell = 0
             revive_imprisonment_spell = 0
@@ -18,7 +22,11 @@ BEGIN
         END
 
     LAF APPLY_RESPAWN_BEGIN INT_VAR portal_next_cutscene_index
-        STR_VAR revive_death_spell
+        STR_VAR death_state_variable
+                petrification_state_variable 
+                imprisonment_state_variable
+                maze_state_variable
+                revive_death_spell
                 revive_petrification_spell
                 revive_imprisonment_spell
                 portal_owner_variable
@@ -36,7 +44,11 @@ END
 
 DEFINE_ACTION_FUNCTION APPLY_RESPAWN_BEGIN 
     INT_VAR portal_next_cutscene_index = ~~
-    STR_VAR revive_death_spell = 0
+    STR_VAR death_state_variable = 0
+            petrification_state_variable  = 0
+            imprisonment_state_variable = 0
+            maze_state_variable = 0
+            revive_death_spell = 0
             revive_petrification_spell = 0
             revive_imprisonment_spell = 0
             portal_owner_variable = 0
@@ -44,13 +56,45 @@ DEFINE_ACTION_FUNCTION APPLY_RESPAWN_BEGIN
             this_cutscene = 0
             next_cutscene = 0
 BEGIN 
+    LAF APPLY_RESPAWN_CUTSCENE_PERTRIFICATION RET cuscene_petrification_spl END
     LAF APPLY_RESPAWN_RESURRECTION 
         STR_VAR revive_death_spell
                 revive_petrification_spell
                 revive_imprisonment_spell
+                cuscene_petrification_spl
         RET resurrection_spl 
-        END
+        END 
     
+    <<<<<<<< .../respawn_begin_player_prepare.baf
+    IF
+        Exists(%player%)
+        !StateCheck(%player%, STATE_REALLY_DEAD)
+        TriggerOverride(%player%, Global("%petrification_state_variable%", "LOCALS", 1))
+    THEN
+        RESPONSE #100
+            CutSceneId(%player%)
+            SetSequence(SEQ_READY)
+            ApplySpellRES("%cuscene_petrification_spl%", %player%)
+    END
+
+    IF
+        Exists(%player%)
+        !StateCheck(%player%, STATE_REALLY_DEAD)
+        TriggerOverride(%player%, Global("%maze_state_variable%", "LOCALS", 1))
+    THEN
+        RESPONSE #100
+            CutSceneId(%player%)
+            SetSequence(SEQ_SLEEP)
+            SetGlobal("%maze_state_variable%", "LOCALS", 0)
+    END
+    >>>>>>>>
+
+    ACTION_PHP_EACH PLAYERS AS _ => player BEGIN 
+
+        EXTEND_BOTTOM ~%this_cutscene%.BCS~ ~.../respawn_begin_player_prepare.baf~ 
+            EVALUATE_BUFFER
+    END
+
     <<<<<<<< .../respawn_begin.baf
     IF
         True()
@@ -66,18 +110,11 @@ BEGIN
             ApplySpellRES("%resurrection_spl%", Player3)
             ApplySpellRES("%resurrection_spl%", Player4)
             ApplySpellRES("%resurrection_spl%", Player5)
-            ApplySpellRES("%resurrection_spl%", Player6)
-
-            SetSequence(SEQ_READY)
-            ActionOverride(Player2, SetSequence(SEQ_READY))
-            ActionOverride(Player3, SetSequence(SEQ_READY))
-            ActionOverride(Player4, SetSequence(SEQ_READY))
-            ActionOverride(Player5, SetSequence(SEQ_READY))
-            ActionOverride(Player6, SetSequence(SEQ_READY)) 
+            ApplySpellRES("%resurrection_spl%", Player6)   
 
             SetGlobal("%portal_next_cutscene_variable%", "GLOBAL", %portal_next_cutscene_index%)
             SetGlobal("%portal_owner_variable%", "GLOBAL", 0)
-            StartCutSceneEx("%next_cutscene%",TRUE)      
+            StartCutSceneEx("%next_cutscene%",TRUE)     
     END
     >>>>>>>>
 
@@ -88,7 +125,7 @@ END
 
 DEFINE_ACTION_FUNCTION APPLY_RESPAWN_END
     STR_VAR this_cutscene = 0
-        next_cutscene = 0
+            next_cutscene = 0
 BEGIN 
     LAF APPLY_RESPAWN_HEAL RET heal_spl END
     
@@ -98,6 +135,12 @@ BEGIN
     THEN
         RESPONSE #100
             CutSceneId(Player1)
+            SetSequence(SEQ_READY)
+            ActionOverride(Player2, SetSequence(SEQ_READY))
+            ActionOverride(Player3, SetSequence(SEQ_READY))
+            ActionOverride(Player4, SetSequence(SEQ_READY))
+            ActionOverride(Player5, SetSequence(SEQ_READY))
+            ActionOverride(Player6, SetSequence(SEQ_READY))
             SmallWait(15)
 
             ApplySpellRES("%heal_spl%", Player1)
@@ -119,16 +162,35 @@ BEGIN
 END
 
 
+DEFINE_ACTION_FUNCTION APPLY_RESPAWN_CUTSCENE_PERTRIFICATION 
+    RET cuscene_petrification_spl
+BEGIN
+    OUTER_SPRINT cuscene_petrification_spl ~%RESREF_SPL_CUTSCENE_PETRIFICATION%~
+
+    CREATE ~SPL~ ~%cuscene_petrification_spl%~
+        LPF ADD_SPL_ABILITY RET ability_index END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_SLOW
+            timing = EFF_TIMING_INSTANT_PERMANENT // Allows for removal
+            END
+END
+
+
 DEFINE_ACTION_FUNCTION APPLY_RESPAWN_RESURRECTION 
     STR_VAR revive_death_spell = 0
             revive_petrification_spell = 0
             revive_imprisonment_spell = 0
+            cuscene_petrification_spl = 0
     RET resurrection_spl
 BEGIN
     OUTER_SPRINT resurrection_spl ~%RESREF_SPL_RESURRECTION%~
 
     CREATE ~SPL~ ~%resurrection_spl%~
         LPF ADD_SPL_ABILITY RET ability_index END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_REMOVE_EFFECTS_BY_RESOURCE
+            STR_VAR resource = ~%cuscene_petrification_spl%~
+            END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_CAST_SPELL
             parameter1 = 0 // Casting Level

@@ -14,21 +14,27 @@ OUTER_SET is_party_revive = MOD_IS_INSTALLED ~Diablofication.tp2~ (ID_OF_LABEL ~
 LAF APPLY_DEATH_PREVENTION 
     STR_VAR players_ref = protagonist
     RET game_over_variable
+        game_over_cutscene
         death_state_variable
         petrification_state_variable 
         imprisonment_state_variable
+        maze_state_variable
         revive_death_spell
         revive_petrification_spell
         revive_imprisonment_spell 
         revive_cooldown_timer 
     END
 
-LAF APPLY_SCRIPTS_ADJUSTMENTS RET respawn_trigger_variable END
+LAF APPLY_SCRIPTS_ADJUSTMENTS END
 
 LAF APPLY_RESPAWN_PENALTY RET penalty_cutscene END
 
 LAF APPLY_RESPAWN_PROCESS 
     STR_VAR penalty_cutscene 
+            death_state_variable
+            petrification_state_variable 
+            imprisonment_state_variable
+            maze_state_variable
             revive_death_spell
             revive_petrification_spell
             revive_imprisonment_spell
@@ -38,7 +44,7 @@ LAF APPLY_RESPAWN_PROCESS
 LAF APPLY_RESPAWN_TRIGGER INT_VAR is_party_revive
     STR_VAR respawn_cutscene 
             game_over_variable
-            respawn_trigger_variable
+            game_over_cutscene
             death_state_variable
             petrification_state_variable 
             imprisonment_state_variable

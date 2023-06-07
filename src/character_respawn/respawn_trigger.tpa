@@ -2,7 +2,7 @@ DEFINE_ACTION_FUNCTION APPLY_RESPAWN_TRIGGER
     INT_VAR is_party_revive = ~~
     STR_VAR respawn_cutscene = 0
             game_over_variable = 0
-            respawn_trigger_variable = 0
+            game_over_cutscene = 0
             death_state_variable = 0
             petrification_state_variable  = 0
             imprisonment_state_variable = 0
@@ -11,6 +11,7 @@ BEGIN
 
         <<<<<<<< .../player1_eliminated.baf
         IF
+            Global("%game_over_variable%", "GLOBAL", 0)
             OR(4)
                 StateCheck(Player1, STATE_REALLY_DEAD)
                 TriggerOverride(Player1, Global("%death_state_variable%", "LOCALS", 1))
@@ -18,8 +19,7 @@ BEGIN
                 TriggerOverride(Player1, Global("%imprisonment_state_variable%", "LOCALS", 1))
         THEN
             RESPONSE #100
-                SetGlobal("%respawn_trigger_variable%", "GLOBAL", 1)
-                Continue()
+                SetGlobal("%game_over_variable%", "GLOBAL", 1)
         END
         >>>>>>>>
 
@@ -31,36 +31,8 @@ BEGIN
     COPY_EXISTING ~baldur.bcs~ ~override~
         DECOMPILE_AND_PATCH BEGIN 
             REPLACE_TEXTUALLY CASE_INSENSITIVE EXACT_MATCH 
-                ~SetGlobal("%game_over_variable%","GLOBAL",1)~ 
-                ~SetGlobal("%respawn_trigger_variable%", "GLOBAL", 1)~
+                ~StartCutSceneEx("%game_over_cutscene%",TRUE)~ 
+                ~StartCutSceneEx("%respawn_cutscene%",TRUE)~
         END
         BUT_ONLY
-
-
-    <<<<<<<< .../respawn_trigger.baf
-    IF
-        Global("%respawn_trigger_variable%", "GLOBAL", 1)
-        GlobalTimerExpired("PoisonParty2", "GLOBAL")
-        Global("PartyCured", "GLOBAL", 0)
-    THEN
-        RESPONSE #100
-            SetGlobalTimer("PoisonParty", "GLOBAL", ONE_DAY)
-            SetGlobalTimer("PoisonParty2", "GLOBAL", TEN_DAYS)
-            SetGlobal("PoisonWarning" ,"GLOBAL", 0)
-            Continue()
-    END
-
-    IF
-        Global("%respawn_trigger_variable%", "GLOBAL", 1)
-    THEN
-        RESPONSE #100
-            SetGlobal("%respawn_trigger_variable%", "GLOBAL", 0)
-            ClearAllActions()
-            StartCutSceneMode()
-            StartCutSceneEx("%respawn_cutscene%", TRUE)
-    END
-    >>>>>>>>
-
-    EXTEND_BOTTOM ~baldur.bcs~ ~.../respawn_trigger.baf~ 
-        EVALUATE_BUFFER
 END

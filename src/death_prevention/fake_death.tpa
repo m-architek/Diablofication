@@ -1,5 +1,8 @@
 DEFINE_ACTION_FUNCTION APPLY_FAKE_DEATH
     STR_VAR players_ref = 0 
+        fake_death_spell = 0 
+        fake_petrification_spell = 0 
+        fake_imprisonment_spell = 0 
         kill_player_variable = 0
         petrify_player_variable = 0
         imprison_player_variable = 0
@@ -11,15 +14,9 @@ DEFINE_ACTION_FUNCTION APPLY_FAKE_DEATH
         fake_petrification_spell
         fake_imprisonment_spell
 BEGIN
-    LAF APPLY_FAKE_DEATH_SPELL STR_VAR death_state_variable
-        RET fake_death_spell 
-        END
-    LAF APPLY_FAKE_PETRIFICATION_SPELL STR_VAR petrification_state_variable
-        RET fake_petrification_spell 
-        END
-    LAF APPLY_FAKE_IMPRISONMENT_SPELL STR_VAR imprisonment_state_variable
-        RET fake_imprisonment_spell
-        END
+    LAF APPLY_FAKE_DEATH_SPELL STR_VAR fake_death_spell death_state_variable END
+    LAF APPLY_FAKE_PETRIFICATION_SPELL STR_VAR fake_petrification_spell petrification_state_variable END
+    LAF APPLY_FAKE_IMPRISONMENT_SPELL STR_VAR fake_imprisonment_spell imprisonment_state_variable END
 
     <<<<<<<< .../apply_fake_death.baf
     IF
@@ -34,13 +31,13 @@ BEGIN
             TriggerOverride(Player1, False())
     THEN
         RESPONSE #100
-            ActionOverride(%player%, SetInterrupt(FALSE))           
-            ActionOverride(%player%, ClearActions(Myself))           
-            ActionOverride(%player%, SetSequence(SEQ_SLEEP))           
-            ActionOverride(%player%, VerbalConstant(Myself, DYING))            
+            ActionOverride(%player%, SetInterrupt(FALSE))
+            ActionOverride(%player%, ClearActions(Myself))
+            ActionOverride(%player%, SetSequence(SEQ_SLEEP))
+            ActionOverride(%player%, VerbalConstant(Myself, DYING))
             ActionOverride(%player%, ApplySpellRES("%fake_death_spell%", Myself))
             ActionOverride(%player%, SetGlobalTimer("%revive_cooldown_timer%", "LOCALS", "ONE_ROUND"))
-            ActionOverride(%player%, SetInterrupt(TRUE))           
+            ActionOverride(%player%, SetInterrupt(TRUE))
     END
 
     IF
@@ -53,7 +50,7 @@ BEGIN
     THEN
         RESPONSE #100
             ApplySpellRES("%fake_petrification_spell%", %player%)
-            ActionOverride(%player%, SetGlobalTimer("%revive_cooldown_timer%", "LOCALS", "ONE_ROUND"))         
+            ActionOverride(%player%, SetGlobalTimer("%revive_cooldown_timer%", "LOCALS", "ONE_ROUND")) 
     END
 
     IF
@@ -79,14 +76,14 @@ END
 
 
 DEFINE_ACTION_FUNCTION APPLY_FAKE_DEATH_SPELL 
-    STR_VAR death_state_variable = 0
-    RET fake_death_spell
+    STR_VAR fake_death_spell = 0
+            death_state_variable = 0
 BEGIN 
-    OUTER_SPRINT fake_death_spell ~%RESREF_SPL_FAKE_DEATH%~
-
     CREATE ~SPL~ ~%fake_death_spell%~
         LPF ADD_SPL_ABILITY RET ability_index END
-        LPF ADD_FAKE_DEATH_COMMON_EFFECTS INT_VAR ability_index END
+        LPF ADD_FAKE_DEATH_COMMON_EFFECTS INT_VAR ability_index 
+            STR_VAR this_resource = ~%fake_death_spell%~
+            END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
             parameter1 = 1
@@ -106,14 +103,14 @@ END
 
 
 DEFINE_ACTION_FUNCTION APPLY_FAKE_PETRIFICATION_SPELL 
-    STR_VAR petrification_state_variable = 0
-    RET fake_petrification_spell
+    STR_VAR fake_petrification_spell = 0
+            petrification_state_variable = 0
 BEGIN 
-    OUTER_SPRINT fake_petrification_spell ~%RESREF_SPL_FAKE_PETRIFICATION%~
-
     CREATE ~SPL~ ~%fake_petrification_spell%~
         LPF ADD_SPL_ABILITY RET ability_index END
-        LPF ADD_FAKE_DEATH_COMMON_EFFECTS INT_VAR ability_index END
+        LPF ADD_FAKE_DEATH_COMMON_EFFECTS INT_VAR ability_index 
+            STR_VAR this_resource = ~%fake_petrification_spell%~
+            END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
             parameter1 = 1
@@ -150,14 +147,14 @@ END
 
 
 DEFINE_ACTION_FUNCTION APPLY_FAKE_IMPRISONMENT_SPELL 
-    STR_VAR imprisonment_state_variable = 0
-    RET fake_imprisonment_spell
+    STR_VAR fake_imprisonment_spell = 0
+            imprisonment_state_variable = 0
 BEGIN 
-    OUTER_SPRINT fake_imprisonment_spell ~%RESREF_SPL_FAKE_IMPRISONMENT%~
-
     CREATE ~SPL~ ~%fake_imprisonment_spell%~
         LPF ADD_SPL_ABILITY RET ability_index END
-        LPF ADD_FAKE_DEATH_COMMON_EFFECTS INT_VAR ability_index END
+        LPF ADD_FAKE_DEATH_COMMON_EFFECTS INT_VAR ability_index 
+            STR_VAR this_resource = ~%fake_imprisonment_spell%~
+            END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
             parameter1 = 1
@@ -172,6 +169,9 @@ BEGIN
             parameter1 = 25069 // Imprisonment // TODO: verify 26002
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
+            opcode = EFF_OPCODE_GRAPHICS_AVATAR_REMOVAL 
+            END   
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
             opcode = EFF_OPCODE_GRAPHICS_ANIMATION_REMOVAL 
             parameter2 = 1 // Stat Value
             END   
@@ -183,7 +183,15 @@ END
 
 DEFINE_PATCH_FUNCTION ADD_FAKE_DEATH_COMMON_EFFECTS 
     INT_VAR ability_index = ~~
-BEGIN 
+    STR_VAR this_resource = 0
+BEGIN  
+    LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+        opcode = EFF_OPCODE_PROTECTION_FROM_RESOURCE
+        parameter1 = 2 // PC
+        parameter2 = 112 // EA!=n
+        timing = EFF_TIMING_INSTANT_LIMITED
+        STR_VAR resource = ~%this_resource%~
+        END
     LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
         opcode = EFF_OPCODE_CURE_INVISIBILITY
         END

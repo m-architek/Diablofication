@@ -3,9 +3,11 @@ INCLUDE ~%src%/death_prevention/lib.tpa~
 LAF APPLY_DEATH_PREVENTION 
     STR_VAR players_ref = PLAYERS
     RET game_over_variable
+        game_over_cutscene
         death_state_variable
         petrification_state_variable 
         imprisonment_state_variable
+        maze_state_variable
         revive_death_spell
         revive_petrification_spell
         revive_imprisonment_spell 

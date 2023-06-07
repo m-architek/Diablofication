@@ -5,7 +5,6 @@ BEGIN
         ActionOverride(Player1, LockScroll())
     ~~~~~
     OUTER_SPRINT unlock_scroll_action ~~~~~
-        UnlockScroll()
         ActionOverride(Player1, UnlockScroll())
         ActionOverride(Player2, UnlockScroll())
         ActionOverride(Player3, UnlockScroll())
@@ -46,20 +45,32 @@ END
 DEFINE_PATCH_FUNCTION PATCH_CUTSCENE_START 
     STR_VAR unlock_scroll_action = 0
 BEGIN
-    REPLACE_TEXTUALLY CASE_INSENSITIVE EXACT_MATCH ~StartCutSceneMode()~ ~~~~~
-        %unlock_scroll_action%
-        StartCutSceneMode()
-    ~~~~~
+    REPLACE_EVALUATE CASE_INSENSITIVE ~^%s%*StartCutSceneMode()$~ 
+        BEGIN 
+            PATCH_LOG ~PATCH_CUTSCENE_START %SOURCE_EXT% %SOURCE_RES%: Replace %MATCH0%~
+        END ~~~~~
+            %unlock_scroll_action%
+            %MATCH0%
+        ~~~~~
 END
 
 DEFINE_PATCH_FUNCTION PATCH_CUTSCENE_END 
     STR_VAR lock_scroll_action = 0
 BEGIN
-
-    REPLACE_TEXTUALLY CASE_INSENSITIVE EXACT_MATCH ~EndCutSceneMode()~ ~~~~~
-        EndCutSceneMode()
-        %lock_scroll_action%
-    ~~~~~
+    REPLACE_EVALUATE CASE_INSENSITIVE ~^%s%*EndCutSceneMode()$~ 
+        BEGIN 
+            PATCH_LOG ~PATCH_CUTSCENE_END %SOURCE_EXT% %SOURCE_RES%: Replace %MATCH0%~
+        END ~~~~~
+            %MATCH0%
+            %lock_scroll_action%
+        ~~~~~
+    REPLACE_EVALUATE CASE_INSENSITIVE ~^%s%*ActionOverride(.*?,EndCutSceneMode())$~ 
+        BEGIN 
+            PATCH_LOG ~PATCH_CUTSCENE_END %SOURCE_EXT% %SOURCE_RES%: Replace %MATCH0%~
+        END ~~~~~
+            %MATCH0%
+            %lock_scroll_action%
+        ~~~~~
 END
 
 DEFINE_ACTION_FUNCTION APPLY_LOCK_ON_GAME_LOAD 

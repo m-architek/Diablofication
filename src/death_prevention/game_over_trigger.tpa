@@ -1,5 +1,6 @@
 DEFINE_ACTION_FUNCTION APPLY_GAME_OVER_TRIGGER
     STR_VAR game_over_variable = 0
+            game_over_cutscene = 0
             death_state_variable = 0
             petrification_state_variable = 0
             imprisonment_state_variable = 0
@@ -7,6 +8,7 @@ DEFINE_ACTION_FUNCTION APPLY_GAME_OVER_TRIGGER
 BEGIN
     <<<<<<<< .../game_over_trigger.baf
     IF
+        Global("%game_over_variable%", "GLOBAL", 0) 
         %Player1_eliminated%
         %Player2_eliminated%
         %Player3_eliminated%
@@ -15,21 +17,29 @@ BEGIN
         %Player6_eliminated%
     THEN
         RESPONSE #100
-            SetGlobal("%game_over_variable%", "GLOBAL", 1)  
-            Continue()       
+            SetGlobal("%game_over_variable%", "GLOBAL", 1)     
+    END
+
+    IF
+        Global("%game_over_variable%", "GLOBAL", 1)
+        GlobalTimerExpired("PoisonParty2", "GLOBAL")
+        Global("PartyCured", "GLOBAL", 0)
+    THEN
+        RESPONSE #100
+            SetGlobalTimer("PoisonParty", "GLOBAL", ONE_DAY)
+            SetGlobalTimer("PoisonParty2", "GLOBAL", TEN_DAYS)
+            SetGlobal("PoisonWarning" ,"GLOBAL", 0)
+            Continue()
     END
 
     IF
         Global("%game_over_variable%", "GLOBAL", 1) 
     THEN
         RESPONSE #100
-            Kill(Player1)
-            Kill(Player2)
-            Kill(Player3)
-            Kill(Player4)
-            Kill(Player5)
-            Kill(Player6)
-            GameOver(19377)          
+            SetGlobal("%game_over_variable%", "GLOBAL", 0)
+            ClearAllActions()
+            StartCutSceneMode()
+            StartCutSceneEx("%game_over_cutscene%", TRUE)         
     END
     >>>>>>>>   
     
@@ -47,5 +57,25 @@ BEGIN
                     TriggerOverride(Player1, False())
             ~~~~~
         END
+        EVALUATE_BUFFER
+
+
+    <<<<<<<< .../game_over_cutscene.baf
+    IF
+        True()
+    THEN
+        RESPONSE #100
+            CutSceneId(Player1)
+            Kill(Player1)
+            Kill(Player2)
+            Kill(Player3)
+            Kill(Player4)
+            Kill(Player5)
+            Kill(Player6)
+            GameOver(19377)          
+    END
+    >>>>>>>>  
+
+    EXTEND_BOTTOM ~%game_over_cutscene%.bcs~ ~.../game_over_cutscene.baf~ 
         EVALUATE_BUFFER
 END

@@ -103,6 +103,12 @@ BEGIN
     THEN
         RESPONSE #100
             CutSceneId(Player1)
+            SetSequence(SEQ_READY)
+            ActionOverride(Player2, SetSequence(SEQ_READY))
+            ActionOverride(Player3, SetSequence(SEQ_READY))
+            ActionOverride(Player4, SetSequence(SEQ_READY))
+            ActionOverride(Player5, SetSequence(SEQ_READY))
+            ActionOverride(Player6, SetSequence(SEQ_READY))
             
             SetGlobal("%portal_onwer_local_varable%", "LOCALS", 0)
             ActionOverride(Player2, SetGlobal("%portal_onwer_local_varable%", "LOCALS", 0))
