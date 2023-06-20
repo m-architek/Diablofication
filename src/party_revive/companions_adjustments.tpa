@@ -1,0 +1,71 @@
+DEFINE_ACTION_FUNCTION APPLY_COMPANIONS_ADJUSTMENTS 
+    STR_VAR death_prevention_variable = 0
+            death_prevention_remove = 0
+            death_state_variable = 0
+            petrification_state_variable = 0
+            imprisonment_state_variable = 0
+BEGIN 
+    LAF JOINABLE_NPC_ARRAY RET_ARRAY JOINABLE_NPC_ARRAY END
+
+
+    ACTION_CLEAR_ARRAY joinable_npc_scripts
+    
+    ACTION_PHP_EACH JOINABLE_NPC_ARRAY AS cre => dv BEGIN 
+        COPY_EXISTING ~%cre%~ ~override~
+            LPF RESOLVE_CRE_OVERRIDE_SCRIPT STR_VAR prefix = ~%PARTY_REVIVE_PREFIX%~
+                RET script_resref
+                END
+            BUT_ONLY
+
+        OUTER_SPRINT $joinable_npc_scripts(~%script_resref%~) ~%dv%~
+    END
+
+    
+    <<<<<<<< .../companion_script_adjustment.baf
+    IF
+        !InParty(Myself)
+        Global("%death_prevention_variable%", "LOCALS", 1)
+    THEN
+        RESPONSE #100
+            DisplayString(Myself,%remove_dp_message_ref%)
+            ApplySpellRES("%death_prevention_remove%", Myself) 
+            SetGlobal("%death_prevention_variable%", "LOCALS", 0)
+    END
+
+    IF
+        InParty(Myself)
+        Global("SPRITE_IS_DEAD%dv%", "GLOBAL", 0)
+        OR(3)
+            Global("%death_state_variable%", "LOCALS", 1)
+            Global("%petrification_state_variable%", "LOCALS", 1)
+            Global("%imprisonment_state_variable%", "LOCALS", 1)
+    THEN
+        RESPONSE #100
+            DisplayString(Myself,%set_dead_message_ref%)
+            SetGlobal("SPRITE_IS_DEAD%dv%", "GLOBAL", 1)
+    END
+
+    IF
+        InParty(Myself)
+        !StateCheck(Myself, STATE_REALLY_DEAD)
+        Global("SPRITE_IS_DEAD%dv%", "GLOBAL", 1)
+        Global("%death_state_variable%", "LOCALS", 0)
+        Global("%petrification_state_variable%", "LOCALS", 0)
+        Global("%imprisonment_state_variable%", "LOCALS", 0)
+    THEN
+        RESPONSE #100
+            DisplayString(Myself,%unset_dead_message_ref%)
+            SetGlobal("SPRITE_IS_DEAD%dv%", "GLOBAL", 0)
+    END
+    >>>>>>>>
+
+
+    ACTION_PHP_EACH joinable_npc_scripts AS script_resref => dv BEGIN 
+        OUTER_SET remove_dp_message_ref = RESOLVE_STR_REF (~Removing DP~) // TODO remove
+        OUTER_SET set_dead_message_ref = RESOLVE_STR_REF (~Setting SPRITE_IS_DEAD%dv%~) // TODO remove
+        OUTER_SET unset_dead_message_ref = RESOLVE_STR_REF (~Clearing SPRITE_IS_DEAD%dv%~) // TODO remove
+
+        EXTEND_TOP ~%script_resref%.BCS~ ~.../companion_script_adjustment.baf~ 
+            EVALUATE_BUFFER
+    END
+END

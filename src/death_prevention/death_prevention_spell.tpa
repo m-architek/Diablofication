@@ -1,16 +1,23 @@
 DEFINE_ACTION_FUNCTION APPLY_DEATH_PREVENTION_SPELL 
     STR_VAR players_ref = 0
+            death_prevention_variable = 0
+            death_prevention_spell = 0
+            death_prevention_remove = 0
 BEGIN
-    LAF APPLY_DEATH_PREVENTION_SPELL_RESOURCE RET death_prevention_spell END
+    LAF APPLY_DEATH_PREVENTION_SPELL_RESOURCE STR_VAR death_prevention_spell END
+    LAF APPLY_DEATH_PREVENTION_SPELL_REMOVE 
+        STR_VAR death_prevention_remove 
+                death_prevention_spell 
+        END
     
     <<<<<<<< .../apply_death_prevention_spell.baf
     IF
         Exists(%player%)
-        TriggerOverride(%player%, Global("%LOCALS_DEATH_PREVENTION_ON%", "LOCALS", 0))
+        TriggerOverride(%player%, Global("%death_prevention_variable%", "LOCALS", 0))
     THEN
         RESPONSE #100
             ApplySpellRES("%death_prevention_spell%", %player%)
-            ActionOverride(%player%, SetGlobal("%LOCALS_DEATH_PREVENTION_ON%", "LOCALS", 1))
+            ActionOverride(%player%, SetGlobal("%death_prevention_variable%", "LOCALS", 1))
             Continue()
     END
     >>>>>>>>
@@ -22,11 +29,10 @@ BEGIN
     END
 END
 
-DEFINE_ACTION_FUNCTION APPLY_DEATH_PREVENTION_SPELL_RESOURCE 
-    RET death_prevention_spell
-BEGIN
-    OUTER_SPRINT death_prevention_spell ~%RESREF_SPL_DEATH_PREVENTION%~
 
+DEFINE_ACTION_FUNCTION APPLY_DEATH_PREVENTION_SPELL_RESOURCE 
+    STR_VAR death_prevention_spell = 0
+BEGIN
     CREATE ~SPL~ ~%death_prevention_spell%~
         LPF ADD_SPL_ABILITY RET ability_index END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
@@ -83,5 +89,18 @@ BEGIN
             opcode = EFF_OPCODE_MINIMUM_BASE_STATS
             parameter2 = 1
             timing = EFF_TIMING_INSTANT_PERMANENT
+            END
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_DEATH_PREVENTION_SPELL_REMOVE 
+    STR_VAR death_prevention_remove = 0
+            death_prevention_spell = 0
+BEGIN 
+    CREATE ~SPL~ ~%death_prevention_remove%~
+        LPF ADD_SPL_ABILITY RET ability_index END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_REMOVE_EFFECTS_BY_RESOURCE
+            STR_VAR resource = ~%death_prevention_spell%~
             END
 END

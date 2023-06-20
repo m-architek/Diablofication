@@ -6,6 +6,7 @@ OUTER_SET CRE_LEVEL_3_OFFSET = 0x0236 // 1 byte
 OUTER_SET CRE_KIT_OFFSET = 0x0244 // 4 bytes
 OUTER_SET CRE_CLASS_OFFSET = 0x0273 // 1 byte
 OUTER_SET CRE_ANIMATION_OFFSET = 0x0028 // 4 bytes
+OUTER_SET CRE_SCRIPT_OVERRIDE_OFFSET = 0x0248 // 8 bytes (resref)
 
 OUTER_SET CRE_KIT_NONE = 0
 OUTER_SET CRE_KIT_TRUE_CLASS = 0x4000
@@ -65,4 +66,24 @@ DEFINE_PATCH_FUNCTION PATCH_CRE_ANIMATION
     INT_VAR animation = ~~
 BEGIN
     WRITE_LONG CRE_ANIMATION_OFFSET animation
+END
+
+
+DEFINE_PATCH_FUNCTION RESOLVE_CRE_OVERRIDE_SCRIPT
+    STR_VAR prefix = 0
+    RET script_resref
+BEGIN 
+    READ_ASCII CRE_SCRIPT_OVERRIDE_OFFSET script_resref
+
+    PATCH_IF (NOT FILE_EXISTS_IN_GAME ~%script_resref%.BCS~) BEGIN 
+        PATCH_LOG ~Creating Override script for %SOURCE_RES% %SOURCE_FILE%. Existing value: %script_resref%~
+
+        LPF GET_UNIQUE_FILE_NAME 
+            STR_VAR extension = ~BCS~
+                    base = ~%prefix%#%SOURCE_FILE%_OVERRIDE_SCRIPT~
+            RET script_resref = filename
+            END
+
+        WRITE_ASCII CRE_SCRIPT_OVERRIDE_OFFSET ~%script_resref%~ #8 
+    END
 END

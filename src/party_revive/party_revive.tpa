@@ -1,0 +1,55 @@
+DEFINE_ACTION_FUNCTION APPLY_PARTY_REVIVE 
+    STR_VAR death_state_variable = 0
+            petrification_state_variable = 0
+            imprisonment_state_variable = 0
+            revive_death_spell = 0
+            revive_petrification_spell = 0
+            revive_imprisonment_spell = 0
+            revive_cooldown_timer = 0
+BEGIN 
+    <<<<<<<< .../party_revive.baf
+    IF
+        Exists(%player%)
+        !StateCheck(%player%, STATE_REALLY_DEAD)
+        TriggerOverride(%player%, Global("%death_state_variable%", "LOCALS", 1))
+        !TriggerOverride(%player%, ActuallyInCombat())
+        !TriggerOverride(%player%, GlobalTimerNotExpired("%revive_cooldown_timer%", "LOCALS"))
+        Global("DB_REVIVE_OFF", "GLOBAL", 0) // TODO remove
+    THEN
+        RESPONSE #100
+            ApplySpellRES("%revive_death_spell%", %player%)
+            ActionOverride(%player%, SetSequence(SEQ_AWAKE))
+    END
+
+    IF
+        Exists(%player%)
+        !StateCheck(%player%, STATE_REALLY_DEAD)
+        TriggerOverride(%player%, Global("%petrification_state_variable%", "LOCALS", 1))
+        !TriggerOverride(%player%, ActuallyInCombat())
+        !TriggerOverride(%player%, GlobalTimerNotExpired("%revive_cooldown_timer%", "LOCALS"))
+        Global("DB_REVIVE_OFF", "GLOBAL", 0) // TODO remove
+    THEN
+        RESPONSE #100
+            ApplySpellRES("%revive_petrification_spell%", %player%)
+            ActionOverride(%player%, PlaySound("MISC_04A"))
+    END
+
+    IF
+        Exists(%player%)
+        !StateCheck(%player%, STATE_REALLY_DEAD)
+        TriggerOverride(%player%, Global("%imprisonment_state_variable%", "LOCALS", 1))
+        !TriggerOverride(%player%, ActuallyInCombat())
+        !TriggerOverride(%player%, GlobalTimerNotExpired("%revive_cooldown_timer%", "LOCALS"))
+        Global("DB_REVIVE_OFF", "GLOBAL", 0) // TODO remove
+    THEN
+        RESPONSE #100
+            ApplySpellRES("%revive_imprisonment_spell%", %player%)
+    END
+    >>>>>>>>
+
+    ACTION_PHP_EACH PLAYERS AS _ => player BEGIN 
+        
+        EXTEND_BOTTOM ~BALDUR.BCS~ ~.../party_revive.baf~ 
+            EVALUATE_BUFFER
+    END
+END

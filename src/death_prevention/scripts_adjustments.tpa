@@ -21,6 +21,7 @@ BEGIN
     ACTION_DEFINE_ASSOCIATIVE_ARRAY patches BEGIN
         ~^%s%*HP(Protagonist,1)$~ => ~HP(Protagonist,2)~
         ~^%s%*HPLT(Protagonist,2)$~ => ~HPLT(Protagonist,3)~
+        ~^%s%*!HPGT(Protagonist,1)$~ => ~!HPGT(Protagonist,2)~
         ~^%s%*ChangeStat(Protagonist,CURHITPOINTS,1,SET)$~ => ~ChangeStat(Protagonist,CURHITPOINTS,2,SET)~
         ~^%s%*Kill(Player1)$~ => ~%kill_player1_action%~
         ~^%s%*Kill(Protagonist)$~ => ~%kill_player1_action%~

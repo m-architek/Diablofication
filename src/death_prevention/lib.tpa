@@ -1,6 +1,8 @@
 DEFINE_ACTION_FUNCTION APPLY_DEATH_PREVENTION 
     STR_VAR players_ref = 0
-    RET game_over_variable
+    RET death_prevention_variable
+        death_prevention_remove
+        game_over_variable
         game_over_cutscene
         death_state_variable
         petrification_state_variable
@@ -24,6 +26,9 @@ BEGIN
     INCLUDE ~%COMPONENT_FOLDER%/game_over_trigger.tpa~
     INCLUDE ~%COMPONENT_FOLDER%/revive_spell.tpa~
 
+    OUTER_SPRINT death_prevention_variable ~%LOCALS_DEATH_PREVENTION_ON%~
+    OUTER_SPRINT death_prevention_spell ~%RESREF_SPL_DEATH_PREVENTION%~
+    OUTER_SPRINT death_prevention_remove ~%RESREF_SPL_DEATH_PREVENTION_REMOVE%~
     OUTER_SPRINT game_over_variable ~%GLOBAL_GAME_OVER%~
     OUTER_SPRINT game_over_cutscene ~%RESREF_BCS_GAME_OVER_CUTSCENE%~
     OUTER_SPRINT kill_player_variable ~%LOCALS_KILL_PLAYER%~
@@ -64,7 +69,12 @@ BEGIN
                     revive_imprisonment_spell
             END
 
-        LAF APPLY_DEATH_PREVENTION_SPELL STR_VAR players_ref END
+        LAF APPLY_DEATH_PREVENTION_SPELL 
+            STR_VAR players_ref
+                    death_prevention_variable
+                    death_prevention_spell
+                    death_prevention_remove
+            END
         
         LAF APPLY_FAKE_DEATH
             STR_VAR players_ref

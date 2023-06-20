@@ -1,0 +1,201 @@
+DEFINE_ACTION_FUNCTION APPLY_DEATH_REACTIONS BEGIN 
+    LAF APPLY_DEATH_REACTIONS_CUTSCENES RET_ARRAY death_reaction_cutscenes END
+
+    <<<<<<<< .../death_reactions.baf
+    IF
+        Exists(%player%)
+        !StateCheck(%player%, STATE_REALLY_DEAD)
+        Global("%player_is_dead_variable%", "GLOBAL", 0)
+        OR(4)
+            TriggerOverride(%player%, Global("%death_state_variable%", "LOCALS", 1))
+            TriggerOverride(%player%, Global("%petrification_state_variable%", "LOCALS", 1))
+            TriggerOverride(%player%, Global("%imprisonment_state_variable%", "LOCALS", 1))
+            TriggerOverride(Player1, False())
+    THEN
+        RESPONSE #100
+            DisplayString(%player%, %set_message_ref%)
+            SetGlobal("%player_is_dead_variable%", "GLOBAL", 1)
+            StartCutSceneEx("%player_death_reaction_cutscene%", TRUE) 
+    END
+
+    IF
+        Exists(%player%)
+        !StateCheck(%player%, STATE_REALLY_DEAD)
+        Global("%player_is_dead_variable%", "GLOBAL", 1)
+        TriggerOverride(%player%, Global("%death_state_variable%", "LOCALS", 0))
+        TriggerOverride(%player%, Global("%petrification_state_variable%", "LOCALS", 0))
+        TriggerOverride(%player%, Global("%imprisonment_state_variable%", "LOCALS", 0))
+    THEN
+        RESPONSE #100
+            DisplayString(%player%, %clear_message_ref%)
+            SetGlobal("%player_is_dead_variable%", "GLOBAL", 0)
+    END
+    >>>>>>>>
+
+
+    ACTION_PHP_EACH PLAYERS AS player_index => player BEGIN 
+        OUTER_SPRINT player_is_dead_variable ~%GLOBAL_PLAYER_IS_DEAD_PREFIX%%player_index%~
+        OUTER_SPRINT player_death_reaction_cutscene $death_reaction_cutscenes(~%player_index%~)
+
+        OUTER_SET set_message_ref = RESOLVE_STR_REF (~Ser %player_is_dead_variable%~) // TODO remove
+        OUTER_SET clear_message_ref = RESOLVE_STR_REF (~Clear %player_is_dead_variable%~) // TODO remove
+
+        EXTEND_BOTTOM ~BALDUR.BCS~ ~.../death_reactions.baf~
+            EVALUATE_BUFFER
+    END 
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_DEATH_REACTIONS_CUTSCENES 
+    RET_ARRAY death_reaction_cutscenes
+BEGIN 
+    LAF APPLY_DEATH_REACTIONS_EXECUTION_CUTSCENES RET_ARRAY execution_cutscenes END
+    
+    ACTION_CLEAR_ARRAY death_reaction_cutscenes
+
+    ACTION_PHP_EACH PLAYERS AS player_index => player BEGIN 
+        OUTER_SPRINT death_reaction_cutscene ~%RESREF_BCS_DEATH_REACTION_CUTSCENE_PREFIX%%player_index%~
+
+        OUTER_SPRINT react_script ~~
+
+        OUTER_FOR (num_in_party = 2; num_in_party <= MAX_IN_PARTY; ++num_in_party) BEGIN 
+            ACTION_IF (num_in_party > player_index) BEGIN 
+                OUTER_SET players_range = num_in_party - 1
+                OUTER_SET player_indicator = 0
+            
+                ACTION_PHP_EACH PLAYERS AS other_player_index => other_player BEGIN 
+                    ACTION_IF (other_player_index < num_in_party AND other_player_index != player_index) BEGIN 
+                        OUTER_SET player_indicator = player_indicator + 1
+
+                        OUTER_SPRINT execution_cutscene $execution_cutscenes(~%player_index%~ ~%other_player_index%~)
+
+                        OUTER_SPRINT react_block ~~~~~
+                            IF
+                                NumInParty(%num_in_party%)
+                                RandomNum(%players_range%, %player_indicator%)
+                                IsValidForPartyDialog(%other_player%)
+                            THEN
+                                RESPONSE #100
+                                    CutSceneId(%player%)
+                                    StartCutSceneEx("%execution_cutscene%", TRUE)  
+                            END
+                        ~~~~~
+                        OUTER_SPRINT react_script ~%react_script%~ ^ ~%react_block%~
+                    END
+                END
+            END
+        END
+            
+        LAF APPEND_BCS STR_VAR resource = ~%death_reaction_cutscene%~ script = ~%react_script%~ END
+        OUTER_SPRINT $death_reaction_cutscenes(~%player_index%~) ~%death_reaction_cutscene%~
+    END
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_DEATH_REACTIONS_EXECUTION_CUTSCENES 
+    RET_ARRAY execution_cutscenes
+BEGIN 
+    PRINT ~APPLY_DEATH_REACTIONS_EXECUTION_CUTSCENES START~
+    ACTION_CLEAR_ARRAY execution_cutscenes
+
+    COPY_EXISTING - ~death.2da~ ~~
+        CLEAR_ARRAY death_reactions
+        LPF READ_2DA_TABLE RET_ARRAY death_reactions = out END
+        BUT_ONLY 
+
+    ACTION_PHP_EACH PLAYERS AS player_index => player BEGIN 
+        ACTION_PHP_EACH PLAYERS AS other_player_index => other_player BEGIN 
+            ACTION_IF (player_index != other_player_index) BEGIN 
+
+                LAF APPLY_DEATH_REACTIONS_EXECUTION_CUTSCENE
+                    INT_VAR player_index
+                            other_player_index
+                    STR_VAR death_reactions_ref = death_reactions
+                    RET execution_cutscene
+                    END
+                
+                OUTER_SPRINT $execution_cutscenes(~%player_index%~ ~%other_player_index%~) ~%execution_cutscene%~
+            END
+        END
+    END
+
+    PRINT ~APPLY_DEATH_REACTIONS_EXECUTION_CUTSCENES END~              
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_DEATH_REACTIONS_EXECUTION_CUTSCENE
+    INT_VAR player_index = ~~
+            other_player_index = ~~
+    STR_VAR death_reactions_ref = 0
+    RET execution_cutscene
+BEGIN 
+    OUTER_SPRINT execution_cutscene ~%RESREF_BCS_DEATH_REACTION_EXECUTION_CUTSCENE_PREFIX%%player_index%%other_player_index%~
+    OUTER_SPRINT cutscene_script ~~
+
+    ACTION_CLEAR_ARRAY react_general_triggers
+
+    ACTION_PHP_EACH ~%death_reactions_ref%~ AS key => react_specific BEGIN 
+        OUTER_SPRINT other_player_dv ~%key_0%~
+        OUTER_SPRINT player_dv ~%key_1%~
+        
+        ACTION_IF (react_specific) BEGIN 
+
+            OUTER_SPRINT react_specific_block ~~~~~
+                IF
+                    InPartySlot("%player_dv%", %player_index%)
+                    InPartySlot("%other_player_dv%", %other_player_index%)
+                THEN
+                    RESPONSE #100
+                        CutSceneId(%player%)
+                        VerbalConstant(%other_player%, REACT_TO_DIE_SPECIFIC)  
+                END
+            ~~~~~
+            OUTER_SPRINT cutscene_script ~%cutscene_script%~ ^ ~%react_specific_block%~
+
+            ACTION_IF (VARIABLE_IS_SET $react_general_triggers(~%player_dv%~)) BEGIN 
+                OUTER_SPRINT react_general_trigger $react_general_triggers(~%player_dv%~)
+            END ELSE BEGIN 
+                OUTER_SPRINT react_general_trigger ~~
+            END
+            
+            OUTER_SPRINT $react_general_triggers(~%player_dv%~) ~%react_general_trigger%~ ^ ~~~~~
+                !InPartySlot("%other_player_dv%", %other_player_index%)
+            ~~~~~
+        END
+    END
+
+    OUTER_SPRINT react_default_trigger ~~
+
+    ACTION_PHP_EACH react_general_triggers AS player_dv => react_general_trigger BEGIN 
+
+        OUTER_SPRINT react_general_block ~~~~~
+            IF
+                InPartySlot("%player_dv%", %player_index%)
+                %react_general_trigger%
+            THEN
+                RESPONSE #100
+                    CutSceneId(%player%)
+                    VerbalConstant(%other_player%, REACT_TO_DIE_GENERAL)  
+            END
+        ~~~~~
+        OUTER_SPRINT cutscene_script ~%cutscene_script%~ ^ ~%react_general_block%~
+
+        OUTER_SPRINT react_default_trigger ~%react_default_trigger%~ ^ ~~~~~
+            !InPartySlot("%player_dv%", %player_index%)
+        ~~~~~
+    END
+
+    OUTER_SPRINT react_default_trigger_block ~~~~~
+        IF
+            True()
+            %react_default_trigger%
+        THEN
+            RESPONSE #100
+                CutSceneId(%player%)
+                VerbalConstant(%other_player%, REACT_TO_DIE_GENERAL)  
+        END
+    ~~~~~
+    OUTER_SPRINT cutscene_script ~%cutscene_script%~ ^ ~%react_default_trigger_block%~
+
+    LAF APPEND_BCS STR_VAR resource = ~%execution_cutscene%~ script = ~%cutscene_script%~ END
+END

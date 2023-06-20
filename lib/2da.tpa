@@ -23,9 +23,9 @@ BEGIN
     SET content_columns_count = raw_columns_count - 1 // First column does not have name
 
     CLEAR_ARRAY out
-    FOR (content_coulmn_index = 0; content_coulmn_index < content_columns_count; ++content_coulmn_index) BEGIN
-        READ_2DA_ENTRY 2DA_CONTENT_HEADER_ROW_INDEX content_coulmn_index 0 column_name
-        DEFINE_ASSOCIATIVE_ARRAY out BEGIN ~%column_name%~ => ~%content_coulmn_index%~ END
+    FOR (content_column_index = 0; content_column_index < content_columns_count; ++content_column_index) BEGIN
+        READ_2DA_ENTRY 2DA_CONTENT_HEADER_ROW_INDEX content_column_index 0 column_name
+        DEFINE_ASSOCIATIVE_ARRAY out BEGIN ~%column_name%~ => ~%content_column_index%~ END
     END
 END
 
@@ -60,10 +60,10 @@ BEGIN
     COUNT_2DA_COLS raw_columns_count
     SET content_columns_count = raw_columns_count - 1 // First column does not have name
 
-    FOR (content_coulmn_index = 0; content_coulmn_index < content_columns_count; ++content_coulmn_index) BEGIN
-        READ_2DA_ENTRY 2DA_CONTENT_HEADER_ROW_INDEX content_coulmn_index 0 this_column_name
+    FOR (content_column_index = 0; content_column_index < content_columns_count; ++content_column_index) BEGIN
+        READ_2DA_ENTRY 2DA_CONTENT_HEADER_ROW_INDEX content_column_index 0 this_column_name
         PATCH_IF (~%this_column_name%~ STRING_EQUAL ~%column_name%~) BEGIN
-            SET column_index = content_coulmn_index
+            SET column_index = content_column_index
         END
     END
 
@@ -83,6 +83,25 @@ BEGIN
         READ_2DA_ENTRY raw_row_index raw_column_index 0 column_value
 
         DEFINE_ASSOCIATIVE_ARRAY out BEGIN ~%row_name%~ => ~%column_value%~ END
+    END
+END
+
+DEFINE_PATCH_FUNCTION READ_2DA_TABLE
+    RET_ARRAY out
+BEGIN
+    LPF READ_2DA_COLUMN_NAMES RET_ARRAY column_names = out END
+    LPF READ_2DA_ROW_NAMES RET_ARRAY row_names = out END
+
+    CLEAR_ARRAY out
+    PHP_EACH row_names AS row_name => content_row_index BEGIN 
+        SET raw_row_index = content_row_index + 2DA_CONTENT_OFFSET // SET_2DA_ENTRY counts from the begginign of the file
+
+        PHP_EACH column_names AS column_name => content_column_index BEGIN
+            SET raw_column_index = content_column_index + 1 // First column does not have name
+
+            READ_2DA_ENTRY raw_row_index raw_column_index 0 column_value
+            SPRINT $out(~%row_name%~ ~%column_name%~) ~%column_value%~
+        END
     END
 END
 

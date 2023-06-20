@@ -1,8 +1,16 @@
 INCLUDE ~%src%/death_prevention/lib.tpa~
 
+INCLUDE ~%COMPONENT_FOLDER%/resources.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/party_revive.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/companions_adjustments.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/death_reactions.tpa~
+
+
 LAF APPLY_DEATH_PREVENTION 
     STR_VAR players_ref = PLAYERS
-    RET game_over_variable
+    RET death_prevention_variable
+        death_prevention_remove
+        game_over_variable
         game_over_cutscene
         death_state_variable
         petrification_state_variable 
@@ -14,48 +22,22 @@ LAF APPLY_DEATH_PREVENTION
         revive_cooldown_timer 
     END
 
-<<<<<<<< .../party_revive.baf
-IF
-    Exists(%player%)
-    !StateCheck(%player%, STATE_REALLY_DEAD)
-    TriggerOverride(%player%, Global("%death_state_variable%", "LOCALS", 1))
-    !TriggerOverride(%player%, ActuallyInCombat())
-    !TriggerOverride(%player%, GlobalTimerNotExpired("%revive_cooldown_timer%", "LOCALS"))
-    Global("DB_REVIVE_OFF", "GLOBAL", 0) // TODO remove
-THEN
-    RESPONSE #100
-        ApplySpellRES("%revive_death_spell%", %player%)
-        ActionOverride(%player%, SetSequence(SEQ_AWAKE))
-END
+LAF APPLY_PARTY_REVIVE 
+    STR_VAR death_state_variable
+            petrification_state_variable
+            imprisonment_state_variable
+            revive_death_spell
+            revive_petrification_spell
+            revive_imprisonment_spell
+            revive_cooldown_timer
+    END
 
-IF
-    Exists(%player%)
-    !StateCheck(%player%, STATE_REALLY_DEAD)
-    TriggerOverride(%player%, Global("%petrification_state_variable%", "LOCALS", 1))
-    !TriggerOverride(%player%, ActuallyInCombat())
-    !TriggerOverride(%player%, GlobalTimerNotExpired("%revive_cooldown_timer%", "LOCALS"))
-    Global("DB_REVIVE_OFF", "GLOBAL", 0) // TODO remove
-THEN
-    RESPONSE #100
-        ApplySpellRES("%revive_petrification_spell%", %player%)
-        ActionOverride(%player%, PlaySound("MISC_04A"))
-END
+LAF APPLY_COMPANIONS_ADJUSTMENTS 
+    STR_VAR death_prevention_variable
+            death_prevention_remove
+            death_state_variable
+            petrification_state_variable
+            imprisonment_state_variable
+    END
 
-IF
-    Exists(%player%)
-    !StateCheck(%player%, STATE_REALLY_DEAD)
-    TriggerOverride(%player%, Global("%imprisonment_state_variable%", "LOCALS", 1))
-    !TriggerOverride(%player%, ActuallyInCombat())
-    !TriggerOverride(%player%, GlobalTimerNotExpired("%revive_cooldown_timer%", "LOCALS"))
-    Global("DB_REVIVE_OFF", "GLOBAL", 0) // TODO remove
-THEN
-    RESPONSE #100
-        ApplySpellRES("%revive_imprisonment_spell%", %player%)
-END
->>>>>>>>
-
-ACTION_PHP_EACH PLAYERS AS _ => player BEGIN 
-    
-    EXTEND_BOTTOM ~BALDUR.BCS~ ~.../party_revive.baf~ 
-        EVALUATE_BUFFER
-END
+LAF APPLY_DEATH_REACTIONS END

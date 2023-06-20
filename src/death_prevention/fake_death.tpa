@@ -36,7 +36,7 @@ BEGIN
             ActionOverride(%player%, SetSequence(SEQ_SLEEP))
             ActionOverride(%player%, VerbalConstant(Myself, DYING))
             ActionOverride(%player%, ApplySpellRES("%fake_death_spell%", Myself))
-            ActionOverride(%player%, SetGlobalTimer("%revive_cooldown_timer%", "LOCALS", "ONE_ROUND"))
+            ActionOverride(%player%, SetGlobalTimer("%revive_cooldown_timer%", "LOCALS", ONE_ROUND))
             ActionOverride(%player%, SetInterrupt(TRUE))
     END
 
@@ -50,7 +50,7 @@ BEGIN
     THEN
         RESPONSE #100
             ApplySpellRES("%fake_petrification_spell%", %player%)
-            ActionOverride(%player%, SetGlobalTimer("%revive_cooldown_timer%", "LOCALS", "ONE_ROUND")) 
+            ActionOverride(%player%, SetGlobalTimer("%revive_cooldown_timer%", "LOCALS", ONE_ROUND)) 
     END
 
     IF
@@ -63,7 +63,7 @@ BEGIN
     THEN
         RESPONSE #100
             ApplySpellRES("%fake_imprisonment_spell%", %player%)
-            ActionOverride(%player%, SetGlobalTimer("%revive_cooldown_timer%", "LOCALS", "ONE_ROUND"))         
+            ActionOverride(%player%, SetGlobalTimer("%revive_cooldown_timer%", "LOCALS", ONE_ROUND))         
     END
     >>>>>>>>
                    
@@ -191,6 +191,12 @@ BEGIN
         parameter2 = 112 // EA!=n
         timing = EFF_TIMING_INSTANT_LIMITED
         STR_VAR resource = ~%this_resource%~
+        END
+    LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+        opcode = EFF_OPCODE_STAT_MORALE
+        parameter1 = 10
+        parameter2 = 1 // Set to value
+        special = 1 // Use parameters
         END
     LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
         opcode = EFF_OPCODE_CURE_INVISIBILITY

@@ -77,7 +77,7 @@ DEFINE_ACTION_FUNCTION APPLY_GENERAL_STATUS_REVERT
 BEGIN
     OUTER_SET dead_ids = IDS_OF_SYMBOL (GENERAL ~DEAD~)
 
-    <<<<<<<< .../revert_general_death_status.baf
+    <<<<<<<< .../revert_general_status.baf
     IF
         Exists(%player%)
         !StateCheck(%player%, STATE_REALLY_DEAD)
@@ -120,7 +120,7 @@ BEGIN
                 script = ~%revert_general_status_script%~ 
             END
 
-        EXTEND_BOTTOM ~baldur.bcs~ ~.../revert_general_death_status.baf~ 
+        EXTEND_BOTTOM ~baldur.bcs~ ~.../revert_general_status.baf~ 
             EVALUATE_BUFFER
     END
 END
