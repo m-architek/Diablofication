@@ -1,36 +1,18 @@
-DEFINE_ACTION_FUNCTION APPLY_DEATH_PREVENTION_SPELL 
-    STR_VAR players_ref = 0
-            death_prevention_variable = 0
-            death_prevention_spell = 0
-            death_prevention_remove = 0
+DEFINE_ACTION_FUNCTION APPLY_DEATH_PREVENTION_RESOURCES
+    STR_VAR death_prevention_spell = 0
+            death_prevention_remove_spell = 0
 BEGIN
-    LAF APPLY_DEATH_PREVENTION_SPELL_RESOURCE STR_VAR death_prevention_spell END
-    LAF APPLY_DEATH_PREVENTION_SPELL_REMOVE 
-        STR_VAR death_prevention_remove 
+    LAF APPLY_DEATH_PREVENTION_SPELL
+        STR_VAR death_prevention_spell 
+        END
+    LAF APPLY_DEATH_PREVENTION_REMOVE_SPELL
+        STR_VAR death_prevention_remove_spell 
                 death_prevention_spell 
         END
-    
-    <<<<<<<< .../apply_death_prevention_spell.baf
-    IF
-        Exists(%player%)
-        TriggerOverride(%player%, Global("%death_prevention_variable%", "LOCALS", 0))
-    THEN
-        RESPONSE #100
-            ApplySpellRES("%death_prevention_spell%", %player%)
-            ActionOverride(%player%, SetGlobal("%death_prevention_variable%", "LOCALS", 1))
-            Continue()
-    END
-    >>>>>>>>
-
-    ACTION_PHP_EACH ~%players_ref%~ AS _ => player BEGIN 
-        
-        EXTEND_TOP ~baldur.bcs~ ~.../apply_death_prevention_spell.baf~
-            EVALUATE_BUFFER
-    END
 END
 
 
-DEFINE_ACTION_FUNCTION APPLY_DEATH_PREVENTION_SPELL_RESOURCE 
+DEFINE_ACTION_FUNCTION APPLY_DEATH_PREVENTION_SPELL 
     STR_VAR death_prevention_spell = 0
 BEGIN
     CREATE ~SPL~ ~%death_prevention_spell%~
@@ -93,11 +75,11 @@ BEGIN
 END
 
 
-DEFINE_ACTION_FUNCTION APPLY_DEATH_PREVENTION_SPELL_REMOVE 
-    STR_VAR death_prevention_remove = 0
+DEFINE_ACTION_FUNCTION APPLY_DEATH_PREVENTION_REMOVE_SPELL 
+    STR_VAR death_prevention_remove_spell = 0
             death_prevention_spell = 0
 BEGIN 
-    CREATE ~SPL~ ~%death_prevention_remove%~
+    CREATE ~SPL~ ~%death_prevention_remove_spell%~
         LPF ADD_SPL_ABILITY RET ability_index END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_REMOVE_EFFECTS_BY_RESOURCE

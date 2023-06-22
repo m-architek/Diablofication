@@ -4,18 +4,21 @@ INCLUDE ~%COMPONENT_FOLDER%/resources.tpa~
 INCLUDE ~%COMPONENT_FOLDER%/party_revive.tpa~
 INCLUDE ~%COMPONENT_FOLDER%/companions_adjustments.tpa~
 INCLUDE ~%COMPONENT_FOLDER%/death_reactions.tpa~
-
+INCLUDE ~%COMPONENT_FOLDER%/general_status_change.tpa~
 
 LAF APPLY_DEATH_PREVENTION 
     STR_VAR players_ref = PLAYERS
     RET death_prevention_variable
-        death_prevention_remove
+        death_prevention_remove_spell
         game_over_variable
         game_over_cutscene
         death_state_variable
         petrification_state_variable 
         imprisonment_state_variable
         maze_state_variable
+        fake_death_spell
+        fake_petrification_spell
+        fake_imprisonment_spell
         revive_death_spell
         revive_petrification_spell
         revive_imprisonment_spell 
@@ -34,10 +37,15 @@ LAF APPLY_PARTY_REVIVE
 
 LAF APPLY_COMPANIONS_ADJUSTMENTS 
     STR_VAR death_prevention_variable
-            death_prevention_remove
+            death_prevention_remove_spell
             death_state_variable
             petrification_state_variable
             imprisonment_state_variable
     END
 
 LAF APPLY_DEATH_REACTIONS END
+
+LAF APPLY_GENERAL_STATUS_CHANGE
+    STR_VAR death_state_variable
+            fake_death_spell
+    END

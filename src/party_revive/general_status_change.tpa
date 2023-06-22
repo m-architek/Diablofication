@@ -1,7 +1,6 @@
 DEFINE_ACTION_FUNCTION APPLY_GENERAL_STATUS_CHANGE
-    STR_VAR players_ref = 0 
-        death_state_variable = 0
-        fake_death_spell = 0
+    STR_VAR death_state_variable = 0
+            fake_death_spell = 0
 BEGIN
     OUTER_SPRINT general_status_variable ~%LOCALS_GENERAL_STATUS%~
 
@@ -16,25 +15,22 @@ BEGIN
 
     LAF APPLY_GENERAL_STATUS_DEAD
         STR_VAR general_ids_ref = general_ids
-            players_ref
-            fake_death_spell
-            general_status_variable
+                fake_death_spell
+                general_status_variable
         END
     
     LAF APPLY_GENERAL_STATUS_REVERT
         STR_VAR general_ids_ref = general_ids
-            players_ref
-            death_state_variable
-            general_status_variable
+                death_state_variable
+                general_status_variable
         END
 END
 
 
 DEFINE_ACTION_FUNCTION APPLY_GENERAL_STATUS_DEAD
     STR_VAR general_ids_ref = 0
-        players_ref = 0 
-        fake_death_spell = 0
-        general_status_variable = 0
+            fake_death_spell = 0
+            general_status_variable = 0
 BEGIN
     OUTER_SET dead_ids = IDS_OF_SYMBOL (GENERAL ~DEAD~)
 
@@ -71,9 +67,8 @@ END
 
 DEFINE_ACTION_FUNCTION APPLY_GENERAL_STATUS_REVERT
     STR_VAR general_ids_ref = 0
-        players_ref = 0 
-        death_state_variable = 0
-        general_status_variable = 0
+            death_state_variable = 0
+            general_status_variable = 0
 BEGIN
     OUTER_SET dead_ids = IDS_OF_SYMBOL (GENERAL ~DEAD~)
 
@@ -91,7 +86,7 @@ BEGIN
     END
     >>>>>>>>
 
-    ACTION_PHP_EACH ~%players_ref%~ AS player_index => player BEGIN 
+    ACTION_PHP_EACH PLAYERS AS player_index => player BEGIN 
         OUTER_SPRINT revert_general_status_cutscene ~%RESREF_BCS_REVERT_GENERAL_STATUS_PREFIX%%player_index%~
         OUTER_SPRINT revert_general_status_script ~~
 

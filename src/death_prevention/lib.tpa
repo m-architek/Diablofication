@@ -1,13 +1,16 @@
 DEFINE_ACTION_FUNCTION APPLY_DEATH_PREVENTION 
     STR_VAR players_ref = 0
     RET death_prevention_variable
-        death_prevention_remove
+        death_prevention_remove_spell
         game_over_variable
         game_over_cutscene
         death_state_variable
         petrification_state_variable
         imprisonment_state_variable
         maze_state_variable
+        fake_death_spell
+        fake_petrification_spell
+        fake_imprisonment_spell
         revive_death_spell
         revive_petrification_spell
         revive_imprisonment_spell
@@ -17,18 +20,19 @@ BEGIN
     OUTER_SPRINT COMPONENT_FOLDER ~%src%/%COMPONENT%~
 
     INCLUDE ~%COMPONENT_FOLDER%/resources.tpa~
-    INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments.tpa~
     INCLUDE ~%COMPONENT_FOLDER%/areas_adjustments.tpa~
-    INCLUDE ~%COMPONENT_FOLDER%/scripts_adjustments.tpa~
-    INCLUDE ~%COMPONENT_FOLDER%/death_prevention_spell.tpa~
-    INCLUDE ~%COMPONENT_FOLDER%/fake_death.tpa~
-    INCLUDE ~%COMPONENT_FOLDER%/general_status_change.tpa~
+    INCLUDE ~%COMPONENT_FOLDER%/death_prevention_resources.tpa~
+    INCLUDE ~%COMPONENT_FOLDER%/death_prevention_scripts.tpa~
+    INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments.tpa~
+    INCLUDE ~%COMPONENT_FOLDER%/fake_death_resources.tpa~
+    INCLUDE ~%COMPONENT_FOLDER%/fake_death_scripts.tpa~
     INCLUDE ~%COMPONENT_FOLDER%/game_over_trigger.tpa~
-    INCLUDE ~%COMPONENT_FOLDER%/revive_spell.tpa~
+    INCLUDE ~%COMPONENT_FOLDER%/revive_resources.tpa~
+    INCLUDE ~%COMPONENT_FOLDER%/scripts_adjustments.tpa~
 
     OUTER_SPRINT death_prevention_variable ~%LOCALS_DEATH_PREVENTION_ON%~
     OUTER_SPRINT death_prevention_spell ~%RESREF_SPL_DEATH_PREVENTION%~
-    OUTER_SPRINT death_prevention_remove ~%RESREF_SPL_DEATH_PREVENTION_REMOVE%~
+    OUTER_SPRINT death_prevention_remove_spell ~%RESREF_SPL_DEATH_PREVENTION_REMOVE%~
     OUTER_SPRINT game_over_variable ~%GLOBAL_GAME_OVER%~
     OUTER_SPRINT game_over_cutscene ~%RESREF_BCS_GAME_OVER_CUTSCENE%~
     OUTER_SPRINT kill_player_variable ~%LOCALS_KILL_PLAYER%~
@@ -46,7 +50,36 @@ BEGIN
     OUTER_SPRINT revive_imprisonment_spell ~%RESREF_SPL_REVIVE_IMPRISONMENT%~
     OUTER_SPRINT revive_cooldown_timer ~%LOCALS_REVIVE_COOLDOWN_TIMER%~
 
-    ACTION_IF (NOT FILE_EXISTS_IN_GAME ~%revive_death_spell%.SPL~) BEGIN 
+    LAF APPLY_DEATH_PREVENTION_SCRIPTS_ADJUSTMENTS 
+        STR_VAR players_ref
+                game_over_variable
+                fake_death_spell
+                revive_death_spell
+                revive_petrification_spell
+                revive_imprisonment_spell
+        END
+
+    LAF APPLY_DEATH_PREVENTION_SCRIPTS
+        STR_VAR players_ref
+                death_prevention_variable
+                death_prevention_spell
+        END
+
+    LAF APPLY_FAKE_DEATH_SCRIPTS
+        STR_VAR players_ref
+                fake_death_spell
+                fake_petrification_spell
+                fake_imprisonment_spell
+                kill_player_variable
+                petrify_player_variable
+                imprison_player_variable
+                death_state_variable
+                petrification_state_variable
+                imprisonment_state_variable
+                revive_cooldown_timer
+        END
+
+    ACTION_IF (NOT FILE_EXISTS_IN_GAME ~%death_prevention_spell%.SPL~) BEGIN 
 
         LAF APPLY_EFFECTS_ADJUSTMENTS 
             STR_VAR kill_player_variable
@@ -60,53 +93,21 @@ BEGIN
         
         LAF APPLY_AREAS_ADJUSTMENTS END
 
-        LAF APPLY_DEATH_PREVENTION_SCRIPTS_ADJUSTMENTS 
-            STR_VAR players_ref
-                    game_over_variable
-                    fake_death_spell
-                    revive_death_spell
-                    revive_petrification_spell
-                    revive_imprisonment_spell
+        LAF APPLY_DEATH_PREVENTION_RESOURCES
+            STR_VAR death_prevention_spell
+                    death_prevention_remove_spell
             END
 
-        LAF APPLY_DEATH_PREVENTION_SPELL 
-            STR_VAR players_ref
-                    death_prevention_variable
-                    death_prevention_spell
-                    death_prevention_remove
-            END
-        
-        LAF APPLY_FAKE_DEATH
-            STR_VAR players_ref
-                    fake_death_spell
+        LAF APPLY_FAKE_DEATH_RESOURCES
+            STR_VAR fake_death_spell
                     fake_petrification_spell
                     fake_imprisonment_spell
-                    kill_player_variable
-                    petrify_player_variable
-                    imprison_player_variable
                     death_state_variable
                     petrification_state_variable
                     imprisonment_state_variable
-                    revive_cooldown_timer
             END
 
-        LAF APPLY_GENERAL_STATUS_CHANGE
-            STR_VAR players_ref
-                    death_state_variable
-                    fake_death_spell
-            END
-
-        LAF APPLY_GAME_OVER_TRIGGER
-            STR_VAR players_ref
-                    game_over_variable
-                    game_over_cutscene
-                    death_state_variable
-                    petrification_state_variable
-                    imprisonment_state_variable
-                    maze_state_variable
-            END
-
-        LAF APPLY_REVIVE_SPELL 
+        LAF APPLY_REVIVE_RESOURCES 
             STR_VAR revive_death_spell
                     revive_petrification_spell
                     revive_imprisonment_spell
@@ -119,6 +120,15 @@ BEGIN
                     kill_player_variable
                     petrify_player_variable
                     imprison_player_variable
+            END
+
+        LAF APPLY_GAME_OVER_TRIGGER
+            STR_VAR game_over_variable
+                    game_over_cutscene
+                    death_state_variable
+                    petrification_state_variable
+                    imprisonment_state_variable
+                    maze_state_variable
             END
     END
 END

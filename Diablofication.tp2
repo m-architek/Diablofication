@@ -73,8 +73,6 @@ BEGIN "Party Revive After Combat (Beta)"
 LABEL ~party_revive~
 REQUIRE_PREDICATE GAME_IS ~bgee~ ~BG1 EE is required.~
 REQUIRE_PREDICATE NOT GAME_INCLUDES ~sod~ ~SoD not supported.~
-REQUIRE_PREDICATE NOT MOD_IS_INSTALLED ~Diablofication.tp2~ (ID_OF_LABEL ~Diablofication.tp2~ ~character_respawn~) 
-    ~Should be installed before Character Respawn component.~
 
 WITH_SCOPE BEGIN
     OUTER_SPRINT COMPONENT ~party_revive~

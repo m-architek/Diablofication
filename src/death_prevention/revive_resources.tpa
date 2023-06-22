@@ -1,4 +1,4 @@
-DEFINE_ACTION_FUNCTION APPLY_REVIVE_SPELL
+DEFINE_ACTION_FUNCTION APPLY_REVIVE_RESOURCES
     STR_VAR revive_death_spell = 0
             revive_petrification_spell = 0
             revive_imprisonment_spell = 0

@@ -13,7 +13,6 @@ DEFINE_ACTION_FUNCTION APPLY_DEATH_REACTIONS BEGIN
             TriggerOverride(Player1, False())
     THEN
         RESPONSE #100
-            DisplayString(%player%, %set_message_ref%)
             SetGlobal("%player_is_dead_variable%", "GLOBAL", 1)
             StartCutSceneEx("%player_death_reaction_cutscene%", TRUE) 
     END
@@ -27,7 +26,6 @@ DEFINE_ACTION_FUNCTION APPLY_DEATH_REACTIONS BEGIN
         TriggerOverride(%player%, Global("%imprisonment_state_variable%", "LOCALS", 0))
     THEN
         RESPONSE #100
-            DisplayString(%player%, %clear_message_ref%)
             SetGlobal("%player_is_dead_variable%", "GLOBAL", 0)
     END
     >>>>>>>>
@@ -36,9 +34,6 @@ DEFINE_ACTION_FUNCTION APPLY_DEATH_REACTIONS BEGIN
     ACTION_PHP_EACH PLAYERS AS player_index => player BEGIN 
         OUTER_SPRINT player_is_dead_variable ~%GLOBAL_PLAYER_IS_DEAD_PREFIX%%player_index%~
         OUTER_SPRINT player_death_reaction_cutscene $death_reaction_cutscenes(~%player_index%~)
-
-        OUTER_SET set_message_ref = RESOLVE_STR_REF (~Ser %player_is_dead_variable%~) // TODO remove
-        OUTER_SET clear_message_ref = RESOLVE_STR_REF (~Clear %player_is_dead_variable%~) // TODO remove
 
         EXTEND_BOTTOM ~BALDUR.BCS~ ~.../death_reactions.baf~
             EVALUATE_BUFFER
@@ -95,7 +90,6 @@ END
 DEFINE_ACTION_FUNCTION APPLY_DEATH_REACTIONS_EXECUTION_CUTSCENES 
     RET_ARRAY execution_cutscenes
 BEGIN 
-    PRINT ~APPLY_DEATH_REACTIONS_EXECUTION_CUTSCENES START~
     ACTION_CLEAR_ARRAY execution_cutscenes
 
     COPY_EXISTING - ~death.2da~ ~~
@@ -118,8 +112,6 @@ BEGIN
             END
         END
     END
-
-    PRINT ~APPLY_DEATH_REACTIONS_EXECUTION_CUTSCENES END~              
 END
 
 

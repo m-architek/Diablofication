@@ -1,31 +1,33 @@
 DEFINE_ACTION_FUNCTION APPLY_RESPAWN_TRIGGER
-    INT_VAR is_party_revive = ~~
     STR_VAR respawn_cutscene = 0
             game_over_variable = 0
             game_over_cutscene = 0
             death_state_variable = 0
             petrification_state_variable  = 0
             imprisonment_state_variable = 0
+            death_prevention_variable = 0
 BEGIN
-    ACTION_IF (NOT is_party_revive) BEGIN 
 
-        <<<<<<<< .../player1_eliminated.baf
-        IF
-            Global("%game_over_variable%", "GLOBAL", 0)
-            OR(4)
-                StateCheck(Player1, STATE_REALLY_DEAD)
-                TriggerOverride(Player1, Global("%death_state_variable%", "LOCALS", 1))
-                TriggerOverride(Player1, Global("%petrification_state_variable%", "LOCALS", 1))
-                TriggerOverride(Player1, Global("%imprisonment_state_variable%", "LOCALS", 1))
-        THEN
-            RESPONSE #100
-                SetGlobal("%game_over_variable%", "GLOBAL", 1)
-        END
-        >>>>>>>>
-
-        EXTEND_BOTTOM ~baldur.bcs~ ~.../player1_eliminated.baf~ 
-            EVALUATE_BUFFER
+    <<<<<<<< .../player1_eliminated.baf
+    IF
+        Global("%game_over_variable%", "GLOBAL", 0)
+        OR(4)
+            StateCheck(Player1, STATE_REALLY_DEAD)
+            TriggerOverride(Player1, Global("%death_state_variable%", "LOCALS", 1))
+            TriggerOverride(Player1, Global("%petrification_state_variable%", "LOCALS", 1))
+            TriggerOverride(Player1, Global("%imprisonment_state_variable%", "LOCALS", 1))
+        OR(3)
+            !Exists(Player2)
+            !TriggerOverride(Player2, Global("%death_prevention_variable%", "LOCALS", 1))
+            TriggerOverride(Player1, False())
+    THEN
+        RESPONSE #100
+            SetGlobal("%game_over_variable%", "GLOBAL", 1)
     END
+    >>>>>>>>
+
+    EXTEND_BOTTOM ~baldur.bcs~ ~.../player1_eliminated.baf~ 
+        EVALUATE_BUFFER
 
 
     COPY_EXISTING ~baldur.bcs~ ~override~

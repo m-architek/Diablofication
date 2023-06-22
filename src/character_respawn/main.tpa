@@ -9,18 +9,19 @@ INCLUDE ~%COMPONENT_FOLDER%/respawn_penalty.tpa~
 
 ACTION_DEFINE_ARRAY protagonist BEGIN Player1 END
 
-OUTER_SET is_party_revive = MOD_IS_INSTALLED ~Diablofication.tp2~ (ID_OF_LABEL ~Diablofication.tp2~ ~party_revive~)
-
 LAF APPLY_DEATH_PREVENTION 
     STR_VAR players_ref = protagonist
     RET death_prevention_variable
-        death_prevention_remove
+        death_prevention_remove_spell
         game_over_variable
         game_over_cutscene
         death_state_variable
         petrification_state_variable 
         imprisonment_state_variable
         maze_state_variable
+        fake_death_spell
+        fake_petrification_spell
+        fake_imprisonment_spell
         revive_death_spell
         revive_petrification_spell
         revive_imprisonment_spell 
@@ -43,11 +44,12 @@ LAF APPLY_RESPAWN_PROCESS
     RET respawn_cutscene = respawn_begin_cutscene
     END
 
-LAF APPLY_RESPAWN_TRIGGER INT_VAR is_party_revive
+LAF APPLY_RESPAWN_TRIGGER
     STR_VAR respawn_cutscene 
             game_over_variable
             game_over_cutscene
             death_state_variable
             petrification_state_variable 
             imprisonment_state_variable
+            death_prevention_variable
     END

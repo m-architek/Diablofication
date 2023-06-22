@@ -1,0 +1,68 @@
+DEFINE_ACTION_FUNCTION APPLY_FAKE_DEATH_SCRIPTS
+    STR_VAR players_ref = 0 
+            fake_death_spell = 0 
+            fake_petrification_spell = 0 
+            fake_imprisonment_spell = 0 
+            kill_player_variable = 0
+            petrify_player_variable = 0
+            imprison_player_variable = 0
+            death_state_variable = 0
+            petrification_state_variable = 0
+            imprisonment_state_variable = 0
+            revive_cooldown_timer = 0
+BEGIN
+    <<<<<<<< .../apply_fake_death.baf
+    IF
+        Exists(%player%)
+        !StateCheck(%player%, STATE_REALLY_DEAD)
+        TriggerOverride(%player%, Global("%death_state_variable%", "LOCALS", 0))
+        TriggerOverride(%player%, Global("%petrification_state_variable%", "LOCALS", 0))
+        TriggerOverride(%player%, Global("%imprisonment_state_variable%", "LOCALS", 0))
+        OR(3)
+            HP(%player%, 1)
+            TriggerOverride(%player%, Global("%kill_player_variable%", "LOCALS", 1))
+            TriggerOverride(Player1, False())
+    THEN
+        RESPONSE #100
+            ActionOverride(%player%, SetInterrupt(FALSE))
+            ActionOverride(%player%, ClearActions(Myself))
+            ActionOverride(%player%, SetSequence(SEQ_SLEEP))
+            ActionOverride(%player%, VerbalConstant(Myself, DYING))
+            ActionOverride(%player%, ApplySpellRES("%fake_death_spell%", Myself))
+            ActionOverride(%player%, SetGlobalTimer("%revive_cooldown_timer%", "LOCALS", ONE_ROUND))
+            ActionOverride(%player%, SetInterrupt(TRUE))
+    END
+
+    IF
+        Exists(%player%)
+        !StateCheck(%player%, STATE_REALLY_DEAD)
+        TriggerOverride(%player%, Global("%death_state_variable%", "LOCALS", 0))
+        TriggerOverride(%player%, Global("%petrification_state_variable%", "LOCALS", 0))
+        TriggerOverride(%player%, Global("%imprisonment_state_variable%", "LOCALS", 0))
+        TriggerOverride(%player%, Global("%petrify_player_variable%", "LOCALS", 1))
+    THEN
+        RESPONSE #100
+            ApplySpellRES("%fake_petrification_spell%", %player%)
+            ActionOverride(%player%, SetGlobalTimer("%revive_cooldown_timer%", "LOCALS", ONE_ROUND)) 
+    END
+
+    IF
+        Exists(%player%)
+        !StateCheck(%player%, STATE_REALLY_DEAD)
+        TriggerOverride(%player%, Global("%death_state_variable%", "LOCALS", 0))
+        TriggerOverride(%player%, Global("%petrification_state_variable%", "LOCALS", 0))
+        TriggerOverride(%player%, Global("%imprisonment_state_variable%", "LOCALS", 0))
+        TriggerOverride(%player%, Global("%imprison_player_variable%", "LOCALS", 1))
+    THEN
+        RESPONSE #100
+            ApplySpellRES("%fake_imprisonment_spell%", %player%)
+            ActionOverride(%player%, SetGlobalTimer("%revive_cooldown_timer%", "LOCALS", ONE_ROUND))         
+    END
+    >>>>>>>>
+                   
+    ACTION_PHP_EACH ~%players_ref%~ AS player_index => player BEGIN 
+
+        EXTEND_BOTTOM ~baldur.bcs~ ~.../apply_fake_death.baf~ 
+            EVALUATE_BUFFER
+    END
+END
