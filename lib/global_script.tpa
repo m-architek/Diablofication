@@ -1,0 +1,40 @@
+ACTION_DEFINE_ARRAY GLOBAL_SCRIPTS BEGIN baldur baldur25 bdbaldur END
+
+DEFINE_ACTION_FUNCTION EXTEND_GLOBAL_SCRIPT 
+    STR_VAR baf = 0
+BEGIN 
+    ACTION_PHP_EACH GLOBAL_SCRIPTS AS _ => script_resref BEGIN 
+        ACTION_IF FILE_EXISTS_IN_GAME ~%script_resref%.bcs~ THEN BEGIN
+            
+            EXTEND_BOTTOM ~%script_resref%.bcs~ ~%baf%~
+                EVALUATE_BUFFER
+        END 
+    END
+END
+
+DEFINE_ACTION_FUNCTION EXTEND_GLOBAL_SCRIPT_TOP
+    STR_VAR baf = 0
+BEGIN 
+    ACTION_PHP_EACH GLOBAL_SCRIPTS AS _ => script_resref BEGIN 
+        ACTION_IF FILE_EXISTS_IN_GAME ~%script_resref%.bcs~ THEN BEGIN
+
+            EXTEND_TOP ~%script_resref%.bcs~ ~%baf%~
+                EVALUATE_BUFFER
+        END
+    END
+END
+
+DEFINE_ACTION_FUNCTION PATCH_GLOBAL_SCRIPT
+    STR_VAR patch_fn = 0
+BEGIN 
+    ACTION_PHP_EACH GLOBAL_SCRIPTS AS _ => script_resref BEGIN 
+        ACTION_IF FILE_EXISTS_IN_GAME ~%script_resref%.bcs~ THEN BEGIN
+
+            COPY_EXISTING ~%script_resref%.bcs~ ~override~
+                DECOMPILE_AND_PATCH BEGIN 
+                    LPF ~%patch_fn%~ END
+                END
+                BUT_ONLY
+        END
+    END
+END

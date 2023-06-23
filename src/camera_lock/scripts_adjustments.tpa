@@ -85,6 +85,5 @@ BEGIN
     END
     >>>>>>>>
     
-    EXTEND_TOP ~baldur.bcs~ ~.../camera_lock.baf~ 
-        EVALUATE_BUFFER
+    LAF EXTEND_GLOBAL_SCRIPT_TOP STR_VAR baf = ~.../camera_lock.baf~  END
 END

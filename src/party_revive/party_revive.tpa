@@ -49,7 +49,6 @@ BEGIN
 
     ACTION_PHP_EACH PLAYERS AS _ => player BEGIN 
         
-        EXTEND_BOTTOM ~BALDUR.BCS~ ~.../party_revive.baf~ 
-            EVALUATE_BUFFER
+        LAF EXTEND_GLOBAL_SCRIPT STR_VAR baf = ~.../party_revive.baf~  END
     END
 END

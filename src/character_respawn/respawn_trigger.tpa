@@ -18,7 +18,7 @@ BEGIN
             TriggerOverride(Player1, Global("%imprisonment_state_variable%", "LOCALS", 1))
         OR(3)
             !Exists(Player2)
-            !TriggerOverride(Player2, Global("%death_prevention_variable%", "LOCALS", 1))
+            TriggerOverride(Player2, Global("%death_prevention_variable%", "LOCALS", 0))
             TriggerOverride(Player1, False())
     THEN
         RESPONSE #100
@@ -26,15 +26,14 @@ BEGIN
     END
     >>>>>>>>
 
-    EXTEND_BOTTOM ~baldur.bcs~ ~.../player1_eliminated.baf~ 
-        EVALUATE_BUFFER
+    LAF EXTEND_GLOBAL_SCRIPT STR_VAR baf = ~.../player1_eliminated.baf~  END
 
 
-    COPY_EXISTING ~baldur.bcs~ ~override~
-        DECOMPILE_AND_PATCH BEGIN 
-            REPLACE_TEXTUALLY CASE_INSENSITIVE EXACT_MATCH 
-                ~StartCutSceneEx("%game_over_cutscene%",TRUE)~ 
-                ~StartCutSceneEx("%respawn_cutscene%",TRUE)~
-        END
-        BUT_ONLY
+     
+    DEFINE_PATCH_FUNCTION REPLACE_GAME_OVER_WITH_RESPAWN BEGIN 
+        REPLACE_TEXTUALLY CASE_INSENSITIVE EXACT_MATCH 
+            ~StartCutSceneEx("%game_over_cutscene%",TRUE)~ 
+            ~StartCutSceneEx("%respawn_cutscene%",TRUE)~
+    END
+    LAF PATCH_GLOBAL_SCRIPT STR_VAR patch_fn = ~REPLACE_GAME_OVER_WITH_RESPAWN~ END
 END

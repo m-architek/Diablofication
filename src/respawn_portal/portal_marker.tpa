@@ -62,7 +62,6 @@ BEGIN
             Continue()
     END
     >>>>>>>>
-    
-    EXTEND_TOP ~BALDUR.BCS~ ~.../create_marker.baf~
-        EVALUATE_BUFFER
+
+    LAF EXTEND_GLOBAL_SCRIPT_TOP STR_VAR baf = ~.../create_marker.baf~  END
 END

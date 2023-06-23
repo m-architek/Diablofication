@@ -33,6 +33,5 @@ END
 ACTION_PHP_EACH players AS _ => player BEGIN 
     OUTER_SPRINT timer ~%GLOBAL_REGENERATION_TIMER_PREFIX%%player%~
     
-    EXTEND_BOTTOM ~BALDUR.BCS~ ~.../spells_regen.baf~ 
-        EVALUATE_BUFFER
+    LAF EXTEND_GLOBAL_SCRIPT STR_VAR baf = ~.../spells_regen.baf~  END
 END

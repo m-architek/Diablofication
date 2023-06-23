@@ -35,8 +35,7 @@ DEFINE_ACTION_FUNCTION APPLY_DEATH_REACTIONS BEGIN
         OUTER_SPRINT player_is_dead_variable ~%GLOBAL_PLAYER_IS_DEAD_PREFIX%%player_index%~
         OUTER_SPRINT player_death_reaction_cutscene $death_reaction_cutscenes(~%player_index%~)
 
-        EXTEND_BOTTOM ~BALDUR.BCS~ ~.../death_reactions.baf~
-            EVALUATE_BUFFER
+        LAF EXTEND_GLOBAL_SCRIPT STR_VAR baf = ~.../death_reactions.baf~  END
     END 
 END
 

@@ -43,21 +43,20 @@ BEGIN
     END
     >>>>>>>>   
     
-    EXTEND_BOTTOM ~baldur.bcs~ ~.../game_over_trigger.baf~ 
-        PHP_EACH PLAYERS AS _ => player BEGIN
-            SPRINT ~%player%_eliminated~ ~~~~~
-                OR(8)
-                    !Exists(%player%)
-                    StateCheck(%player%, STATE_REALLY_DEAD)
-                    StateCheck(%player%, STATE_CHARMED)
-                    TriggerOverride(%player%, Global("%death_state_variable%", "LOCALS", 1))
-                    TriggerOverride(%player%, Global("%petrification_state_variable%", "LOCALS", 1))
-                    TriggerOverride(%player%, Global("%imprisonment_state_variable%", "LOCALS", 1))
-                    TriggerOverride(%player%, Global("%maze_state_variable%", "LOCALS", 1))
-                    TriggerOverride(Player1, False())
-            ~~~~~
-        END
-        EVALUATE_BUFFER
+    ACTION_PHP_EACH PLAYERS AS _ => player BEGIN
+        OUTER_SPRINT ~%player%_eliminated~ ~~~~~
+            OR(8)
+                !Exists(%player%)
+                StateCheck(%player%, STATE_REALLY_DEAD)
+                StateCheck(%player%, STATE_CHARMED)
+                TriggerOverride(%player%, Global("%death_state_variable%", "LOCALS", 1))
+                TriggerOverride(%player%, Global("%petrification_state_variable%", "LOCALS", 1))
+                TriggerOverride(%player%, Global("%imprisonment_state_variable%", "LOCALS", 1))
+                TriggerOverride(%player%, Global("%maze_state_variable%", "LOCALS", 1))
+                TriggerOverride(Player1, False())
+        ~~~~~
+    END
+    LAF EXTEND_GLOBAL_SCRIPT STR_VAR baf = ~.../game_over_trigger.baf~ END
 
 
     <<<<<<<< .../game_over_cutscene.baf
@@ -66,13 +65,10 @@ BEGIN
     THEN
         RESPONSE #100
             CutSceneId(Player1)
-            Kill(Player1)
-            Kill(Player2)
-            Kill(Player3)
-            Kill(Player4)
-            Kill(Player5)
-            Kill(Player6)
-            GameOver(19377)          
+            SmallWait(60)
+            FadeToColor([30.0], 0)
+            SmallWait(30)
+            GameOver(-1)
     END
     >>>>>>>>  
 

@@ -8,6 +8,7 @@ INCLUDE ~%lib%/eff.tpa~
 INCLUDE ~%lib%/eff_v1.tpa~
 INCLUDE ~%lib%/eff_v2.tpa~
 INCLUDE ~%lib%/extend_cut250.tpa~
+INCLUDE ~%lib%/global_script.tpa~
 INCLUDE ~%lib%/ids.tpa~
 INCLUDE ~%lib%/itm.tpa~
 INCLUDE ~%lib%/itm_spl.tpa~

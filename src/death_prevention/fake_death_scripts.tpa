@@ -62,7 +62,6 @@ BEGIN
                    
     ACTION_PHP_EACH ~%players_ref%~ AS player_index => player BEGIN 
 
-        EXTEND_BOTTOM ~baldur.bcs~ ~.../apply_fake_death.baf~ 
-            EVALUATE_BUFFER
+        LAF EXTEND_GLOBAL_SCRIPT STR_VAR baf = ~.../apply_fake_death.baf~ END
     END
 END

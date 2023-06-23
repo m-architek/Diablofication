@@ -50,7 +50,7 @@ BEGIN
                     CREATE ~EFF~ ~%save_general_status_eff%~
                         LPF ALTER_EFF_V2_EFFECT
                             INT_VAR opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
-                                parameter1 = ~%ids_id%~
+                                    parameter1 = ~%ids_id%~
                             STR_VAR resource = ~%general_status_variable%~
                             END
                 END
@@ -115,7 +115,6 @@ BEGIN
                 script = ~%revert_general_status_script%~ 
             END
 
-        EXTEND_BOTTOM ~baldur.bcs~ ~.../revert_general_status.baf~ 
-            EVALUATE_BUFFER
+        LAF EXTEND_GLOBAL_SCRIPT STR_VAR baf = ~.../revert_general_status.baf~ END
     END
 END

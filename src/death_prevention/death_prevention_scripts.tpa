@@ -17,7 +17,6 @@ BEGIN
 
     ACTION_PHP_EACH ~%players_ref%~ AS _ => player BEGIN 
         
-        EXTEND_TOP ~baldur.bcs~ ~.../apply_death_prevention.baf~
-            EVALUATE_BUFFER
+        LAF EXTEND_GLOBAL_SCRIPT_TOP STR_VAR baf = ~.../apply_death_prevention.baf~ END
     END
 END
