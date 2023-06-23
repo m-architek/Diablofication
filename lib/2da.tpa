@@ -123,4 +123,16 @@ BEGIN
             SET_2DA_ENTRY raw_row_index raw_column_index 0 ~%column_value%~
         END
     END
+    PRETTY_PRINT_2DA
+END
+
+DEFINE_PATCH_FUNCTION INSERT_2DA_ROW_VALUE
+    STR_VAR row_value = 0
+BEGIN
+    COUNT_2DA_ROWS 0 raw_rows_count
+
+    PATCH_LOG ~Inserting to %SOURCE_EXT% %SOURCE_RES%: %row_value%~
+    INSERT_2DA_ROW raw_rows_count 0 ~%row_value%~    
+
+    PRETTY_PRINT_2DA
 END

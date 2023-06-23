@@ -19,6 +19,7 @@ ALWAYS
 
     OUTER_SPRINT config ~%MOD_FOLDER%/config~
     OUTER_SPRINT lib ~%MOD_FOLDER%/lib~
+    OUTER_SPRINT resources ~%MOD_FOLDER%/resources~
     OUTER_SPRINT src ~%MOD_FOLDER%/src~
     OUTER_SPRINT tra ~%MOD_FOLDER%/tra~
 

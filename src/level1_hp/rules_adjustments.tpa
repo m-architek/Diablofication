@@ -19,7 +19,6 @@ BEGIN
     ACTION_PHP_EACH hp_tables AS hp_table => _ BEGIN
         COPY_EXISTING ~%hp_table%.2DA~ ~override~
             LPF PATCH_HP_TABLE RET lvl1_hp static_increment END
-            PRETTY_PRINT_2DA
             BUT_ONLY
         ACTION_DEFINE_ASSOCIATIVE_ARRAY hp_lvl1_values BEGIN ~%hp_table%~ => ~%lvl1_hp%~ END
         ACTION_DEFINE_ASSOCIATIVE_ARRAY hp_static_increment_values BEGIN ~%hp_table%~ => ~%static_increment%~ END

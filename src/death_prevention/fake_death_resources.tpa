@@ -43,6 +43,22 @@ DEFINE_ACTION_FUNCTION APPLY_FAKE_PETRIFICATION_SPELL
     STR_VAR fake_petrification_spell = 0
             petrification_state_variable = 0
 BEGIN 
+    COPY_EXISTING - ~efftext.2da~ ~~
+        LPF READ_2DA_ROW STR_VAR row_name = ~%EFF_OPCODE_STATE_PETRIFICATION%~ 
+                RET_ARRAY petrification_efftext = out 
+                END
+        BUT_ONLY
+
+    OUTER_SET petrification_strref = $petrification_efftext(STRREF)
+    
+    COPY ~%resources%/petrification_icon.bam~ ~override/%RESREF_BAM_PETRIFICATION_ICON%.BAM~
+
+    LAF APPLY_STATDESC_ENTRY 
+        INT_VAR str_ref = petrification_strref
+        STR_VAR icon = ~%RESREF_BAM_PETRIFICATION_ICON%~
+        RET petrification_icon = entry
+        END
+
     CREATE ~SPL~ ~%fake_petrification_spell%~
         LPF ADD_SPL_ABILITY RET ability_index END
         LPF ADD_FAKE_DEATH_COMMON_EFFECTS INT_VAR ability_index 
@@ -65,11 +81,11 @@ BEGIN
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_DISPLAY_ICON
-            parameter2 = 171 // Petrified (?)
+            parameter2 = petrification_icon
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_DISPLAY_STRING
-            parameter1 = 14127 // Petrification
+            parameter1 = petrification_strref
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_COLOUR_BY_PALETTE
@@ -87,6 +103,25 @@ DEFINE_ACTION_FUNCTION APPLY_FAKE_IMPRISONMENT_SPELL
     STR_VAR fake_imprisonment_spell = 0
             imprisonment_state_variable = 0
 BEGIN 
+    OUTER_SET imprisonment_strref = 0
+
+    ACTION_IF (IDS_OF_SYMBOL (SPELL WIZARD_IMPRISONMENT) != "-1") BEGIN 
+        LAF SPELL_IDS_RESOURCE_OF_SYMBOL STR_VAR ids_name = WIZARD_IMPRISONMENT
+            RET imprisonment_resource = spell_resource
+            END
+        COPY_EXISTING - ~%imprisonment_resource%.SPL~ ~~
+            READ_LONG NAME1 imprisonment_strref
+            BUT_ONLY
+    END
+    
+    COPY ~%resources%/imprisonment_icon.bam~ ~override/%RESREF_BAM_IMPRISONMENT_ICON%.BAM~
+
+    LAF APPLY_STATDESC_ENTRY 
+        INT_VAR str_ref = imprisonment_strref
+        STR_VAR icon = ~%RESREF_BAM_IMPRISONMENT_ICON%~
+        RET imprisonment_icon = entry
+        END
+
     CREATE ~SPL~ ~%fake_imprisonment_spell%~
         LPF ADD_SPL_ABILITY RET ability_index END
         LPF ADD_FAKE_DEATH_COMMON_EFFECTS INT_VAR ability_index 
@@ -99,11 +134,11 @@ BEGIN
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_DISPLAY_ICON
-            parameter2 = 79 // Imprisonment
+            parameter2 = imprisonment_icon
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_DISPLAY_STRING
-            parameter1 = 25069 // Imprisonment // TODO: verify 26002
+            parameter1 = imprisonment_strref
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
             opcode = EFF_OPCODE_GRAPHICS_AVATAR_REMOVAL 

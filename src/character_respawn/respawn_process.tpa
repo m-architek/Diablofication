@@ -231,23 +231,36 @@ END
 DEFINE_ACTION_FUNCTION APPLY_RESPAWN_HEAL 
     RET heal_spl
 BEGIN
-    COPY_EXISTING ~SPPR607.SPL~ ~override/%RESREF_SPL_HEAL_HEAL%.SPL~ 
+    LAF SPELL_IDS_RESOURCE_OF_SYMBOL STR_VAR ids_name = CLERIC_HEAL
+        RET heal_resref = spell_resource
+        END
+    LAF SPELL_IDS_RESOURCE_OF_SYMBOL STR_VAR ids_name = CLERIC_NEUTRALIZE_POISON
+        RET cure_resref = spell_resource
+        END
+    LAF SPELL_IDS_RESOURCE_OF_SYMBOL STR_VAR ids_name = CLERIC_RESTORATION
+        RET restoration_resref = spell_resource
+        END
+    LAF SPELL_IDS_RESOURCE_OF_SYMBOL STR_VAR ids_name = CLERIC_SPIRITUAL_CLARITY
+        RET clarity_resref = spell_resource
+        END
+
+    COPY_EXISTING ~%heal_resref%.SPL~ ~override/%RESREF_SPL_HEAL_HEAL%.SPL~ 
         WRITE_LONG NAME1 0
         WRITE_LONG UNIDENTIFIED_DESC 0
         LPF ADD_SPL_HEADER END
         BUT_ONLY
-    COPY_EXISTING ~SPPR404.SPL~ ~override/%RESREF_SPL_HEAL_CURE%.SPL~
+    COPY_EXISTING ~%cure_resref%.SPL~ ~override/%RESREF_SPL_HEAL_CURE%.SPL~
         WRITE_LONG NAME1 0
         WRITE_LONG UNIDENTIFIED_DESC 0
         LPF ADD_SPL_HEADER END
         BUT_ONLY
-    COPY_EXISTING ~SPPR713.SPL~ ~override/%RESREF_SPL_HEAL_RESTORATION%.SPL~
+    COPY_EXISTING ~%restoration_resref%.SPL~ ~override/%RESREF_SPL_HEAL_RESTORATION%.SPL~
         WRITE_LONG NAME1 0
         WRITE_LONG UNIDENTIFIED_DESC 0
         LPF ADD_SPL_HEADER END
         LPF DELETE_SPELL_EFFECT INT_VAR opcode_to_delete = EFF_OPCODE_FATIGUE_MODIFIER END
         BUT_ONLY
-    COPY_EXISTING ~SPPR350.SPL~ ~override/%RESREF_SPL_HEAL_CLARITY%.SPL~
+    COPY_EXISTING ~%clarity_resref%.SPL~ ~override/%RESREF_SPL_HEAL_CLARITY%.SPL~
         WRITE_LONG NAME1 0
         WRITE_LONG UNIDENTIFIED_DESC 0
         LPF ADD_SPL_HEADER END
@@ -295,6 +308,12 @@ BEGIN
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_DISPLAY_STRING
             parameter1 = 25820 // Dispel Effects
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_STAT_MORALE
+            parameter1 = 10
+            parameter2 = 1 // Set to value
+            special = 1 // Use parameters
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_SPELL_MAGICAL_REST
