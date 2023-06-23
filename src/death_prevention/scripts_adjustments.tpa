@@ -53,21 +53,24 @@ BEGIN
             ApplySpellRES("%revive_imprisonment_spell%", %player%)
         ~~~~~
     END
+
+    ACTION_IF (NOT ~%revive_action%~ STR_EQ ~~) BEGIN 
     
-    ACTION_DEFINE_ASSOCIATIVE_ARRAY patches BEGIN
-        ~^%s%*StartCutSceneMode()$~ => ~~~~~
-            %revive_action%
-            StartCutSceneMode()
-        ~~~~~
+        ACTION_DEFINE_ASSOCIATIVE_ARRAY patches BEGIN
+            ~^%s%*StartCutSceneMode()$~ => ~~~~~
+                %revive_action%
+                StartCutSceneMode()
+            ~~~~~
+        END
+
+        COPY_EXISTING_REGEXP GLOB ~^.+\.bcs$~ ~override~
+            LPF PATCH_DEATH_PREVENTION_SCRIPTS_ADJUSTMENTS STR_VAR patches_ref = patches END
+            BUT_ONLY
+
+        COPY_EXISTING_REGEXP GLOB ~^.+\.dlg$~ ~override~
+            LPF PATCH_DEATH_PREVENTION_SCRIPTS_ADJUSTMENTS STR_VAR patches_ref = patches END
+            BUT_ONLY
     END
-
-    COPY_EXISTING_REGEXP GLOB ~^.+\.bcs$~ ~override~
-        LPF PATCH_DEATH_PREVENTION_SCRIPTS_ADJUSTMENTS STR_VAR patches_ref = patches END
-        BUT_ONLY
-
-    COPY_EXISTING_REGEXP GLOB ~^.+\.dlg$~ ~override~
-        LPF PATCH_DEATH_PREVENTION_SCRIPTS_ADJUSTMENTS STR_VAR patches_ref = patches END
-        BUT_ONLY
 END
 
 

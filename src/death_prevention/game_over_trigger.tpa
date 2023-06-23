@@ -67,7 +67,6 @@ BEGIN
             CutSceneId(Player1)
             SmallWait(60)
             FadeToColor([30.0], 0)
-            SmallWait(30)
             GameOver(-1)
     END
     >>>>>>>>  

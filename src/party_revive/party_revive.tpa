@@ -51,4 +51,25 @@ BEGIN
         
         LAF EXTEND_GLOBAL_SCRIPT STR_VAR baf = ~.../party_revive.baf~  END
     END
+
+    LAF APPLY_REMOVE_RESURRECTION_FROM_TEMPLES END
 END
+
+
+DEFINE_ACTION_FUNCTION APPLY_REMOVE_RESURRECTION_FROM_TEMPLES BEGIN
+    LAF SPELL_IDS_RESOURCE_OF_SYMBOL STR_VAR ids_name = ~CLERIC_RAISE_DEAD~
+        RET rise_dead_resref = spell_resource
+        END
+    LAF SPELL_IDS_RESOURCE_OF_SYMBOL STR_VAR ids_name = ~CLERIC_MASS_RAISE_DEAD~
+        RET mass_rise_dead_resref = spell_resource
+        END
+    LAF SPELL_IDS_RESOURCE_OF_SYMBOL STR_VAR ids_name = ~CLERIC_RESURRECTION~
+        RET resurrection_resref = spell_resource
+        END
+
+    COPY_EXISTING_REGEXP GLOB ~^.+\.sto$~ ~override~
+        LPF REMOVE_STORE_CURE STR_VAR spell_name = ~%rise_dead_resref%~ END
+        LPF REMOVE_STORE_CURE STR_VAR spell_name = ~%mass_rise_dead_resref%~ END
+        LPF REMOVE_STORE_CURE STR_VAR spell_name = ~%resurrection_resref%~ END
+        BUT_ONLY
+END 

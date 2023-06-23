@@ -42,19 +42,6 @@ BEGIN
     CREATE ~SPL~ ~%revive_death_spell%~
         LPF ADD_SPL_ABILITY RET ability_index END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_PROTECTION_FROM_RESOURCE
-            parameter1 = 3 // DEAD
-            parameter2 = 113 // GENERAL!=n
-            timing = EFF_TIMING_INSTANT_LIMITED
-            STR_VAR resource = ~%revive_death_spell%~
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_RAISE_DEAD
-            END
-        LPF ADD_REVIVE_COMMON_EFFECTS INT_VAR ability_index  
-            STR_VAR this_resource = ~%revive_death_spell%~
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_REMOVE_EFFECTS_BY_RESOURCE
             STR_VAR resource = ~%fake_death_spell%~
             END
@@ -69,10 +56,8 @@ BEGIN
             STR_VAR resource = ~%kill_player_variable%~
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_CAST_SPELL
-            parameter1 = 0 // Casting Level
-            parameter2 = 1 // Cast Instantly at caster level
-            STR_VAR resource = ~#RDREMOV~
+            opcode = EFF_OPCODE_HP_CURRENT
+            parameter1 = 1
             END
 END
 
@@ -85,9 +70,6 @@ DEFINE_ACTION_FUNCTION APPLY_REVIVE_PETRIFICATION_SPELL
 BEGIN 
     CREATE ~SPL~ ~%revive_petrification_spell%~
         LPF ADD_SPL_ABILITY RET ability_index END
-        LPF ADD_REVIVE_COMMON_EFFECTS INT_VAR ability_index  
-            STR_VAR this_resource = ~%revive_petrification_spell%~
-            END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_REMOVE_EFFECTS_BY_RESOURCE
             STR_VAR resource = ~%fake_petrification_spell%~
@@ -102,6 +84,10 @@ BEGIN
             parameter1 = 0
             STR_VAR resource = ~%petrify_player_variable%~
             END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_HP_CURRENT
+            parameter1 = 1
+            END
 END
 
 
@@ -113,9 +99,6 @@ DEFINE_ACTION_FUNCTION APPLY_REVIVE_IMPRISONMENT_SPELL
 BEGIN 
     CREATE ~SPL~ ~%revive_imprisonment_spell%~
         LPF ADD_SPL_ABILITY RET ability_index END
-        LPF ADD_REVIVE_COMMON_EFFECTS INT_VAR ability_index 
-            STR_VAR this_resource = ~%revive_imprisonment_spell%~
-            END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_REMOVE_EFFECTS_BY_RESOURCE
             STR_VAR resource = ~%fake_imprisonment_spell%~
@@ -130,22 +113,8 @@ BEGIN
             parameter1 = 0
             STR_VAR resource = ~%imprison_player_variable%~
             END
-END
-
-
-DEFINE_PATCH_FUNCTION ADD_REVIVE_COMMON_EFFECTS 
-    INT_VAR ability_index = ~~
-    STR_VAR this_resource = 0
-BEGIN 
-    LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-        opcode = EFF_OPCODE_PROTECTION_FROM_RESOURCE
-        parameter1 = 2 // PC
-        parameter2 = 112 // EA!=n
-        timing = EFF_TIMING_INSTANT_LIMITED
-        STR_VAR resource = ~%this_resource%~
-        END
-    LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-        opcode = EFF_OPCODE_HP_CURRENT
-        parameter1 = 1
-        END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_HP_CURRENT
+            parameter1 = 1
+            END
 END

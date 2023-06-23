@@ -209,6 +209,22 @@ BEGIN
             parameter2 = 1 // Cast Instantly at caster level
             STR_VAR resource = ~%revive_imprisonment_spell%~
             END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_PROTECTION_FROM_RESOURCE
+            parameter1 = 3 // DEAD
+            parameter2 = 113 // GENERAL!=n
+            timing = EFF_TIMING_INSTANT_LIMITED
+            STR_VAR resource = ~%resurrection_spl%~
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_RAISE_DEAD
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_CAST_SPELL
+            parameter1 = 0 // Casting Level
+            parameter2 = 1 // Cast Instantly at caster level
+            STR_VAR resource = ~#RDREMOV~
+            END
 END
 
 

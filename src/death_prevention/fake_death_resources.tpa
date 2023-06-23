@@ -169,6 +169,12 @@ BEGIN
         parameter1 = 0 // Irrelevant
         parameter2 = 7 // Button: Talk
         END
+    LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+        opcode = EFF_OPCODE_CAST_SPELL
+        parameter1 = 0 // Casting Level
+        parameter2 = 1 // Cast Instantly at caster level
+        STR_VAR resource = ~#RDREMOV~
+        END
     LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
         opcode = EFF_OPCODE_MAKE_UNSELECTABLE
         parameter1 = GAME_IS ~bgee~ // Dialogue disabled (BG:EE: 1, BG2:EE: 0)

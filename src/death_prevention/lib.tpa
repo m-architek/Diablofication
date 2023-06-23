@@ -50,6 +50,16 @@ BEGIN
     OUTER_SPRINT revive_imprisonment_spell ~%RESREF_SPL_REVIVE_IMPRISONMENT%~
     OUTER_SPRINT revive_cooldown_timer ~%LOCALS_REVIVE_COOLDOWN_TIMER%~
 
+    ACTION_CLEAR_ARRAY players_adjusted
+    ACTION_PHP_EACH ~%players_ref%~ AS player_index => player BEGIN 
+        OUTER_SPRINT marker_file ~%RESREF_PLAYER_MARKER_PREFIX%%player_index%~
+        ACTION_IF (NOT FILE_EXISTS_IN_GAME ~%marker_file%~) BEGIN 
+            OUTER_SPRINT $players_adjusted(~%player_index%~) ~%player%~
+            COPY ~.../blank~ ~override/%marker_file%~
+        END
+    END
+    OUTER_SPRINT players_ref players_adjusted
+
     LAF APPLY_DEATH_PREVENTION_SCRIPTS_ADJUSTMENTS 
         STR_VAR players_ref
                 game_over_variable
