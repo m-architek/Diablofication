@@ -16,6 +16,21 @@ DEFINE_ACTION_FUNCTION APPLY_FAKE_DEATH_SPELL
     STR_VAR fake_death_spell = 0
             death_state_variable = 0
 BEGIN 
+    COPY_EXISTING - ~efftext.2da~ ~~
+        LPF READ_2DA_ROW STR_VAR row_name = ~%EFF_OPCODE_INSTANT_DEATH%~ 
+                RET_ARRAY death_efftext = out 
+                END
+        SET death_strref = $death_efftext(STRREF)
+        BUT_ONLY
+    
+    COPY ~%resources%/death_icon.bam~ ~override/%RESREF_BAM_DEATH_ICON%.BAM~
+
+    LAF APPLY_STATDESC_ENTRY 
+        INT_VAR str_ref = death_strref
+        STR_VAR icon = ~%RESREF_BAM_DEATH_ICON%~
+        RET death_icon = entry
+        END
+
     CREATE ~SPL~ ~%fake_death_spell%~
         LPF ADD_SPL_ABILITY RET ability_index END
         LPF ADD_FAKE_DEATH_COMMON_EFFECTS INT_VAR ability_index 
@@ -33,8 +48,12 @@ BEGIN
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_SLEEP
             parameter2 = 1 // Not Wake on Damage
-            special = 51 // Dying
+            special = death_icon
             timing = EFF_TIMING_INSTANT_PERMANENT // Allows for removal
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_DISPLAY_STRING
+            parameter1 = death_strref
             END
 END
 
@@ -47,9 +66,8 @@ BEGIN
         LPF READ_2DA_ROW STR_VAR row_name = ~%EFF_OPCODE_STATE_PETRIFICATION%~ 
                 RET_ARRAY petrification_efftext = out 
                 END
+        SET petrification_strref = $petrification_efftext(STRREF)
         BUT_ONLY
-
-    OUTER_SET petrification_strref = $petrification_efftext(STRREF)
     
     COPY ~%resources%/petrification_icon.bam~ ~override/%RESREF_BAM_PETRIFICATION_ICON%.BAM~
 
@@ -70,24 +88,6 @@ BEGIN
             STR_VAR resource = ~%petrification_state_variable%~
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_PROTECTION_FROM_OPCODE
-            parameter2 = EFF_OPCODE_CURE_HOLD
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_STATE_PARALYZE
-            parameter1 = 2 // PC
-            parameter2 = 2 // EA
-            timing = EFF_TIMING_INSTANT_PERMANENT // protect against op337
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_DISPLAY_ICON
-            parameter2 = petrification_icon
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_DISPLAY_STRING
-            parameter1 = petrification_strref
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_COLOUR_BY_PALETTE
             parameter1 = 72 // Stone Dead Grey
             parameter2 = 255 // Whole Body
@@ -96,6 +96,20 @@ BEGIN
             opcode = EFF_OPCODE_PLAY_SOUND
             STR_VAR resource = ~MISC_06B~
             END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_PROTECTION_FROM_OPCODE
+            parameter2 = EFF_OPCODE_CURE_SLEEP
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_SLEEP
+            parameter2 = 1 // Not Wake on Damage
+            special = petrification_icon
+            timing = EFF_TIMING_INSTANT_PERMANENT // Allows for removal
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_DISPLAY_STRING
+            parameter1 = petrification_strref
+            END
 END
 
 
@@ -103,7 +117,7 @@ DEFINE_ACTION_FUNCTION APPLY_FAKE_IMPRISONMENT_SPELL
     STR_VAR fake_imprisonment_spell = 0
             imprisonment_state_variable = 0
 BEGIN 
-    OUTER_SET imprisonment_strref = 0
+    OUTER_SET imprisonment_strref = "-1"
 
     ACTION_IF (IDS_OF_SYMBOL (SPELL WIZARD_IMPRISONMENT) != "-1") BEGIN 
         LAF SPELL_IDS_RESOURCE_OF_SYMBOL STR_VAR ids_name = WIZARD_IMPRISONMENT
@@ -209,6 +223,25 @@ BEGIN
         parameter1 = 0 // Casting Level
         parameter2 = 1 // Cast Instantly at caster level
         STR_VAR resource = ~#RDREMOV~
+        END
+    LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
+        opcode = EFF_OPCODE_SILENCE
+        timing = EFF_TIMING_INSTANT_PERMANENT // Allows for removal
+        END
+    LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
+        opcode = EFF_OPCODE_STAT_MISCAST_MAGIC
+        parameter1 = 100
+        parameter2 = 0 // Mage
+        END
+    LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
+        opcode = EFF_OPCODE_STAT_MISCAST_MAGIC
+        parameter1 = 100
+        parameter2 = 1 // Cleric
+        END
+    LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
+        opcode = EFF_OPCODE_STAT_MISCAST_MAGIC
+        parameter1 = 100
+        parameter2 = 2 // Innate
         END
     LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
         opcode = EFF_OPCODE_MAKE_UNSELECTABLE

@@ -56,27 +56,14 @@ DEFINE_ACTION_FUNCTION APPLY_RESPAWN_BEGIN
             this_cutscene = 0
             next_cutscene = 0
 BEGIN 
-    LAF APPLY_RESPAWN_CUTSCENE_PERTRIFICATION RET cuscene_petrification_spl END
     LAF APPLY_RESPAWN_RESURRECTION 
         STR_VAR revive_death_spell
                 revive_petrification_spell
                 revive_imprisonment_spell
-                cuscene_petrification_spl
         RET resurrection_spl 
         END 
     
-    <<<<<<<< .../respawn_begin_player_prepare.baf
-    IF
-        Exists(%player%)
-        !StateCheck(%player%, STATE_REALLY_DEAD)
-        TriggerOverride(%player%, Global("%petrification_state_variable%", "LOCALS", 1))
-    THEN
-        RESPONSE #100
-            CutSceneId(%player%)
-            SetSequence(SEQ_READY)
-            ApplySpellRES("%cuscene_petrification_spl%", %player%)
-    END
-
+    <<<<<<<< .../clear_maze.baf
     IF
         Exists(%player%)
         !StateCheck(%player%, STATE_REALLY_DEAD)
@@ -91,7 +78,7 @@ BEGIN
 
     ACTION_PHP_EACH PLAYERS AS _ => player BEGIN 
 
-        EXTEND_BOTTOM ~%this_cutscene%.BCS~ ~.../respawn_begin_player_prepare.baf~ 
+        EXTEND_BOTTOM ~%this_cutscene%.BCS~ ~.../clear_maze.baf~ 
             EVALUATE_BUFFER
     END
 
@@ -162,25 +149,10 @@ BEGIN
 END
 
 
-DEFINE_ACTION_FUNCTION APPLY_RESPAWN_CUTSCENE_PERTRIFICATION 
-    RET cuscene_petrification_spl
-BEGIN
-    OUTER_SPRINT cuscene_petrification_spl ~%RESREF_SPL_CUTSCENE_PETRIFICATION%~
-
-    CREATE ~SPL~ ~%cuscene_petrification_spl%~
-        LPF ADD_SPL_ABILITY RET ability_index END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_SLOW
-            timing = EFF_TIMING_INSTANT_PERMANENT // Allows for removal
-            END
-END
-
-
 DEFINE_ACTION_FUNCTION APPLY_RESPAWN_RESURRECTION 
     STR_VAR revive_death_spell = 0
             revive_petrification_spell = 0
             revive_imprisonment_spell = 0
-            cuscene_petrification_spl = 0
     RET resurrection_spl
 BEGIN
     OUTER_SPRINT resurrection_spl ~%RESREF_SPL_RESURRECTION%~
@@ -191,10 +163,6 @@ BEGIN
             opcode = EFF_OPCODE_PROTECTION_FROM_OPCODE
             parameter2 = EFF_OPCODE_PLAY_SOUND
             timing = EFF_TIMING_INSTANT_LIMITED
-            END
-        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-            opcode = EFF_OPCODE_REMOVE_EFFECTS_BY_RESOURCE
-            STR_VAR resource = ~%cuscene_petrification_spl%~
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_CAST_SPELL

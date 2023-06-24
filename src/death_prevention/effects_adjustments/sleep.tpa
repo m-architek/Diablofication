@@ -1,0 +1,32 @@
+DEFINE_ACTION_FUNCTION APPLY_SLEEP_PATCHES
+    STR_VAR patches_ref = 0
+    RET_ARRAY ~%patches_ref%~ patch_SLEEP
+BEGIN
+    COPY_EXISTING ~efftext.2da~ ~override~
+        LPF READ_2DA_ROW STR_VAR row_name = ~%EFF_OPCODE_SLEEP%~ 
+                RET_ARRAY sleep_efftext = out 
+                END
+        SET sleep_strref = $sleep_efftext(STRREF)
+
+        CLEAR_ARRAY efftext_patches
+        CLEAR_ARRAY sleep_strref_patch
+        SPRINT $sleep_strref_patch(STRREF) "-1"
+        SPRINT $efftext_patches(~%EFF_OPCODE_SLEEP%~) sleep_strref_patch
+        LPF PATCH_2DA_TABLE STR_VAR patches_ref = efftext_patches END
+        BUT_ONLY
+
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_SLEEP BEGIN
+        patch_type => ~CLONE~
+        match_opcode => EFF_OPCODE_SLEEP
+        opcode => EFF_OPCODE_DISPLAY_STRING
+        parameter1 => ~%sleep_strref%~
+        parameter2 => 0
+    END
+
+    ACTION_IF (sleep_strref != "-1") BEGIN 
+
+        ACTION_DEFINE_ASSOCIATIVE_ARRAY ~%patches_ref%~ BEGIN 
+            ~%DEATH_PREVENTION_PREFIX%_SLEEP~ => patch_SLEEP
+        END
+    END
+END

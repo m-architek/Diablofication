@@ -24,8 +24,8 @@ BEGIN
             TriggerOverride(Player1, False())
     THEN
         RESPONSE #100
+            ClearActions(%player%)
             ActionOverride(%player%, SetInterrupt(FALSE))
-            ActionOverride(%player%, ClearActions(Myself))
             ActionOverride(%player%, SetSequence(SEQ_SLEEP))
             ActionOverride(%player%, VerbalConstant(Myself, DYING))
             ActionOverride(%player%, ApplySpellRES("%fake_death_spell%", Myself))

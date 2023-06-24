@@ -10,6 +10,7 @@ INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments/replace_creature.tpa~
 INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments/instant_death.tpa~
 INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments/imprisonment.tpa~
 INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments/maze.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments/sleep.tpa~
 
 DEFINE_ACTION_FUNCTION APPLY_EFFECTS_ADJUSTMENTS
     STR_VAR kill_player_variable = 0
@@ -106,6 +107,11 @@ BEGIN
                   patch_MAZE_FIXED_END
                   patch_MAZE_START_IMMUNITY
                   patch_MAZE_END_IMMUNITY
+        END
+
+    LAF APPLY_SLEEP_PATCHES STR_VAR patches_ref = patches
+        RET_ARRAY patches 
+                  patch_SLEEP
         END
 
     LAF PATCH_EXISTING_EFFECTS STR_VAR patches_ref = patches END
