@@ -10,7 +10,6 @@ BEGIN
     THEN
         RESPONSE #100
             ApplySpellRES("%death_prevention_spell%", %player%)
-            ActionOverride(%player%, SetGlobal("%death_prevention_variable%", "LOCALS", 1))
             Continue()
     END
     >>>>>>>>

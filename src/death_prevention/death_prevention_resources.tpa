@@ -1,22 +1,31 @@
 DEFINE_ACTION_FUNCTION APPLY_DEATH_PREVENTION_RESOURCES
-    STR_VAR death_prevention_spell = 0
+    STR_VAR death_prevention_variable = 0
+            death_prevention_spell = 0
             death_prevention_remove_spell = 0
 BEGIN
     LAF APPLY_DEATH_PREVENTION_SPELL
-        STR_VAR death_prevention_spell 
+        STR_VAR death_prevention_variable
+                death_prevention_spell 
         END
     LAF APPLY_DEATH_PREVENTION_REMOVE_SPELL
-        STR_VAR death_prevention_remove_spell 
+        STR_VAR death_prevention_variable
+                death_prevention_remove_spell 
                 death_prevention_spell 
         END
 END
 
 
 DEFINE_ACTION_FUNCTION APPLY_DEATH_PREVENTION_SPELL 
-    STR_VAR death_prevention_spell = 0
+    STR_VAR death_prevention_variable = 0
+            death_prevention_spell = 0
 BEGIN
     CREATE ~SPL~ ~%death_prevention_spell%~
         LPF ADD_SPL_ABILITY RET ability_index END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
+            parameter1 = 1
+            STR_VAR resource = ~%death_prevention_variable%~
+            END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_HP_MINIMUM
             parameter1 = 1
@@ -76,7 +85,8 @@ END
 
 
 DEFINE_ACTION_FUNCTION APPLY_DEATH_PREVENTION_REMOVE_SPELL 
-    STR_VAR death_prevention_remove_spell = 0
+    STR_VAR death_prevention_variable = 0
+            death_prevention_remove_spell = 0
             death_prevention_spell = 0
 BEGIN 
     CREATE ~SPL~ ~%death_prevention_remove_spell%~
@@ -84,5 +94,10 @@ BEGIN
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_REMOVE_EFFECTS_BY_RESOURCE
             STR_VAR resource = ~%death_prevention_spell%~
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
+            parameter1 = 0
+            STR_VAR resource = ~%death_prevention_variable%~
             END
 END

@@ -59,6 +59,10 @@ BEGIN
             opcode = EFF_OPCODE_HP_CURRENT
             parameter1 = 1
             END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_SET_SEQ
+            parameter2 = 1 // Awake
+            END
 END
 
 
@@ -87,6 +91,10 @@ BEGIN
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_HP_CURRENT
             parameter1 = 1
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_PLAY_SOUND
+            STR_VAR resource = ~MISC_04A~
             END
 END
 

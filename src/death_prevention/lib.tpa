@@ -104,7 +104,8 @@ BEGIN
         LAF APPLY_AREAS_ADJUSTMENTS END
 
         LAF APPLY_DEATH_PREVENTION_RESOURCES
-            STR_VAR death_prevention_spell
+            STR_VAR death_prevention_variable
+                    death_prevention_spell
                     death_prevention_remove_spell
             END
 

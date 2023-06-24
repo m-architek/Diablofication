@@ -187,6 +187,11 @@ BEGIN
 
     CREATE ~SPL~ ~%resurrection_spl%~
         LPF ADD_SPL_ABILITY RET ability_index END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
+            opcode = EFF_OPCODE_PROTECTION_FROM_OPCODE
+            parameter2 = EFF_OPCODE_PLAY_SOUND
+            timing = EFF_TIMING_INSTANT_LIMITED
+            END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_REMOVE_EFFECTS_BY_RESOURCE
             STR_VAR resource = ~%cuscene_petrification_spl%~

@@ -7,7 +7,9 @@ BEGIN
         LPF READ_2DA_ROW_NAMES RET_ARRAY entries = out END
         SET last_entry = 0
         PHP_EACH entries AS entry => _ BEGIN 
-            SET last_entry = entry
+            PATCH_IF (entry > last_entry) BEGIN 
+                SET last_entry = entry
+            END
         END
 
         SET entry = last_entry + 1

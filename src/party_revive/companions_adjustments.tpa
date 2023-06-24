@@ -29,7 +29,6 @@ BEGIN
         RESPONSE #100
             DisplayString(Myself,%remove_dp_message_ref%)
             ApplySpellRES("%death_prevention_remove_spell%", Myself) 
-            SetGlobal("%death_prevention_variable%", "LOCALS", 0)
     END
 
     IF

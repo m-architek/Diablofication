@@ -7,6 +7,8 @@ DEFINE_ACTION_FUNCTION APPLY_DEATH_PREVENTION_SCRIPTS_ADJUSTMENTS
             revive_imprisonment_spell = 0
 BEGIN
     ACTION_CLEAR_ARRAY patches
+    OUTER_SET patches_not_empty = 0
+
     OUTER_SPRINT game_over_action ~~~~~
         SetGlobal("%game_over_variable%", "GLOBAL", 1)
         EndCutSceneMode()
@@ -16,10 +18,10 @@ BEGIN
         ReallyForceSpellRES("%fake_death_spell%", Player1)
         %game_over_action%
     ~~~~~
-    OUTER_SPRINT revive_action ~~
 
     ACTION_PHP_EACH ~%players_ref%~ AS player_index => player BEGIN 
-
+        OUTER_SET patches_not_empty = 1
+        
         ACTION_DEFINE_ASSOCIATIVE_ARRAY patches BEGIN 
             ~^%s%*HP(%player%,1)$~ => ~HP(%player%,2)~
             ~^%s%*HPLT(%player%,2)$~ => ~HPLT(%player%,3)~
@@ -45,23 +47,9 @@ BEGIN
                 ~~~~~
             END
         END
-        
-        OUTER_SPRINT revive_action ~~~~~
-            %revive_action%
-            ApplySpellRES("%revive_death_spell%", %player%)
-            ApplySpellRES("%revive_petrification_spell%", %player%)
-            ApplySpellRES("%revive_imprisonment_spell%", %player%)
-        ~~~~~
     END
 
-    ACTION_IF (NOT ~%revive_action%~ STR_EQ ~~) BEGIN 
-    
-        ACTION_DEFINE_ASSOCIATIVE_ARRAY patches BEGIN
-            ~^%s%*StartCutSceneMode()$~ => ~~~~~
-                %revive_action%
-                StartCutSceneMode()
-            ~~~~~
-        END
+    ACTION_IF (patches_not_empty) BEGIN 
 
         COPY_EXISTING_REGEXP GLOB ~^.+\.bcs$~ ~override~
             LPF PATCH_DEATH_PREVENTION_SCRIPTS_ADJUSTMENTS STR_VAR patches_ref = patches END
