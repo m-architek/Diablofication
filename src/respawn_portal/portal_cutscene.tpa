@@ -7,17 +7,18 @@ INCLUDE ~%COMPONENT_FOLDER%/portal_cutscene/portal_execution.tpa~
 
 DEFINE_ACTION_FUNCTION APPLY_PORTAL_CUTSCENE
     STR_VAR portal_open_variable = 0
-        portal_owner_variable = 0
-        portal_marker_dv = 0
-        give_return_spell = 0
-        candlekeep_enter_variable = 0
-        close_portal_action = 0
-        portal_begin_cutscene = 0
-        portal_end_cutscene = 0
+            portal_owner_variable = 0
+            portal_marker_dv = 0
+            give_return_spell = 0
+            candlekeep_enter_variable = 0
+            close_portal_action = 0
+            portal_begin_cutscene = 0
+            portal_end_cutscene = 0
+            portal_clarity_spell = 0
     RET portal_area_variable
         portal_master_area_variable
     RET_ARRAY all_areas 
-        master_areas
+              master_areas
 BEGIN
     OUTER_SPRINT portal_master_area_resolving_prefix ~%RESREF_BCS_PORTAL_MASTER_AREA_RESOLVING_PREFIX%~
     OUTER_SPRINT portal_area_resolving_prefix ~%RESREF_BCS_PORTAL_AREA_RESOLVING_PREFIX%~
@@ -26,12 +27,13 @@ BEGIN
 
     LAF APPLY_PORTAL_CUTSCENE_BEGIN
         STR_VAR portal_marker_dv
-            portal_open_variable
-            portal_owner_variable
-            give_return_spell
-            close_portal_action
-            this_cutscene = ~%portal_begin_cutscene%~
-            next_cutscene_prefix = ~%portal_master_area_resolving_prefix%~
+                portal_open_variable
+                portal_owner_variable
+                give_return_spell
+                close_portal_action
+                portal_clarity_spell
+                this_cutscene = ~%portal_begin_cutscene%~
+                next_cutscene_prefix = ~%portal_master_area_resolving_prefix%~
         END
 
     LAF APPLY_PORTAL_MASTER_AREA_RESOLVING
@@ -73,6 +75,7 @@ DEFINE_ACTION_FUNCTION APPLY_PORTAL_CUTSCENE_BEGIN
         close_portal_action = 0
         this_cutscene = 0
         next_cutscene_prefix = 0
+        portal_clarity_spell = 0
 BEGIN
     <<<<<<<< .../portal_begin.baf
     IF
@@ -81,6 +84,13 @@ BEGIN
         RESPONSE #100
             CutSceneId(Player1)
             %close_portal_action%
+
+            ApplySpellRES("%portal_clarity_spell%", Player1)
+            ApplySpellRES("%portal_clarity_spell%", Player2)
+            ApplySpellRES("%portal_clarity_spell%", Player3)
+            ApplySpellRES("%portal_clarity_spell%", Player4)
+            ApplySpellRES("%portal_clarity_spell%", Player5)
+            ApplySpellRES("%portal_clarity_spell%", Player6)
 
             SetGlobal("%portal_open_variable%", "GLOBAL", 1)
     END

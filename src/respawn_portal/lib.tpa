@@ -16,6 +16,7 @@ BEGIN
         INCLUDE ~%COMPONENT_FOLDER%/portal_cutscene.tpa~
         INCLUDE ~%COMPONENT_FOLDER%/return_cutscene.tpa~
         INCLUDE ~%COMPONENT_FOLDER%/portal_next_cutscene.tpa~
+        INCLUDE ~%COMPONENT_FOLDER%/portal_clarity_spell.tpa~
         
 
         OUTER_SPRINT portal_owner_variable ~%GLOBAL_PORTAL_OWNER%~
@@ -27,27 +28,31 @@ BEGIN
             OUTER_SPRINT return_begin_cutscene ~%RESREF_BCS_RETURN_BEGIN%~
 
             LAF APPLY_PORTAL_MARKER RET portal_marker_dv END
+
+            LAF APPLY_PORTAL_CLARITY_SPELL RET portal_clarity_spell END
             
             LAF APPLY_RETURN_SPELL STR_VAR return_cutscene = ~%return_begin_cutscene%~
-                RET give_return_spell remove_return_spell
+                RET give_return_spell 
+                    remove_return_spell
                 END
 
             LAF APPLY_SCRIPTS_ADJUSTMENTS 
                 STR_VAR portal_open_variable 
-                    remove_return_spell
+                        remove_return_spell
                 RET candlekeep_enter_variable
                     close_portal_action
                 END
             
             LAF APPLY_PORTAL_CUTSCENE
                 STR_VAR portal_open_variable
-                    portal_owner_variable
-                    portal_marker_dv
-                    give_return_spell
-                    candlekeep_enter_variable
-                    close_portal_action
-                    portal_begin_cutscene
-                    portal_end_cutscene
+                        portal_owner_variable
+                        portal_marker_dv
+                        give_return_spell
+                        candlekeep_enter_variable
+                        close_portal_action
+                        portal_begin_cutscene
+                        portal_end_cutscene
+                        portal_clarity_spell
                 RET portal_area_variable
                     portal_master_area_variable
                 RET_ARRAY all_areas 
@@ -56,19 +61,20 @@ BEGIN
 
             LAF APPLY_RETURN_CUTSCENE
                 STR_VAR return_begin_cutscene
-                    portal_marker_dv
-                    portal_area_variable
-                    portal_master_area_variable
-                    all_areas_ref = all_areas
-                    master_areas_ref = master_areas
-                    portal_open_variable
-                    close_portal_action
+                        portal_marker_dv
+                        portal_area_variable
+                        portal_master_area_variable
+                        all_areas_ref = all_areas
+                        master_areas_ref = master_areas
+                        portal_open_variable
+                        close_portal_action
+                        portal_clarity_spell
                 END
         END
 
         LAF APPLY_PORTAL_NEXT_CUTSCENE INT_VAR next_cutscene_index
             STR_VAR portal_end_cutscene
-                next_cutscene
+                    next_cutscene
             RET next_cutscene_variable
             END
 

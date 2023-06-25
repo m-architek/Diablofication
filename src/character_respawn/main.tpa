@@ -2,6 +2,7 @@ INCLUDE ~%src%/death_prevention/lib.tpa~
 INCLUDE ~%src%/respawn_portal/lib.tpa~
 
 INCLUDE ~%COMPONENT_FOLDER%/resources.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/areas_adjustments.tpa~
 INCLUDE ~%COMPONENT_FOLDER%/ducal_palace_adjustments.tpa~
 INCLUDE ~%COMPONENT_FOLDER%/respawn_trigger.tpa~
 INCLUDE ~%COMPONENT_FOLDER%/respawn_process.tpa~
@@ -28,6 +29,8 @@ LAF APPLY_DEATH_PREVENTION
         revive_imprisonment_spell 
         revive_cooldown_timer 
     END
+
+LAF APPLY_AREAS_ADJUSTMENTS END
 
 LAF APPLY_DUCAL_PALACE_ADJUSTMENTS 
     STR_VAR death_prevention_spell

@@ -1,8 +1,8 @@
 DEFINE_ACTION_FUNCTION APPLY_PORTAL_SPELL
     STR_VAR portal_cutscene = 0
-    RET portal_spell portal_onwer_local_varable
+    RET portal_spell portal_owner_local_variable
 BEGIN     
-    OUTER_SPRINT portal_onwer_local_varable ~%LOCALS_PORTAL_OWNER%~
+    OUTER_SPRINT portal_owner_local_variable ~%LOCALS_PORTAL_OWNER%~
 
     LAF EXTEND_CUT250_WITH_CUTSCENE STR_VAR cutscene = ~%portal_cutscene%~
         RET cut250_index
@@ -37,7 +37,7 @@ BEGIN
                 opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
                 target = EFF_TARGET_SELF
                 parameter1 = 1
-            STR_VAR resource = ~%portal_onwer_local_varable%~
+            STR_VAR resource = ~%portal_owner_local_variable%~
             END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
                 opcode = EFF_OPCODE_SCRIPT_MODIFY_GLOBAL_VAR

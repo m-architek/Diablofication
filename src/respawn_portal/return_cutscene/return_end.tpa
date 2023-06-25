@@ -33,61 +33,21 @@ BEGIN
             ApplySpellRES("%return_end_spell%", Player4)
             ApplySpellRES("%return_end_spell%", Player5)
             ApplySpellRES("%return_end_spell%", Player6)
-            
-            CreateVisualEffectObject("spdimndr", Player1)
-    END
 
-    IF
-        !StateCheck(Player2, STATE_REALLY_DEAD)
-    THEN
-        RESPONSE #100
-            CutSceneId(Player1)
-            CreateVisualEffectObject("spdimndr", Player2)
-    END
-
-    IF
-        !StateCheck(Player3, STATE_REALLY_DEAD)
-    THEN
-        RESPONSE #100
-            CutSceneId(Player1)
-            CreateVisualEffectObject("spdimndr", Player3)
-    END
-
-    IF
-        !StateCheck(Player4, STATE_REALLY_DEAD)
-    THEN
-        RESPONSE #100
-            CutSceneId(Player1)
-            CreateVisualEffectObject("spdimndr", Player4)
-    END
-
-    IF
-        !StateCheck(Player5, STATE_REALLY_DEAD)
-    THEN
-        RESPONSE #100
-            CutSceneId(Player1)
-            CreateVisualEffectObject("spdimndr", Player5)
-    END
-
-    IF
-        !StateCheck(Player6, STATE_REALLY_DEAD)
-    THEN
-        RESPONSE #100
-            CutSceneId(Player1)
-            CreateVisualEffectObject("spdimndr", Player6)
-    END
-
-    IF
-        True()
-    THEN
-        RESPONSE #100
-            CutSceneId(Player1)
             SetSequence(SEQ_READY)
             ActionOverride(Player2, SetSequence(SEQ_READY))
             ActionOverride(Player3, SetSequence(SEQ_READY))
             ActionOverride(Player4, SetSequence(SEQ_READY))
             ActionOverride(Player5, SetSequence(SEQ_READY))
             ActionOverride(Player6, SetSequence(SEQ_READY))
+            
+            ApplySpell(Player1, DRYAD_TELEPORT)
+            ApplySpell(Player2, DRYAD_TELEPORT)
+            ApplySpell(Player3, DRYAD_TELEPORT)
+            ApplySpell(Player4, DRYAD_TELEPORT)
+            ApplySpell(Player5, DRYAD_TELEPORT)
+            ApplySpell(Player6, DRYAD_TELEPORT)
+            
             SmallWait(15)
             FadeFromColor([30.0],0)
             SmallWait(30)

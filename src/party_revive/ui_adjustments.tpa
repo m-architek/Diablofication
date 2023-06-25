@@ -1,0 +1,28 @@
+DEFINE_ACTION_FUNCTION APPLY_UI_ADJUSTMENTS BEGIN
+    OUTER_SPRINT target_line @1
+
+    ACTION_CLEAR_ARRAY source_lines
+    OUTER_SPRINT $source_lines(~STRREF_GUI_MIXED_DEATH_MULTIPLAYER_CLIENT~) @11
+    OUTER_SPRINT $source_lines(~STRREF_GUI_MIXED_DEATH_MULTIPLAYER_SERVER~) @12
+    OUTER_SPRINT $source_lines(~STRREF_GUI_MIXED_DEATH_SINGLEPLAYER~) @13
+
+    COPY_EXISTING - ~enginest.2da~ ~~
+        CLEAR_ARRAY enginest_strrefs
+        LPF READ_2DA_COLUMN STR_VAR column_name = ~StrRef~
+            RET_ARRAY enginest_strrefs = out
+            END
+        BUT_ONLY
+
+    ACTION_PHP_EACH source_lines AS strref_key => source_line BEGIN 
+        OUTER_SET strref = $enginest_strrefs(~%strref_key%~)
+
+        ACTION_GET_STRREF strref text
+
+        OUTER_PATCH_SAVE text ~%text%~ BEGIN
+            PATCH_LOG ~Patching %strref_key% message (%strref%): '%text%' ('%source_line%' -> '%target_line%')~
+            REPLACE_TEXTUALLY CASE_INSENSITIVE EXACT_MATCH ~%source_line%~ ~%target_line%~
+        END
+
+        STRING_SET_EVALUATE strref ~%text%~
+    END
+END

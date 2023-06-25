@@ -14,7 +14,6 @@ BEGIN
         TriggerOverride(%player%, Global("%death_state_variable%", "LOCALS", 1))
         !TriggerOverride(%player%, ActuallyInCombat())
         !TriggerOverride(%player%, GlobalTimerNotExpired("%revive_cooldown_timer%", "LOCALS"))
-        Global("DB_REVIVE_OFF", "GLOBAL", 0) // TODO remove
     THEN
         RESPONSE #100
             ApplySpellRES("%revive_death_spell%", %player%)
@@ -26,7 +25,6 @@ BEGIN
         TriggerOverride(%player%, Global("%petrification_state_variable%", "LOCALS", 1))
         !TriggerOverride(%player%, ActuallyInCombat())
         !TriggerOverride(%player%, GlobalTimerNotExpired("%revive_cooldown_timer%", "LOCALS"))
-        Global("DB_REVIVE_OFF", "GLOBAL", 0) // TODO remove
     THEN
         RESPONSE #100
             ApplySpellRES("%revive_petrification_spell%", %player%)
@@ -38,7 +36,6 @@ BEGIN
         TriggerOverride(%player%, Global("%imprisonment_state_variable%", "LOCALS", 1))
         !TriggerOverride(%player%, ActuallyInCombat())
         !TriggerOverride(%player%, GlobalTimerNotExpired("%revive_cooldown_timer%", "LOCALS"))
-        Global("DB_REVIVE_OFF", "GLOBAL", 0) // TODO remove
     THEN
         RESPONSE #100
             ApplySpellRES("%revive_imprisonment_spell%", %player%)

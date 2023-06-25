@@ -144,3 +144,17 @@ BEGIN
         STR_VAR patches_ref
         END
 END
+
+
+DEFINE_PATCH_FUNCTION RESET_SPL_HEADER BEGIN
+    WRITE_LONG NAME1 0
+    WRITE_LONG UNIDENTIFIED_DESC 0
+    LPF ADD_SPL_HEADER END
+    LPF ALTER_SPELL_HEADER 
+        INT_VAR target = ITM_SPL_ABILITY_TARGET_LIVING_ACTOR
+                target_count = 0
+                range = 1
+                min_level = 1
+                projectile = 0
+        END
+END

@@ -1,6 +1,7 @@
 DEFINE_ACTION_FUNCTION APPLY_RETURN_SPELL 
     STR_VAR return_cutscene = 0
-    RET give_return_spell remove_return_spell
+    RET give_return_spell 
+        remove_return_spell
 BEGIN     
     LAF EXTEND_CUT250_WITH_CUTSCENE STR_VAR cutscene = ~%return_cutscene%~
         RET cut250_index

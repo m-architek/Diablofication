@@ -1,0 +1,48 @@
+DEFINE_ACTION_FUNCTION APPLY_PORTAL_CLARITY_SPELL 
+    RET portal_clarity_spell
+BEGIN
+    LAF SPELL_IDS_RESOURCE_OF_SYMBOL STR_VAR ids_name = CLERIC_SPIRITUAL_CLARITY
+        RET clarity_resref = spell_resource
+        END
+
+    COPY_EXISTING ~%clarity_resref%.SPL~ ~override/%RESREF_SPL_PORTAL_CLARITY_SUBSPELL%.SPL~
+        LPF RESET_SPL_HEADER END
+        LPF DELETE_SPELL_EFFECT INT_VAR opcode_to_delete = EFF_OPCODE_COLOR_PULSE END
+        LPF DELETE_SPELL_EFFECT INT_VAR opcode_to_delete = EFF_OPCODE_PLAY_SOUND END
+        LPF DELETE_SPELL_EFFECT INT_VAR opcode_to_delete = EFF_OPCODE_GRPAHICS_PLAY_EFFECT END
+        BUT_ONLY
+
+    OUTER_SPRINT portal_clarity_spell ~%RESREF_SPL_PORTAL_CLARITY%~
+
+    CREATE ~SPL~ ~%portal_clarity_spell%~
+        LPF ADD_SPL_ABILITY RET ability_index END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_REMOVE_OPCODE
+            parameter1 = "-1"
+            parameter2 = EFF_OPCODE_CHARM
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_REMOVE_OPCODE
+            parameter1 = "-1"
+            parameter2 = EFF_OPCODE_ALTERNATIVE_CHARM
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_REMOVE_OPCODE
+            parameter1 = "-1"
+            parameter2 = EFF_OPCODE_FREEDOM
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_FREEDOM
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
+            opcode = EFF_OPCODE_CAST_SPELL
+            parameter2 = 1 // Cast Instantly at caster level
+            STR_VAR resource = ~%RESREF_SPL_PORTAL_CLARITY_SUBSPELL%~
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_STAT_MORALE
+            parameter1 = 10
+            parameter2 = 1 // Set to value
+            special = 1 // Use parameters
+            END
+END

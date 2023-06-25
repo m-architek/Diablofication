@@ -21,7 +21,6 @@ BEGIN
     OUTER_SPRINT COMPONENT_FOLDER ~%src%/%COMPONENT%~
 
     INCLUDE ~%COMPONENT_FOLDER%/resources.tpa~
-    INCLUDE ~%COMPONENT_FOLDER%/areas_adjustments.tpa~
     INCLUDE ~%COMPONENT_FOLDER%/death_prevention_resources.tpa~
     INCLUDE ~%COMPONENT_FOLDER%/death_prevention_scripts.tpa~
     INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments.tpa~
@@ -66,13 +65,8 @@ BEGIN
     ACTION_CLEAR_ARRAY imprison_player_actions
     ACTION_PHP_EACH ~%players_ref%~ AS player_index => player BEGIN 
         OUTER_SPRINT $kill_player_actions(~%player_index%~) ~~~~~
-            ClearActions(%player%)
-            ActionOverride(%player%, SetInterrupt(FALSE))
-            ActionOverride(%player%, SetSequence(SEQ_SLEEP))
-            ActionOverride(%player%, VerbalConstant(Myself, DYING))
-            ActionOverride(%player%, ApplySpellRES("%fake_death_spell%", Myself))
+            ApplySpellRES("%fake_death_spell%", %player%)
             ActionOverride(%player%, SetGlobalTimer("%revive_cooldown_timer%", "LOCALS", ONE_ROUND))
-            ActionOverride(%player%, SetInterrupt(TRUE))
         ~~~~~
         OUTER_SPRINT $petrify_player_actions(~%player_index%~) ~~~~~
             ApplySpellRES("%fake_petrification_spell%", %player%)
@@ -121,8 +115,6 @@ BEGIN
                     maze_state_variable
             END
         
-        LAF APPLY_AREAS_ADJUSTMENTS END
-
         LAF APPLY_DEATH_PREVENTION_RESOURCES
             STR_VAR death_prevention_variable
                     death_prevention_spell

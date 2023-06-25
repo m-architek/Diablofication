@@ -5,6 +5,9 @@ INCLUDE ~%COMPONENT_FOLDER%/party_revive.tpa~
 INCLUDE ~%COMPONENT_FOLDER%/companions_adjustments.tpa~
 INCLUDE ~%COMPONENT_FOLDER%/death_reactions.tpa~
 INCLUDE ~%COMPONENT_FOLDER%/general_status_change.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/ui_adjustments.tpa~
+
+LOAD_TRA ~%tra%/%LANGUAGE%/%COMPONENT%.tra~
 
 LAF APPLY_DEATH_PREVENTION 
     STR_VAR players_ref = PLAYERS
@@ -50,3 +53,5 @@ LAF APPLY_GENERAL_STATUS_CHANGE
     STR_VAR death_state_variable
             fake_death_spell
     END
+
+LAF APPLY_UI_ADJUSTMENTS END

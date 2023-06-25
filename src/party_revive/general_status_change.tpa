@@ -92,15 +92,12 @@ BEGIN
 
         ACTION_PHP_EACH general_ids AS ids_id => ids_name BEGIN 
 
-            OUTER_SET message_ref = RESOLVE_STR_REF (~Setting GENERAL to %ids_id%~) // TODO remove
-
             OUTER_SPRINT revert_general_status_block ~~~~~
                 IF
                     TriggerOverride(%player%, Global("%general_status_variable%", "LOCALS", %ids_id%))
                 THEN
                     RESPONSE #100
                         CutSceneId(%player%)
-                        DisplayString(Myself,%message_ref%)
                         ChangeGeneral(%player%, %ids_id%)
                 END
             ~~~~~

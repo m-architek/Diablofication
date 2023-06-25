@@ -24,6 +24,9 @@ BEGIN
         LPF ADD_CRE_EFFECT INT_VAR opcode = EFF_OPCODE_INVISIBILITY 
             timing = EFF_TIMING_INSTANT_PERMANENT
             END
+        LPF ADD_CRE_EFFECT INT_VAR opcode = EFF_OPCODE_NON_DETECTION 
+            timing = EFF_TIMING_INSTANT_PERMANENT
+            END
         LPF ADD_CRE_EFFECT INT_VAR opcode = EFF_OPCODE_SANCTUARY 
             parameter2 = 1 // Custom overlay
             timing = EFF_TIMING_INSTANT_PERMANENT

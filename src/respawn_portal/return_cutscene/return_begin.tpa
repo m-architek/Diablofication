@@ -1,8 +1,9 @@
 DEFINE_ACTION_FUNCTION APPLY_RETURN_BEGIN
     STR_VAR portal_open_variable = 0
-        close_portal_action = 0
-        this_cutscene = 0
-        next_cutscene = 0
+            close_portal_action = 0
+            portal_clarity_spell = 0
+            this_cutscene = 0
+            next_cutscene = 0
     RET return_begin_spell
 BEGIN 
     LAF APPLY_RETURN_BEGIN_SPELL RET return_begin_spell END
@@ -34,6 +35,13 @@ BEGIN
             SmallWait(45)
             FadeToColor([30.0],0)
             SmallWait(30)
+
+            ApplySpellRES("%portal_clarity_spell%", Player1)
+            ApplySpellRES("%portal_clarity_spell%", Player2)
+            ApplySpellRES("%portal_clarity_spell%", Player3)
+            ApplySpellRES("%portal_clarity_spell%", Player4)
+            ApplySpellRES("%portal_clarity_spell%", Player5)
+            ApplySpellRES("%portal_clarity_spell%", Player6) 
 
             ApplySpellRES("%return_begin_spell%", Player1)
             ApplySpellRES("%return_begin_spell%", Player2)

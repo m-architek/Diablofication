@@ -21,8 +21,20 @@ BEGIN
             HP(%player%, 1)
             TriggerOverride(%player%, Global("%kill_player_variable%", "LOCALS", 1))
             TriggerOverride(Player1, False())
+        Global("%kill_player_next_tick_variable%", "GLOBAL", 0)
     THEN
         RESPONSE #100
+            ClearActions(%player%)
+            VerbalConstant(%player%, DYING)
+            SetGlobal("%kill_player_next_tick_variable%", "GLOBAL", 1)
+    END
+
+    IF
+        Exists(%player%)
+        Global("%kill_player_next_tick_variable%", "GLOBAL", 1)
+    THEN
+        RESPONSE #100
+            SetGlobal("%kill_player_next_tick_variable%", "GLOBAL", 0)
             %kill_player_action%
     END
 
@@ -55,6 +67,7 @@ BEGIN
         OUTER_SPRINT kill_player_action $~%kill_player_actions_ref%~(~%player_index%~)
         OUTER_SPRINT petrify_player_action $~%petrify_player_actions_ref%~(~%player_index%~)
         OUTER_SPRINT imprison_player_action $~%imprison_player_actions_ref%~(~%player_index%~)
+        OUTER_SPRINT kill_player_next_tick_variable ~%GLOBAL_KILL_PLAYER_NEXT_TICK_PREFIX%%player_index%~
 
         LAF EXTEND_GLOBAL_SCRIPT STR_VAR baf = ~.../apply_fake_death.baf~ END
     END

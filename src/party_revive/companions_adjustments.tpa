@@ -27,7 +27,6 @@ BEGIN
         Global("%death_prevention_variable%", "LOCALS", 1)
     THEN
         RESPONSE #100
-            DisplayString(Myself,%remove_dp_message_ref%)
             ApplySpellRES("%death_prevention_remove_spell%", Myself) 
     END
 
@@ -40,7 +39,6 @@ BEGIN
             Global("%imprisonment_state_variable%", "LOCALS", 1)
     THEN
         RESPONSE #100
-            DisplayString(Myself,%set_dead_message_ref%)
             SetGlobal("SPRITE_IS_DEAD%dv%", "GLOBAL", 1)
     END
 
@@ -53,16 +51,12 @@ BEGIN
         Global("%imprisonment_state_variable%", "LOCALS", 0)
     THEN
         RESPONSE #100
-            DisplayString(Myself,%unset_dead_message_ref%)
             SetGlobal("SPRITE_IS_DEAD%dv%", "GLOBAL", 0)
     END
     >>>>>>>>
 
 
     ACTION_PHP_EACH joinable_npc_scripts AS script_resref => dv BEGIN 
-        OUTER_SET remove_dp_message_ref = RESOLVE_STR_REF (~Removing DP~) // TODO remove
-        OUTER_SET set_dead_message_ref = RESOLVE_STR_REF (~Setting SPRITE_IS_DEAD%dv%~) // TODO remove
-        OUTER_SET unset_dead_message_ref = RESOLVE_STR_REF (~Clearing SPRITE_IS_DEAD%dv%~) // TODO remove
 
         EXTEND_TOP ~%script_resref%.BCS~ ~.../companion_script_adjustment.baf~ 
             EVALUATE_BUFFER
