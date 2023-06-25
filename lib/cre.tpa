@@ -1,5 +1,6 @@
 OUTER_SET CRE_HP_CURRENT_OFFSET = 0x0024 // 2 bytes
 OUTER_SET CRE_HP_MAX_OFFSET = 0x0026 // 2 bytes
+OUTER_SET CRE_EFF_VERSION_OFFSET = 0x0033 // 1 byte
 OUTER_SET CRE_LEVEL_1_OFFSET = 0x0234 // 1 byte
 OUTER_SET CRE_LEVEL_2_OFFSET = 0x0235 // 1 byte
 OUTER_SET CRE_LEVEL_3_OFFSET = 0x0236 // 1 byte
@@ -9,8 +10,24 @@ OUTER_SET CRE_CLASS_OFFSET = 0x0273 // 1 byte
 OUTER_SET CRE_ANIMATION_OFFSET = 0x0028 // 4 bytes
 OUTER_SET CRE_SCRIPT_OVERRIDE_OFFSET = 0x0248 // 8 bytes (resref)
 
+OUTER_SET CRE_KNOWN_SPELLS_OFFSET = 0x02a0 // 4 bytes
+OUTER_SET CRE_KNOWN_SPELLS_COUNT_OFFSET = 0x02a4 // 4 bytes
+OUTER_SET CRE_SPELL_INFO_OFFSET = 0x02a8 // 4 bytes
+OUTER_SET CRE_SPELL_INFO_COUNT_OFFSET = 0x02ac // 4 bytes
+OUTER_SET CRE_MEMORIZED_SPELLS_OFFSET = 0x02b0 // 4 bytes
+OUTER_SET CRE_MEMORIZED_SPELLS_COUNT_OFFSET = 0x02b4 // 4 bytes
+OUTER_SET CRE_ITEM_SLOTS_OFFSET = 0x02b8 // 4 bytes
+OUTER_SET CRE_ITEMS_OFFSET = 0x02bc // 4 bytes
+OUTER_SET CRE_ITEMS_COUNT_OFFSET = 0x02c0 // 4 bytes
+OUTER_SET CRE_EFFECTS_OFFSET = 0x02c4 // 4 bytes
+OUTER_SET CRE_EFFECTS_COUNT_OFFSET = 0x02c8 // 4 bytes
+
 OUTER_SET CRE_KIT_NONE = 0
 OUTER_SET CRE_KIT_TRUE_CLASS = 0x4000
+
+OUTER_SET CRE_EFF_VERSION_1 = 0
+OUTER_SET CRE_EFF_VERSION_2 = 1
+
 
 
 DEFINE_PATCH_FUNCTION READ_CRE_CLASS 
@@ -93,5 +110,87 @@ BEGIN
             END
 
         WRITE_ASCII CRE_SCRIPT_OVERRIDE_OFFSET ~%script_resref%~ #8 
+    END
+END
+
+
+DEFINE_PATCH_FUNCTION PATCH_CRE_EFFECTS 
+    STR_VAR patches_ref = 0
+BEGIN 
+    READ_LONG CRE_EFFECTS_OFFSET effects_offset
+    READ_LONG CRE_EFFECTS_COUNT_OFFSET effects_count
+    READ_BYTE CRE_EFF_VERSION_OFFSET eff_version
+    
+    PATCH_MATCH ~%eff_version%~ WITH
+        ~%CRE_EFF_VERSION_1%~ BEGIN
+            LPF PATCH_EFF_EFFECT_LIST INT_VAR offset_shift = effects_offset effects_count
+                STR_VAR patches_ref eff_strategy_ref = ~EFF_V1_STRATEGY~ effect_category = ~CRE~
+                RET effects_count_diff
+                END
+            LPF ADJUST_CRE_AFTER_EFFECTS_COUNT_CHANGE 
+                INT_VAR effects_count_diff
+                        effect_size = EFF_V1_SIZE
+                        effects_offset
+                        effects_count
+                RET effects_count
+                END
+        END
+        ~%CRE_EFF_VERSION_2%~ BEGIN 
+            LPF PATCH_EFF_EFFECT_LIST INT_VAR offset_shift = effects_offset effects_count
+                STR_VAR patches_ref eff_strategy_ref = ~EFF_V2CRE_STRATEGY~ effect_category = ~CRE~
+                RET effects_count_diff
+                END
+            LPF ADJUST_CRE_AFTER_EFFECTS_COUNT_CHANGE 
+                INT_VAR effects_count_diff
+                        effect_size = EFF_V2CRE_SIZE
+                        effects_offset
+                        effects_count
+                RET effects_count
+                END
+        END
+        DEFAULT PATCH_WARN ~PATCH_CRE_EFFECTS %SOURCE_EXT% %SOURCE_RES% invalid EFF version value: %eff_version%~
+    END
+END
+
+
+DEFINE_PATCH_FUNCTION ADJUST_CRE_AFTER_EFFECTS_COUNT_CHANGE 
+    INT_VAR effects_count_diff = ~~
+            effect_size = ~~
+            effects_offset = ~~
+            effects_count = ~~
+    RET effects_count
+BEGIN 
+    PATCH_IF (effects_count_diff != 0) BEGIN 
+        READ_LONG CRE_KNOWN_SPELLS_OFFSET known_spells_offset
+        READ_LONG CRE_SPELL_INFO_OFFSET spell_info_offset
+        READ_LONG CRE_MEMORIZED_SPELLS_OFFSET memorized_spells_offset
+        READ_LONG CRE_ITEM_SLOTS_OFFSET item_slots_offset
+        READ_LONG CRE_ITEMS_OFFSET items_offset
+        
+        SET offset_diff = effects_count_diff * effect_size
+
+        PATCH_IF (effects_offset < known_spells_offset) BEGIN 
+            SET known_spells_offset = known_spells_offset + offset_diff
+            WRITE_LONG CRE_KNOWN_SPELLS_OFFSET known_spells_offset
+        END
+        PATCH_IF (effects_offset < spell_info_offset) BEGIN 
+            SET spell_info_offset = spell_info_offset + offset_diff
+            WRITE_LONG CRE_SPELL_INFO_OFFSET spell_info_offset
+        END
+        PATCH_IF (effects_offset < memorized_spells_offset) BEGIN 
+            SET memorized_spells_offset = memorized_spells_offset + offset_diff
+            WRITE_LONG CRE_MEMORIZED_SPELLS_OFFSET memorized_spells_offset
+        END
+        PATCH_IF (effects_offset < item_slots_offset) BEGIN 
+            SET item_slots_offset = item_slots_offset + offset_diff
+            WRITE_LONG CRE_ITEM_SLOTS_OFFSET item_slots_offset
+        END
+        PATCH_IF (effects_offset < items_offset) BEGIN 
+            SET items_offset = items_offset + offset_diff
+            WRITE_LONG CRE_ITEMS_OFFSET items_offset
+        END
+
+        SET effects_count = effects_count + effects_count_diff
+        WRITE_LONG CRE_EFFECTS_COUNT_OFFSET effects_count
     END
 END

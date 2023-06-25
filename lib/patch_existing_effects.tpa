@@ -28,4 +28,11 @@ BEGIN
         SET counter = counter + 1
         LPF PRINT_PROGRESS INT_VAR count counter END
         BUT_ONLY
+
+    LAF JOINABLE_NPC_ARRAY RET_ARRAY JOINABLE_NPC_ARRAY END
+    ACTION_PHP_EACH JOINABLE_NPC_ARRAY AS cre => _ BEGIN
+        COPY_EXISTING ~%cre%~ ~override~
+            LPF PATCH_CRE_EFFECTS STR_VAR patches_ref END
+            BUT_ONLY
+    END
 END
