@@ -9,6 +9,7 @@ INCLUDE ~%COMPONENT_FOLDER%/general_status_change.tpa~
 LAF APPLY_DEATH_PREVENTION 
     STR_VAR players_ref = PLAYERS
     RET death_prevention_variable
+        death_prevention_spell
         death_prevention_remove_spell
         game_over_variable
         game_over_cutscene

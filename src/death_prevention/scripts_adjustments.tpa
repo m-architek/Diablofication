@@ -1,10 +1,7 @@
 DEFINE_ACTION_FUNCTION APPLY_DEATH_PREVENTION_SCRIPTS_ADJUSTMENTS 
     STR_VAR players_ref = 0 
             game_over_variable = 0
-            fake_death_spell = 0
-            revive_death_spell = 0
-            revive_petrification_spell = 0
-            revive_imprisonment_spell = 0
+            kill_player_actions_ref = 0
 BEGIN
     ACTION_CLEAR_ARRAY patches
     OUTER_SET patches_not_empty = 0
@@ -13,14 +10,11 @@ BEGIN
         SetGlobal("%game_over_variable%", "GLOBAL", 1)
         EndCutSceneMode()
     ~~~~~
-    OUTER_SPRINT kill_player1_action ~~~~~
-        VerbalConstant(Player1, DYING)
-        ReallyForceSpellRES("%fake_death_spell%", Player1)
-        %game_over_action%
-    ~~~~~
 
     ACTION_PHP_EACH ~%players_ref%~ AS player_index => player BEGIN 
         OUTER_SET patches_not_empty = 1
+        
+        OUTER_SPRINT kill_player_action $~%kill_player_actions_ref%~(~%player_index%~)
         
         ACTION_DEFINE_ASSOCIATIVE_ARRAY patches BEGIN 
             ~^%s%*HP(%player%,1)$~ => ~HP(%player%,2)~
@@ -35,16 +29,19 @@ BEGIN
                 ~^%s%*HPLT(Protagonist,2)$~ => ~HPLT(Protagonist,3)~
                 ~^%s%*!HPGT(Protagonist,1)$~ => ~!HPGT(Protagonist,2)~
                 ~^%s%*ChangeStat(Protagonist,CURHITPOINTS,1,SET)$~ => ~ChangeStat(Protagonist,CURHITPOINTS,2,SET)~
-                ~^%s%*Kill(Player1)$~ => ~%kill_player1_action%~
-                ~^%s%*Kill(Protagonist)$~ => ~%kill_player1_action%~
+                ~^%s%*Kill(Player1)$~ => ~~~~~
+                    %kill_player_action%
+                    %game_over_action%
+                ~~~~~
+                ~^%s%*Kill(Protagonist)$~ => ~~~~~
+                    %kill_player_action%
+                    %game_over_action%
+                ~~~~~
                 ~^%s%*GameOver(.*?)$~ => ~%game_over_action%~
             END
         END ELSE BEGIN 
             ACTION_DEFINE_ASSOCIATIVE_ARRAY patches BEGIN 
-                ~^%s%*Kill(%player%)$~ => ~~~~~
-                    VerbalConstant(%player%, DYING)
-                    ReallyForceSpellRES("%fake_death_spell%", %player%)
-                ~~~~~
+                ~^%s%*Kill(%player%)$~ => ~%kill_player_action%~
             END
         END
     END

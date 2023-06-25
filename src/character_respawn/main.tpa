@@ -2,7 +2,7 @@ INCLUDE ~%src%/death_prevention/lib.tpa~
 INCLUDE ~%src%/respawn_portal/lib.tpa~
 
 INCLUDE ~%COMPONENT_FOLDER%/resources.tpa~
-INCLUDE ~%COMPONENT_FOLDER%/scripts_adjustments.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/ducal_palace_adjustments.tpa~
 INCLUDE ~%COMPONENT_FOLDER%/respawn_trigger.tpa~
 INCLUDE ~%COMPONENT_FOLDER%/respawn_process.tpa~
 INCLUDE ~%COMPONENT_FOLDER%/respawn_penalty.tpa~
@@ -12,6 +12,7 @@ ACTION_DEFINE_ARRAY protagonist BEGIN Player1 END
 LAF APPLY_DEATH_PREVENTION 
     STR_VAR players_ref = protagonist
     RET death_prevention_variable
+        death_prevention_spell
         death_prevention_remove_spell
         game_over_variable
         game_over_cutscene
@@ -28,7 +29,12 @@ LAF APPLY_DEATH_PREVENTION
         revive_cooldown_timer 
     END
 
-LAF APPLY_SCRIPTS_ADJUSTMENTS END
+LAF APPLY_DUCAL_PALACE_ADJUSTMENTS 
+    STR_VAR death_prevention_spell
+            death_state_variable
+            fake_death_spell
+            revive_death_spell
+    END
 
 LAF APPLY_RESPAWN_PENALTY RET penalty_cutscene END
 

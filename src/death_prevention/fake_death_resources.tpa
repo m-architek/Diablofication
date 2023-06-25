@@ -33,9 +33,7 @@ BEGIN
 
     CREATE ~SPL~ ~%fake_death_spell%~
         LPF ADD_SPL_ABILITY RET ability_index END
-        LPF ADD_FAKE_DEATH_COMMON_EFFECTS INT_VAR ability_index 
-            STR_VAR this_resource = ~%fake_death_spell%~
-            END
+        LPF ADD_FAKE_DEATH_COMMON_EFFECTS INT_VAR ability_index END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
             parameter1 = 1
@@ -79,9 +77,7 @@ BEGIN
 
     CREATE ~SPL~ ~%fake_petrification_spell%~
         LPF ADD_SPL_ABILITY RET ability_index END
-        LPF ADD_FAKE_DEATH_COMMON_EFFECTS INT_VAR ability_index 
-            STR_VAR this_resource = ~%fake_petrification_spell%~
-            END
+        LPF ADD_FAKE_DEATH_COMMON_EFFECTS INT_VAR ability_index END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
             parameter1 = 1
@@ -138,9 +134,7 @@ BEGIN
 
     CREATE ~SPL~ ~%fake_imprisonment_spell%~
         LPF ADD_SPL_ABILITY RET ability_index END
-        LPF ADD_FAKE_DEATH_COMMON_EFFECTS INT_VAR ability_index 
-            STR_VAR this_resource = ~%fake_imprisonment_spell%~
-            END
+        LPF ADD_FAKE_DEATH_COMMON_EFFECTS INT_VAR ability_index END
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
             parameter1 = 1
@@ -169,15 +163,7 @@ END
 
 DEFINE_PATCH_FUNCTION ADD_FAKE_DEATH_COMMON_EFFECTS 
     INT_VAR ability_index = ~~
-    STR_VAR this_resource = 0
 BEGIN  
-    LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
-        opcode = EFF_OPCODE_PROTECTION_FROM_RESOURCE
-        parameter1 = 2 // PC
-        parameter2 = 112 // EA!=n
-        timing = EFF_TIMING_INSTANT_LIMITED
-        STR_VAR resource = ~%this_resource%~
-        END
     LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
         opcode = EFF_OPCODE_STAT_MORALE
         parameter1 = 10

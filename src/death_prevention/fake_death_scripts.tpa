@@ -1,15 +1,14 @@
 DEFINE_ACTION_FUNCTION APPLY_FAKE_DEATH_SCRIPTS
     STR_VAR players_ref = 0 
-            fake_death_spell = 0 
-            fake_petrification_spell = 0 
-            fake_imprisonment_spell = 0 
             kill_player_variable = 0
             petrify_player_variable = 0
             imprison_player_variable = 0
             death_state_variable = 0
             petrification_state_variable = 0
             imprisonment_state_variable = 0
-            revive_cooldown_timer = 0
+            kill_player_actions_ref = 0
+            petrify_player_actions_ref = 0
+            imprison_player_actions_ref = 0
 BEGIN
     <<<<<<<< .../apply_fake_death.baf
     IF
@@ -24,13 +23,7 @@ BEGIN
             TriggerOverride(Player1, False())
     THEN
         RESPONSE #100
-            ClearActions(%player%)
-            ActionOverride(%player%, SetInterrupt(FALSE))
-            ActionOverride(%player%, SetSequence(SEQ_SLEEP))
-            ActionOverride(%player%, VerbalConstant(Myself, DYING))
-            ActionOverride(%player%, ApplySpellRES("%fake_death_spell%", Myself))
-            ActionOverride(%player%, SetGlobalTimer("%revive_cooldown_timer%", "LOCALS", ONE_ROUND))
-            ActionOverride(%player%, SetInterrupt(TRUE))
+            %kill_player_action%
     END
 
     IF
@@ -42,8 +35,7 @@ BEGIN
         TriggerOverride(%player%, Global("%petrify_player_variable%", "LOCALS", 1))
     THEN
         RESPONSE #100
-            ApplySpellRES("%fake_petrification_spell%", %player%)
-            ActionOverride(%player%, SetGlobalTimer("%revive_cooldown_timer%", "LOCALS", ONE_ROUND)) 
+            %petrify_player_action%
     END
 
     IF
@@ -55,12 +47,14 @@ BEGIN
         TriggerOverride(%player%, Global("%imprison_player_variable%", "LOCALS", 1))
     THEN
         RESPONSE #100
-            ApplySpellRES("%fake_imprisonment_spell%", %player%)
-            ActionOverride(%player%, SetGlobalTimer("%revive_cooldown_timer%", "LOCALS", ONE_ROUND))         
+            %imprison_player_action%
     END
     >>>>>>>>
                    
     ACTION_PHP_EACH ~%players_ref%~ AS player_index => player BEGIN 
+        OUTER_SPRINT kill_player_action $~%kill_player_actions_ref%~(~%player_index%~)
+        OUTER_SPRINT petrify_player_action $~%petrify_player_actions_ref%~(~%player_index%~)
+        OUTER_SPRINT imprison_player_action $~%imprison_player_actions_ref%~(~%player_index%~)
 
         LAF EXTEND_GLOBAL_SCRIPT STR_VAR baf = ~.../apply_fake_death.baf~ END
     END

@@ -1,6 +1,7 @@
 DEFINE_ACTION_FUNCTION APPLY_DEATH_PREVENTION 
     STR_VAR players_ref = 0
     RET death_prevention_variable
+        death_prevention_spell
         death_prevention_remove_spell
         game_over_variable
         game_over_cutscene
@@ -60,13 +61,33 @@ BEGIN
     END
     OUTER_SPRINT players_ref players_adjusted
 
+    ACTION_CLEAR_ARRAY kill_player_actions
+    ACTION_CLEAR_ARRAY petrify_player_actions
+    ACTION_CLEAR_ARRAY imprison_player_actions
+    ACTION_PHP_EACH ~%players_ref%~ AS player_index => player BEGIN 
+        OUTER_SPRINT $kill_player_actions(~%player_index%~) ~~~~~
+            ClearActions(%player%)
+            ActionOverride(%player%, SetInterrupt(FALSE))
+            ActionOverride(%player%, SetSequence(SEQ_SLEEP))
+            ActionOverride(%player%, VerbalConstant(Myself, DYING))
+            ActionOverride(%player%, ApplySpellRES("%fake_death_spell%", Myself))
+            ActionOverride(%player%, SetGlobalTimer("%revive_cooldown_timer%", "LOCALS", ONE_ROUND))
+            ActionOverride(%player%, SetInterrupt(TRUE))
+        ~~~~~
+        OUTER_SPRINT $petrify_player_actions(~%player_index%~) ~~~~~
+            ApplySpellRES("%fake_petrification_spell%", %player%)
+            ActionOverride(%player%, SetGlobalTimer("%revive_cooldown_timer%", "LOCALS", ONE_ROUND))
+        ~~~~~
+        OUTER_SPRINT $imprison_player_actions(~%player_index%~) ~~~~~
+            ApplySpellRES("%fake_imprisonment_spell%", %player%)
+            ActionOverride(%player%, SetGlobalTimer("%revive_cooldown_timer%", "LOCALS", ONE_ROUND))
+        ~~~~~
+    END
+
     LAF APPLY_DEATH_PREVENTION_SCRIPTS_ADJUSTMENTS 
         STR_VAR players_ref
                 game_over_variable
-                fake_death_spell
-                revive_death_spell
-                revive_petrification_spell
-                revive_imprisonment_spell
+                kill_player_actions_ref = kill_player_actions
         END
 
     LAF APPLY_DEATH_PREVENTION_SCRIPTS
@@ -77,16 +98,15 @@ BEGIN
 
     LAF APPLY_FAKE_DEATH_SCRIPTS
         STR_VAR players_ref
-                fake_death_spell
-                fake_petrification_spell
-                fake_imprisonment_spell
                 kill_player_variable
                 petrify_player_variable
                 imprison_player_variable
                 death_state_variable
                 petrification_state_variable
                 imprisonment_state_variable
-                revive_cooldown_timer
+                kill_player_actions_ref = kill_player_actions
+                petrify_player_actions_ref = petrify_player_actions
+                imprison_player_actions_ref = imprison_player_actions
         END
 
     ACTION_IF (NOT FILE_EXISTS_IN_GAME ~%death_prevention_spell%.SPL~) BEGIN 

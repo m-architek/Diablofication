@@ -1,0 +1,64 @@
+DEFINE_ACTION_FUNCTION APPLY_DUCAL_PALACE_ADJUSTMENTS 
+    STR_VAR death_prevention_spell = 0
+            death_state_variable = 0
+            fake_death_spell = 0
+            revive_death_spell = 0
+BEGIN 
+
+    COPY_EXISTING ~AR0108.BCS~ ~override~
+        DECOMPILE_AND_PATCH BEGIN
+            PATCH_FOR_EACH duke_dv IN ~LIIA~ ~BELT~ BEGIN
+
+                REPLACE_EVALUATE CASE_INSENSITIVE ~^%s%*CreateCreature("%duke_dv%",.*?)$~
+                    BEGIN 
+                        PATCH_LOG ~APPLY_DUCAL_PALACE_ADJUSTMENTS %SOURCE_EXT% %SOURCE_RES%: %MATCH0%~
+                    END 
+                    ~~~~~
+                        %MATCH0%
+                        ApplySpellRES("%death_prevention_spell%", "%duke_dv%")
+                    ~~~~~
+            END 
+        END
+        BUT_ONLY
+
+    <<<<<<<< .../duke_death_prevention.baf
+    IF
+        Exists("%duke_dv%")
+        !StateCheck("%duke_dv%", STATE_REALLY_DEAD)
+        !TriggerOverride("%duke_dv%", Global("%death_state_variable%", "LOCALS", 1))
+        HP("%duke_dv%", 1)
+    THEN
+        RESPONSE #100
+            ClearActions("%duke_dv%")
+            ActionOverride("%duke_dv%", SetInterrupt(FALSE))
+            ActionOverride("%duke_dv%", SetSequence(SEQ_SLEEP))
+            ActionOverride("%duke_dv%", VerbalConstant(Myself, DYING))
+            ActionOverride("%duke_dv%", ApplySpellRES("%fake_death_spell%", Myself))
+            ActionOverride("%duke_dv%", SetInterrupt(TRUE))
+    END
+    
+    IF
+        Exists("%duke_dv%")
+        !StateCheck("%duke_dv%", STATE_REALLY_DEAD)
+        TriggerOverride("%duke_dv%", Global("%death_state_variable%", "LOCALS", 1))
+        !TriggerOverride(Player1, ActuallyInCombat())
+        Dead("GDOPP7")
+        Dead("GDOPP71")
+        Dead("GDOPP72")
+        Dead("GDOPP73")
+        Dead("GDOPP74")
+        Dead("GDOPP75")
+    THEN
+        RESPONSE #100
+            ApplySpellRES("%revive_death_spell%", "%duke_dv%")
+    END
+    >>>>>>>>
+
+    EXTEND_BOTTOM ~AR0108.BCS~ ~.../duke_death_prevention.baf~
+        SPRINT duke_dv ~LIIA~
+        EVALUATE_BUFFER
+
+    EXTEND_BOTTOM ~AR0108.BCS~ ~.../duke_death_prevention.baf~
+        SPRINT duke_dv ~BELT~
+        EVALUATE_BUFFER
+END
