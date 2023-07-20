@@ -9,7 +9,7 @@ BEGIN
         DECOMPILE_AND_PATCH BEGIN
             PATCH_FOR_EACH duke_dv IN ~LIIA~ ~BELT~ BEGIN
 
-                REPLACE_EVALUATE CASE_INSENSITIVE ~^%s%*CreateCreature("%duke_dv%",.*?)$~
+                REPLACE_EVALUATE CASE_INSENSITIVE ~CreateCreature("%duke_dv%",.*?)~
                     BEGIN 
                         PATCH_LOG ~APPLY_DUCAL_PALACE_ADJUSTMENTS %SOURCE_EXT% %SOURCE_RES%: %MATCH0%~
                     END 

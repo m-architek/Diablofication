@@ -2,9 +2,9 @@ DEFINE_ACTION_FUNCTION APPLY_SCRIPTS_ADJUSTMENTS BEGIN
     
     ACTION_CLEAR_ARRAY add_xp_patterns
     ACTION_DEFINE_ARRAY add_xp_patterns BEGIN
-        ~^%s%*AddExperienceParty(.*?)$~
-        ~^%s%*AddXPObject(.*?)$~
-        ~^%s%*AddXP2DA(.*?)$~
+        ~AddExperienceParty(.*?)~
+        ~AddXPObject(.*?)~
+        ~AddXP2DA(.*?)~
     END
 
     COPY_EXISTING_REGEXP GLOB ~^.+\.dlg$~ ~override~

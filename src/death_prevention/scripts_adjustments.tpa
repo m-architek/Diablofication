@@ -17,31 +17,31 @@ BEGIN
         OUTER_SPRINT kill_player_action $~%kill_player_actions_ref%~(~%player_index%~)
         
         ACTION_DEFINE_ASSOCIATIVE_ARRAY patches BEGIN 
-            ~^%s%*HP(%player%,1)$~ => ~HP(%player%,2)~
-            ~^%s%*HPLT(%player%,2)$~ => ~HPLT(%player%,3)~
-            ~^%s%*!HPGT(%player%,1)$~ => ~!HPGT(%player%,2)~
-            ~^%s%*ChangeStat(%player%,CURHITPOINTS,1,SET)$~ => ~ChangeStat(%player%,CURHITPOINTS,2,SET)~
+            ~HP(%player%,1)~ => ~HP(%player%,2)~
+            ~HPLT(%player%,2)~ => ~HPLT(%player%,3)~
+            ~!HPGT(%player%,1)~ => ~!HPGT(%player%,2)~
+            ~ChangeStat(%player%,CURHITPOINTS,1,SET)~ => ~ChangeStat(%player%,CURHITPOINTS,2,SET)~
         END
 
         ACTION_IF (~%player%~ STR_EQ ~Player1~) BEGIN 
             ACTION_DEFINE_ASSOCIATIVE_ARRAY patches BEGIN
-                ~^%s%*HP(Protagonist,1)$~ => ~HP(Protagonist,2)~
-                ~^%s%*HPLT(Protagonist,2)$~ => ~HPLT(Protagonist,3)~
-                ~^%s%*!HPGT(Protagonist,1)$~ => ~!HPGT(Protagonist,2)~
-                ~^%s%*ChangeStat(Protagonist,CURHITPOINTS,1,SET)$~ => ~ChangeStat(Protagonist,CURHITPOINTS,2,SET)~
-                ~^%s%*Kill(Player1)$~ => ~~~~~
+                ~HP(Protagonist,1)~ => ~HP(Protagonist,2)~
+                ~HPLT(Protagonist,2)~ => ~HPLT(Protagonist,3)~
+                ~!HPGT(Protagonist,1)~ => ~!HPGT(Protagonist,2)~
+                ~ChangeStat(Protagonist,CURHITPOINTS,1,SET)~ => ~ChangeStat(Protagonist,CURHITPOINTS,2,SET)~
+                ~Kill(Player1)~ => ~~~~~
                     %kill_player_action%
                     %game_over_action%
                 ~~~~~
-                ~^%s%*Kill(Protagonist)$~ => ~~~~~
+                ~Kill(Protagonist)~ => ~~~~~
                     %kill_player_action%
                     %game_over_action%
                 ~~~~~
-                ~^%s%*GameOver(.*?)$~ => ~%game_over_action%~
+                ~GameOver(.*?)~ => ~%game_over_action%~
             END
         END ELSE BEGIN 
             ACTION_DEFINE_ASSOCIATIVE_ARRAY patches BEGIN 
-                ~^%s%*Kill(%player%)$~ => ~%kill_player_action%~
+                ~Kill(%player%)~ => ~%kill_player_action%~
             END
         END
     END
