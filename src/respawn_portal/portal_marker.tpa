@@ -11,7 +11,6 @@ BEGIN
         WRITE_ASCII SCRIPT_OVERRIDE ~%portal_marker_script%~ #8
         LPF PATCH_CRE_HP INT_VAR current_hp = 1 max_hp = 1 END
         LPF PATCH_CRE_EA INT_VAR ea = IDS_OF_SYMBOL (EA NEUTRAL) END
-        LPF PATCH_CRE_ANIMATION INT_VAR animation = IDS_OF_SYMBOL (ANIMATE BIRD) END
         ADD_CRE_ITEM ~MINHP1~ #0 #0 #0 ~NONE~ ~AMULET~
         ADD_CRE_ITEM ~MAGE01~ #0 #0 #0 ~NONE~ ~RING~
         LPF ADD_CRE_EFFECT INT_VAR opcode = EFF_OPCODE_GRAPHICS_ANIMATION_REMOVAL 
@@ -32,7 +31,12 @@ BEGIN
             timing = EFF_TIMING_INSTANT_PERMANENT
             END
         LPF ADD_CRE_EFFECT INT_VAR opcode = EFF_OPCODE_PROTECTION_FROM_CREATURE_TYPE 
-            parameter1 = 0 // ANYONE
+            parameter1 = 255 // ENEMY
+            parameter2 = 2 // EA
+            timing = EFF_TIMING_INSTANT_PERMANENT
+            END
+        LPF ADD_CRE_EFFECT INT_VAR opcode = EFF_OPCODE_PROTECTION_FROM_CREATURE_TYPE 
+            parameter1 = 128 // NEUTRAL
             parameter2 = 2 // EA
             timing = EFF_TIMING_INSTANT_PERMANENT
             END
