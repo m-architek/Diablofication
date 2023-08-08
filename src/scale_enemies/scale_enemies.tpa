@@ -1,0 +1,91 @@
+DEFINE_ACTION_FUNCTION APPLY_SCALE_ENEMIES BEGIN
+    PRINT ~~
+    PRINT ~Patching existing creatures. This can take a while...~
+    PRINT ~~
+
+    LAF JOINABLE_NPC_ARRAY RET_ARRAY JOINABLE_NPC_ARRAY END
+
+    ACTION_CLEAR_ARRAY scale_enemies_parameters
+    ACTION_CLEAR_ARRAY scale_enemies_scripts
+
+    LAF COUNT_EXISTING STR_VAR glob = ~^.+\.cre$~ RET count END
+    OUTER_SET counter = 0
+
+    COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
+
+        PATCH_IF (NOT VARIABLE_IS_SET $JOINABLE_NPC_ARRAY(~%SOURCE_FILE%~)) BEGIN 
+            LPF READ_CRE_XP_VALUE RET xp_value END
+
+            PATCH_IF (xp_value > 1) BEGIN 
+                LPF READ_CRE_HP RET current_hp max_hp END
+
+                PATCH_IF (max_hp > 1) BEGIN 
+                    
+                    LPF RESOLVE_CRE_OVERRIDE_SCRIPT STR_VAR prefix = ~%SCALE_ENEMIES_PREFIX%~
+                        RET script_resref
+                        END
+
+                    SPRINT $scale_enemies_parameters(~%script_resref%~ ~%xp_value%~ ~%max_hp%~) ~~
+                    SPRINT $scale_enemies_scripts(~%script_resref%~) ~~
+                END
+            END
+        END
+        SET counter = counter + 1
+        LPF PRINT_PROGRESS INT_VAR count counter END
+        BUT_ONLY
+
+
+    ACTION_PHP_EACH scale_enemies_parameters AS key => _ BEGIN 
+        OUTER_SPRINT script_resref ~%key_0%~
+        OUTER_SET xp_value = ~%key_1%~
+        OUTER_SET max_hp = ~%key_2%~
+
+        OUTER_SPRINT scale_enemies_script $scale_enemies_scripts(~%script_resref%~)
+
+        OUTER_FOR (num_in_party = 1; num_in_party < MAX_IN_PARTY; ++num_in_party) BEGIN 
+            OUTER_SET xp_rate = (100 * num_in_party) / MAX_IN_PARTY
+            OUTER_SET hp_rate = 50 + ((50 * num_in_party) / MAX_IN_PARTY)
+            
+            OUTER_SET new_xp_value = (xp_value * xp_rate) / 100
+            OUTER_SET new_max_hp = (max_hp * hp_rate) / 100
+
+            ACTION_IF (new_xp_value < 1) BEGIN 
+                OUTER_SET new_xp_value = 1
+            END
+            ACTION_IF (new_max_hp < 1) BEGIN 
+                OUTER_SET new_max_hp = 1
+            END
+            
+            OUTER_SPRINT scale_enemies_script ~%scale_enemies_script%~ ^ ~~~~~
+                IF
+                    Global("%LOCALS_SCALE_ENEMIES_ON%", "LOCALS", 0)
+                    NumInParty(%num_in_party%)
+                    CheckStat(Myself, %xp_value%, XPVALUE)
+                    CheckStat(Myself, %max_hp%, MAXHITPOINTS)
+                THEN
+                    RESPONSE #100
+                        ChangeStat(Myself, XPVALUE, %new_xp_value%, SET) 
+                        ChangeStat(Myself, MAXHITPOINTS, %new_max_hp%, SET) 
+                        SetGlobal("%LOCALS_SCALE_ENEMIES_ON%", "LOCALS", 1)
+                END
+            ~~~~~
+        END
+
+        OUTER_SPRINT $scale_enemies_scripts(~%script_resref%~) ~%scale_enemies_script%~
+    END
+
+    ACTION_PHP_EACH scale_enemies_scripts AS script_resref => scale_enemies_script BEGIN 
+        
+        OUTER_SPRINT scale_enemies_script ~~~~~
+            IF
+                Global("%LOCALS_SCALE_ENEMIES_ON%", "LOCALS", 0)
+                NumInParty(%MAX_IN_PARTY%)
+            THEN
+                RESPONSE #100
+                    SetGlobal("%LOCALS_SCALE_ENEMIES_ON%", "LOCALS", 1)
+            END
+        ~~~~~ ^ ~%scale_enemies_script%~ 
+
+        LAF APPEND_BCS STR_VAR resource = ~%script_resref%~ script = ~%scale_enemies_script%~ END
+    END
+END

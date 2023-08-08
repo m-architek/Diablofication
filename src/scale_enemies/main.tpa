@@ -1,0 +1,5 @@
+INCLUDE ~%COMPONENT_FOLDER%/resources.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/scale_enemies.tpa~
+
+LAF APPLY_SCALE_ENEMIES END
+ 

@@ -1,3 +1,4 @@
+OUTER_SET CRE_XP_VALUE_OFFSET = 0x0014 // 4 bytes
 OUTER_SET CRE_HP_CURRENT_OFFSET = 0x0024 // 2 bytes
 OUTER_SET CRE_HP_MAX_OFFSET = 0x0026 // 2 bytes
 OUTER_SET CRE_EFF_VERSION_OFFSET = 0x0033 // 1 byte
@@ -71,6 +72,13 @@ BEGIN
 END
 
 
+DEFINE_PATCH_FUNCTION READ_CRE_XP_VALUE
+    RET xp_value
+BEGIN
+    READ_LONG CRE_XP_VALUE_OFFSET xp_value
+END
+
+
 DEFINE_PATCH_FUNCTION PATCH_CRE_HP
     INT_VAR current_hp = ~~
         max_hp = ~~
@@ -101,11 +109,11 @@ BEGIN
     READ_ASCII CRE_SCRIPT_OVERRIDE_OFFSET script_resref
 
     PATCH_IF (NOT FILE_EXISTS_IN_GAME ~%script_resref%.BCS~) BEGIN 
-        PATCH_LOG ~Creating Override script for %SOURCE_RES% %SOURCE_FILE%. Existing value: %script_resref%~
+        PATCH_LOG ~Creating Override script for %SOURCE_EXT% %SOURCE_RES%. Existing value: %script_resref%~
 
         LPF GET_UNIQUE_FILE_NAME 
             STR_VAR extension = ~BCS~
-                    base = ~%prefix%#%SOURCE_FILE%_OVERRIDE_SCRIPT~
+                    base = ~%prefix%#OVERRIDE_SCRIPT#%SOURCE_RES%~
             RET script_resref = filename
             END
 
