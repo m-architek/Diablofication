@@ -41,7 +41,7 @@ LANGUAGE ~Polish~ ~polish~
 
 
 BEGIN "Town Portal (Beta)" 
-LABEL ~town_portal~
+LABEL ~db-diablofication-town_portal~
 REQUIRE_PREDICATE GAME_IS ~bgee~ ~BG1 EE is required.~
 REQUIRE_PREDICATE NOT GAME_INCLUDES ~sod~ ~SoD not supported.~
 
@@ -56,7 +56,7 @@ END
 
 
 BEGIN "Identification For All" 
-LABEL ~identification~
+LABEL ~db-diablofication-identification~
 REQUIRE_PREDICATE GAME_IS ~bgee~ ~BG1 EE is required.~
 REQUIRE_PREDICATE NOT GAME_INCLUDES ~sod~ ~SoD not supported.~
 
@@ -71,7 +71,7 @@ END
 
 
 BEGIN "Party Revive After Combat (Beta)" 
-LABEL ~party_revive~
+LABEL ~db-diablofication-party_revive~
 REQUIRE_PREDICATE GAME_IS ~bgee~ ~BG1 EE is required.~
 REQUIRE_PREDICATE NOT GAME_INCLUDES ~sod~ ~SoD not supported.~
 
@@ -86,7 +86,7 @@ END
 
 
 BEGIN "Character Respawn (Beta)" 
-LABEL ~character_respawn~
+LABEL ~db-diablofication-character_respawn~
 REQUIRE_PREDICATE GAME_IS ~bgee~ ~BG1 EE is required.~
 REQUIRE_PREDICATE NOT GAME_INCLUDES ~sod~ ~SoD not supported.~
 
@@ -101,7 +101,7 @@ END
 
 
 BEGIN "Remove Non-Combat Experience"
-LABEL ~noncombat_xp~
+LABEL ~db-diablofication-noncombat_xp~
 REQUIRE_PREDICATE GAME_IS ~bgee~ ~BG1 EE is required.~
 REQUIRE_PREDICATE NOT GAME_INCLUDES ~sod~ ~SoD not supported.~
 
@@ -116,7 +116,7 @@ END
 
 
 BEGIN "Spells Regeneration"
-LABEL ~spells_regen~
+LABEL ~db-diablofication-spells_regen~
 REQUIRE_PREDICATE GAME_IS ~bgee~ ~BG1 EE is required.~
 REQUIRE_PREDICATE NOT GAME_INCLUDES ~sod~ ~SoD not supported.~
 
@@ -131,7 +131,7 @@ END
 
 
 BEGIN "More HP on Level One"
-LABEL ~level1_hp~
+LABEL ~db-diablofication-level1_hp~
 REQUIRE_PREDICATE GAME_IS ~bgee~ ~BG1 EE is required.~
 REQUIRE_PREDICATE NOT GAME_INCLUDES ~sod~ ~SoD not supported.~
 
@@ -146,7 +146,7 @@ END
 
 
 BEGIN "More Proficiency Points"
-LABEL ~proficiency~
+LABEL ~db-diablofication-proficiency~
 REQUIRE_PREDICATE GAME_IS ~bgee~ ~BG1 EE is required.~
 REQUIRE_PREDICATE NOT GAME_INCLUDES ~sod~ ~SoD not supported.~
 
@@ -161,7 +161,7 @@ END
 
 
 BEGIN "Camera Lock (Beta)"
-LABEL ~camera_lock~
+LABEL ~db-diablofication-camera_lock~
 REQUIRE_PREDICATE GAME_IS ~bgee~ ~BG1 EE is required.~
 REQUIRE_PREDICATE NOT GAME_INCLUDES ~sod~ ~SoD not supported.~
 
