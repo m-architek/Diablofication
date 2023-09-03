@@ -1,0 +1,13 @@
+COPY - ~%config%/common_items.2da~ ~~
+    LPF READ_2DA_ROW_NAMES RET_ARRAY common_items = out END
+
+ACTION_PHP_EACH common_items AS item_resource => _ BEGIN
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY ~patch_%item_resource%~ BEGIN 
+        match_resource => ~%item_resource%~ 
+    END
+    OUTER_SPRINT $patches(~%item_resource%~) ~patch_%item_resource%~ 
+END
+
+COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
+    LPF PATCH_CRE_ITEMS STR_VAR patches_ref = patches END
+    BUT_ONLY

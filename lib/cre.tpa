@@ -23,6 +23,10 @@ OUTER_SET CRE_ITEMS_COUNT_OFFSET = 0x02c0 // 4 bytes
 OUTER_SET CRE_EFFECTS_OFFSET = 0x02c4 // 4 bytes
 OUTER_SET CRE_EFFECTS_COUNT_OFFSET = 0x02c8 // 4 bytes
 
+OUTER_SET CRE_ITEM_SIZE = 20
+OUTER_SET CRE_ITEM_RESOURCE_OFFSET = 0x0000 // 8 bytes (resref)
+OUTER_SET CRE_ITEM_FLAGS_OFFSET = 0x0010 // 4 bytes
+
 OUTER_SET CRE_KIT_NONE = 0
 OUTER_SET CRE_KIT_TRUE_CLASS = 0x4000
 
@@ -201,4 +205,40 @@ BEGIN
         SET effects_count = effects_count + effects_count_diff
         WRITE_LONG CRE_EFFECTS_COUNT_OFFSET effects_count
     END
+END
+
+
+DEFINE_PATCH_FUNCTION PATCH_CRE_ITEMS
+    STR_VAR patches_ref = 0
+BEGIN 
+    // READ_LONG CRE_ITEM_SLOTS_OFFSET item_slots_offset
+    READ_LONG CRE_ITEMS_OFFSET items_offset
+    READ_LONG CRE_ITEMS_COUNT_OFFSET items_count
+
+    SET print = 0
+
+    FOR (item_index = 0; item_index < items_count; ++item_index) BEGIN
+        SET offset_shift = items_offset + (item_index * CRE_ITEM_SIZE)
+        READ_ASCII (offset_shift + CRE_ITEM_RESOURCE_OFFSET) resource
+
+        PHP_EACH ~%patches_ref%~ AS patch_name => patch_ref BEGIN
+            PATCH_IF (~%resource%~ STR_EQ $~%patch_ref%~(match_resource)) BEGIN 
+                SET print = 1
+
+            END
+        END
+
+
+        //OUTER_SET CRE_ITEM_RESOURCE_OFFSET = 0x0000 // 8 bytes (resref)
+// OUTER_SET CRE_ITEM_FLAGS_OFFSET = 0x0010 // 4 bytes
+
+    END
+
+    PATCH_IF (print) BEGIN 
+
+                READ_LONG NAME1 name_strref
+                GET_STRREF name_strref name
+                PATCH_PRINT ~%SOURCE_RES%_____%name%~
+    END
+    
 END
