@@ -1,35 +1,38 @@
 DEFINE_ACTION_FUNCTION APPLY_SCRIPTS_ADJUSTMENTS BEGIN
-    
-    ACTION_CLEAR_ARRAY add_xp_patterns
-    ACTION_DEFINE_ARRAY add_xp_patterns BEGIN
-        ~AddExperienceParty(.*?)~
-        ~AddXPObject(.*?)~
-        ~AddXP2DA(.*?)~
-    END
 
     COPY_EXISTING_REGEXP GLOB ~^.+\.dlg$~ ~override~
-        PATCH_IF (NOT ~%SOURCE_RES%~ STR_EQ ~NARRAT2~) BEGIN 
-            DECOMPILE_AND_PATCH BEGIN
-                LPF PATCH_NONCOMBAT_XP STR_VAR add_xp_patterns_ref = add_xp_patterns END
-            END
+        DECOMPILE_AND_PATCH BEGIN
+            LPF PATCH_ADD_XP_PARTY END
         END
         BUT_ONLY
 
-    COPY_EXISTING ~BALDUR.BCS~ ~override~
+    COPY_EXISTING_REGEXP GLOB ~^.+\.bcs$~ ~override~
         DECOMPILE_AND_PATCH BEGIN
-            REPLACE_TEXTUALLY CASE_INSENSITIVE EXACT_MATCH ~AddExperienceParty(10000)~ ~NoAction()~
+            LPF PATCH_ADD_XP_PARTY END
         END
         BUT_ONLY
 END
 
-DEFINE_PATCH_FUNCTION PATCH_NONCOMBAT_XP 
-    STR_VAR add_xp_patterns_ref = 0 
-BEGIN
-    PHP_EACH ~%add_xp_patterns_ref%~ AS _ => pattern BEGIN 
-        REPLACE_EVALUATE CASE_INSENSITIVE ~%pattern%~
-            BEGIN 
+DEFINE_PATCH_FUNCTION PATCH_ADD_XP_PARTY BEGIN
+    REPLACE_EVALUATE CASE_INSENSITIVE ~AddExperienceParty(\([0-9]+\))~
+        BEGIN
+            SET raw_calculated_xp = MATCH1 / 6
+            SET round_limit = 100
+            SET calculated_xp = raw_calculated_xp - (raw_calculated_xp MODULO round_limit)
+            PATCH_IF (calculated_xp > 0) BEGIN 
+                PATCH_LOG ~PATCH_NONCOMBAT_XP %SOURCE_EXT% %SOURCE_RES%: Replace action %MATCH0%. Calculated XP: %calculated_xp%~
+                SPRINT new_action ~~~~~
+                    AddXPObject(Player1,%calculated_xp%)
+                    AddXPObject(Player2,%calculated_xp%)
+                    AddXPObject(Player3,%calculated_xp%)
+                    AddXPObject(Player4,%calculated_xp%)
+                    AddXPObject(Player5,%calculated_xp%)
+                    AddXPObject(Player6,%calculated_xp%)
+                ~~~~~ 
+            END ELSE BEGIN 
                 PATCH_LOG ~PATCH_NONCOMBAT_XP %SOURCE_EXT% %SOURCE_RES%: Remove action %MATCH0%~
-            END 
-            ~NoAction()~ 
-    END
+                SPRINT new_action ~NoAction()~
+            END
+        END 
+        ~%new_action%~
 END

@@ -103,7 +103,7 @@ END
 
 BEGIN "Remove Non-Combat Experience"
 LABEL ~db-diablofication-noncombat_xp~
-REQUIRE_PREDICATE GAME_IS ~bgee~ ~BG1 EE is required.~
+REQUIRE_PREDICATE GAME_IS ~bgee bg2ee~ ~BG1/BG2 EE is required.~
 REQUIRE_PREDICATE NOT GAME_INCLUDES ~sod~ ~SoD not supported.~
 
 WITH_SCOPE BEGIN
