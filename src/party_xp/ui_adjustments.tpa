@@ -1,0 +1,13 @@
+DEFINE_ACTION_FUNCTION APPLY_UI_ADJUSTMENTS BEGIN
+    OUTER_SET message_strref = 24528
+    OUTER_SPRINT source_message @1
+    OUTER_SPRINT target_message @2
+
+    ACTION_GET_STRREF message_strref message
+    
+    ACTION_IF (~%message%~ STR_EQ ~%source_message%~) BEGIN 
+        STRING_SET_EVALUATE message_strref ~%target_message%~
+    END ELSE BEGIN 
+        LOG ~Skipping message change (%message_strref%): '%message%' ('%source_message%' -> '%target_message%')~
+    END
+END

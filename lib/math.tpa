@@ -1,0 +1,55 @@
+DEFINE_DIMORPHIC_FUNCTION MATH_ROUND_UP
+    INT_VAR value = ~~ 
+        precision = 1
+    RET out
+BEGIN 
+    OUTER_SET reminder = value MODULO precision
+    OUTER_SET out = value - reminder
+    
+    ACTION_IF (reminder != 0) BEGIN 
+        OUTER_SET out = out + precision
+    END
+END
+
+DEFINE_DIMORPHIC_FUNCTION MATH_ROUND_DOWN
+    INT_VAR value = ~~ 
+        precision = 1
+    RET out
+BEGIN 
+    OUTER_SET reminder = value MODULO precision
+    OUTER_SET out = value - reminder
+END
+
+DEFINE_DIMORPHIC_FUNCTION MATH_ROUND_UP_TO_SIGFIGS
+    INT_VAR value = ~~ 
+        sigfigs = 1
+    RET out
+BEGIN 
+    ACTION_IF (value < 10 ** sigfigs) BEGIN 
+        OUTER_SET out = value
+    END ELSE BEGIN
+        OUTER_SET figs = STRING_LENGTH ~%value%~
+
+        LAF MATH_ROUND_UP INT_VAR value 
+            precision = 10 ** (figs - sigfigs)
+            RET out 
+            END
+    END
+END
+
+DEFINE_DIMORPHIC_FUNCTION MATH_ROUND_DOWN_TO_SIGFIGS
+    INT_VAR value = ~~ 
+        sigfigs = 1
+    RET out
+BEGIN 
+    ACTION_IF (value < 10 ** sigfigs) BEGIN 
+        OUTER_SET out = value
+    END ELSE BEGIN
+        OUTER_SET figs = STRING_LENGTH ~%value%~
+
+        LAF MATH_ROUND_DOWN INT_VAR value 
+            precision = 10 ** (figs - sigfigs)
+            RET out 
+            END
+    END
+END
