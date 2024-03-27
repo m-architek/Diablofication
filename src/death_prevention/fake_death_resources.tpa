@@ -176,6 +176,12 @@ BEGIN
     LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
         opcode = EFF_OPCODE_CURE_PAUSE
         END
+    LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
+        opcode = EFF_OPCODE_CURE_POISON
+        END
+    LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index
+        opcode = EFF_OPCODE_CURE_DISEASE
+        END
     LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
         opcode = EFF_OPCODE_REMOVE_OPCODE
         parameter1 = "-1"
