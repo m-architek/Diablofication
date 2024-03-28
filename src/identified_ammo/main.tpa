@@ -1,0 +1,17 @@
+COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
+    LPF READ_ITM_HEADER RET type stack END
+    
+    PATCH_IF (
+        (
+               type = ITM_TYPE_ARROW 
+            OR type = ITM_TYPE_BULLET 
+            OR type = ITM_TYPE_DAGGER 
+            OR type = ITM_TYPE_AXE 
+            OR type = ITM_TYPE_BOLT 
+        )
+        AND stack > 1
+    ) BEGIN 
+        PATCH_LOG ~Patching %SOURCE_EXT% %SOURCE_RES% (type %type% with stack %stack%).~
+        LPF PATCH_ITM_LORE INT_VAR lore = 0 END
+    END
+    BUT_ONLY
