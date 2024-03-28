@@ -173,20 +173,19 @@ DEFINE_PATCH_FUNCTION PATCH_EFF_EFFECT_FILTER_APPLICABLE_PATCHES
     RET_ARRAY applicable_patches
 BEGIN
     SPRINT eff_read_strategy_ref $~%eff_strategy_ref%~(read_strategy) 
-    
+
     CLEAR_ARRAY effect
     CLEAR_ARRAY applicable_patches
 
     SPRINT read_opcode_fn $~%eff_read_strategy_ref%~(opcode)
     LPF ~%read_opcode_fn%~ INT_VAR offset_shift RET $effect(opcode) = opcode END
-    
+
     SPRINT read_resource_fn $~%eff_read_strategy_ref%~(resource)
     LPF ~%read_resource_fn%~ INT_VAR offset_shift RET $effect(resource) = resource END
-    
+
     PHP_EACH ~%patches_ref%~ AS patch_name => patch_ref BEGIN
 
         PATCH_IF (
-            (NOT VARIABLE_IS_SET $~%patch_ref%~(exclude_category) OR NOT ~%effect_category%~ STR_EQ $~%patch_ref%~(exclude_category)) AND
             (NOT VARIABLE_IS_SET $~%patch_ref%~(match_opcode) OR $effect(opcode) == $~%patch_ref%~(match_opcode)) AND
             (NOT VARIABLE_IS_SET $~%patch_ref%~(match_resource) OR $effect(resource) STR_EQ $~%patch_ref%~(match_resource))
         ) BEGIN
@@ -207,10 +206,12 @@ BEGIN
             END
 
             PATCH_IF (
+                (NOT VARIABLE_IS_SET $~%patch_ref%~(exclude_category) OR NOT ~%effect_category%~ STR_EQ $~%patch_ref%~(exclude_category)) AND
                 (NOT VARIABLE_IS_SET $~%patch_ref%~(match_parameter1) OR $effect(parameter1) == $~%patch_ref%~(match_parameter1)) AND
                 (NOT VARIABLE_IS_SET $~%patch_ref%~(match_parameter2) OR $effect(parameter2) == $~%patch_ref%~(match_parameter2))
             ) BEGIN
 
+                SET match_result = 0
                 PATCH_IF (VARIABLE_IS_SET $~%patch_ref%~(match_function)) BEGIN
                     SPRINT match_function $~%patch_ref%~(match_function)
                     LPF ~%match_function%~ INT_VAR offset_shift STR_VAR eff_read_strategy_ref RET match_result END
