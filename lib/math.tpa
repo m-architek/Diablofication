@@ -20,6 +20,7 @@ BEGIN
     OUTER_SET out = value - reminder
 END
 
+
 DEFINE_DIMORPHIC_FUNCTION MATH_ROUND_UP_TO_SIGFIGS
     INT_VAR value = ~~ 
         sigfigs = 1
@@ -51,5 +52,30 @@ BEGIN
             precision = 10 ** (figs - sigfigs)
             RET out 
             END
+    END
+END
+
+
+/**
+ * This is alternative version of WeiDU BASE36 function used by GET_UNIQUE_FILE_NAME function
+ * See: https://github.com/WeiDUorg/weidu/blob/111b111/src/tph/include/get_unique_file_name.tpa#L11
+ * It converts decimal input to base 36 without length restrictions and 0000 placeholder
+ */
+DEFINE_DIMORPHIC_FUNCTION MATH_BASE36
+    INT_VAR base10 = ~~
+    RET base36
+BEGIN
+    OUTER_PATCH_SAVE base36 ~~ BEGIN
+        WHILE (base10 > 0) BEGIN 
+            SET reminder = base10 MODULO 36
+            SET ascii_offset = reminder < 10 ? 48 : (65 - 10)
+
+            INSERT_BYTES 0 1
+            WRITE_BYTE 0 (reminder + ascii_offset)
+            SET base10 = base10 / 36
+        END
+    END
+    ACTION_IF (~%base36%~ STR_EQ ~~) BEGIN 
+        OUTER_SPRINT base36 ~0~
     END
 END
