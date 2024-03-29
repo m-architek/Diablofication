@@ -211,7 +211,6 @@ BEGIN
                 (NOT VARIABLE_IS_SET $~%patch_ref%~(match_parameter2) OR $effect(parameter2) == $~%patch_ref%~(match_parameter2))
             ) BEGIN
 
-                SET match_result = 0
                 PATCH_IF (VARIABLE_IS_SET $~%patch_ref%~(match_function)) BEGIN
                     SPRINT match_function $~%patch_ref%~(match_function)
                     LPF ~%match_function%~ INT_VAR offset_shift STR_VAR eff_read_strategy_ref RET match_result END

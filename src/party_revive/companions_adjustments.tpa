@@ -7,13 +7,15 @@ DEFINE_ACTION_FUNCTION APPLY_COMPANIONS_ADJUSTMENTS
 BEGIN 
     LAF JOINABLE_NPC_ARRAY RET_ARRAY JOINABLE_NPC_ARRAY END
 
-
     ACTION_CLEAR_ARRAY joinable_npc_scripts
+    OUTER_SET script_index = 0
     
     ACTION_PHP_EACH JOINABLE_NPC_ARRAY AS cre => dv BEGIN 
         COPY_EXISTING ~%cre%~ ~override~
-            LPF RESOLVE_CRE_OVERRIDE_SCRIPT STR_VAR prefix = ~%PARTY_REVIVE_PREFIX%~
+            LPF RESOLVE_CRE_OVERRIDE_SCRIPT INT_VAR script_index
+                STR_VAR prefix = ~%RESREF_BCS_COMPANION_SCRIPT_PREFIX%~
                 RET script_resref
+                    script_index
                 END
             BUT_ONLY
 
