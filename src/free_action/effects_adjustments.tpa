@@ -1,0 +1,21 @@
+INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments/positive_mode.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments/negative_mode.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments/haste.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments/free_action.tpa~
+
+DEFINE_ACTION_FUNCTION APPLY_EFFECTS_ADJUSTMENTS BEGIN
+    ACTION_CLEAR_ARRAY patches
+
+    // LAF APPLY_RAISE_DEAD_PATCHES 
+    //     STR_VAR patches_ref = patches 
+    //             revive_death_spell
+    //     RET_ARRAY patches 
+    //               patch_RAISE_DEAD 
+    //               patch_MASS_RAISE_DEAD
+    //     END
+
+    
+
+    LAF PATCH_EXISTING_EFFECTS STR_VAR patches_ref = patches END
+
+END

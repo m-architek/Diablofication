@@ -1,0 +1,68 @@
+DEFINE_ACTION_FUNCTION APPLY_HASTE_PATCHES 
+    STR_VAR patches_ref = 0
+    RET_ARRAY ~%patches_ref%~
+            patch_HASTE
+BEGIN
+    COPY ~.../blank~ ~override/%RESREF_2DA_HASTE_RESOURCES%.2DA~
+
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY patch_HASTE BEGIN
+        patch_type => ~ALTER~
+        match_opcode => EFF_OPCODE_HASTE
+        match_function => ~HASTE_MATCH_FUNCTION~
+        patch_function => ~HASTE_PATCH_FUNCTION~
+    END
+
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY ~%patches_ref%~ BEGIN 
+        ~%COMPONENT_PREFIX%_HASTE~ => patch_HASTE
+    END
+END
+
+DEFINE_PATCH_FUNCTION STAT_DRAIN_PATCH_FUNCTION 
+    INT_VAR offset_shift = ~~
+    STR_VAR eff_strategy_ref = 0
+BEGIN 
+    INNER_ACTION BEGIN 
+        COPY_EXISTING ~%RESREF_2DA_HASTE_RESOURCES%.2DA~ ~override~
+            INSERT_2DA_ROW 0 0 ~%SOURCE_FILE%~
+            BUT_ONLY
+    END
+END
+
+DEFINE_ACTION_FUNCTION APPLY_STAT_DRAIN_RESOURCES 
+    STR_VAR kill_player_variable = 0
+BEGIN
+    ACTION_DEFINE_ASSOCIATIVE_ARRAY stats_conditions BEGIN 
+        ~STR~ => 124 // 124_STAT(STR)>=n
+        ~DEX~ => 122 // 122_STAT(DEX)>=n
+        ~CON~ => 126 // 126_STAT(CON)>=n
+        ~INT~ => 128 // 128_STAT(INT)>=n
+        ~WIS~ => 130 // 130_STAT(WIS)>=n
+        ~CHR~ => 132 // 132_STAT(CHR)>=n
+    END
+
+    COPY_EXISTING - ~%RESREF_2DA_STAT_DRAIN_KILL_RESOURCES%.2DA~ ~~
+        READ_2DA_ENTRIES_NOW drain_kill_resources 1
+        BUT_ONLY
+
+    OUTER_FOR (row = 0; row < drain_kill_resources; ++row) BEGIN 
+        OUTER_SPRINT drain_kill_resource $drain_kill_resources(~%row%~ 0)
+        OUTER_SPRINT stat $drain_kill_resources(~%row%~ 1)
+        OUTER_SPRINT stat_amount $drain_kill_resources(~%row%~ 2)
+
+        ACTION_IF (NOT FILE_EXISTS_IN_GAME ~%drain_kill_resource%.SPL~) BEGIN 
+            CREATE ~SPL~ ~%drain_kill_resource%~
+                LPF ADD_SPL_ABILITY RET ability_index END
+                LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+                    opcode = EFF_OPCODE_PROTECTION_FROM_RESOURCE
+                    parameter1 = (stat_amount + 1)
+                    parameter2 = $stats_conditions(~%stat%~)
+                    STR_VAR resource = ~%drain_kill_resource%~
+                    END
+                LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+                    opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR
+                    parameter1 = 1
+                    STR_VAR resource = ~%kill_player_variable%~
+                    END
+        END
+    END
+END

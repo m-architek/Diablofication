@@ -1,0 +1,61 @@
+/**
+ * This component use idea from klatu Tweaks and Fixes 1.7 mod.
+ * See: http://www.shsforums.net/files/file/1109-klatu-tweaks-and-fixes/
+ * 
+ * Quote:
+ * 
+ * there are two movement modifiers available: 126 and 176
+ * 
+ * basic idea is this:
+ * use 126 for negative modification
+ * use 176 for positive modification
+ * 
+ * always remove every immunity:176
+ * 
+ * collect all spells that apply an opcode 16 (haste)
+ * 
+ * 
+ * whenever have opcode 163 (free action)
+ * remvove every	206 (protect) : all haste spells
+ * 					126 (move mod)
+ * 					176 (move mod) if neutral
+ * 					101 (immunity) :16 (haste)
+ * 					169 (no icon): 38 (haste icon)
+ * and add			101 (immunity): 126 (-move)
+ * 
+ * End of quote.
+ * 
+ * This implementation also handles "Increased Movement Rate (195)" icon. 
+ * It also handles other opcodes that protect against resources (318, 324).
+ * I don't understand why it should "remvove every (..) 176 (move mod) if neutral" so I'm skipping doing so for now.
+ * 
+ * 								opcode = 126					// opcode: move mod -
+								OR 
+								opcode = 176					// opcode: move mod +
+								OR 
+								(opcode = 101 AND param2 = 16)	// immune: haste
+								OR 
+								(opcode = 101 AND param2 = 126)	// immune: move mod -
+								OR 
+								(opcode = 101 AND param2 = 176)	// immune: move mod +
+								OR 
+								(opcode = 169 AND param2 = 38)	// prevent icon: haste
+								OR 
+								(opcode = 240 AND param2 = 38)	// remove icon: haste
+								OR
+								(opcode = 267 AND (~%strRef%~ STRING_EQUAL_CASE ~hasted~))	// prevent string: hasted
+
+
+                                					PATCH_IF (
+						targetB = target
+						AND prob1B = prob1
+						AND prob2B = prob2
+						AND sTypeB = sType
+						AND sBonusB = sBonus
+					) BEGIN									// effect is related
+ */
+INCLUDE ~%COMPONENT_FOLDER%/resources.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/effects_adjustments.tpa~
+
+LAF APPLY_EFFECTS_ADJUSTMENTS END
+
