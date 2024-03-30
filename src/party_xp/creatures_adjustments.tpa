@@ -23,17 +23,7 @@ DEFINE_ACTION_FUNCTION APPLY_CREATURES_ADJUSTMENTS BEGIN
                     RET script_resref 
                     END
 
-                LPF MATH_ROUND_DOWN_TO_SIGFIGS INT_VAR value = (xp_value / MAX_IN_PARTY) 
-                    sigfigs = 2
-                    RET calculated_xp = out
-                    END
-                PATCH_IF (calculated_xp = 0) BEGIN 
-                    SET calculated_xp = 1
-                END
-
-                PATCH_LOG ~PATCH_NONCOMBAT_XP %SOURCE_EXT% %SOURCE_RES%: Extend script %script_resref% for XP value %xp_value%. Calculated XP: %calculated_xp%~
-
-                SPRINT $party_xp_parameters(~%script_resref%~ ~%xp_value%~) ~%calculated_xp%~
+                SPRINT $party_xp_parameters(~%script_resref%~) ~%xp_value%~
                 SPRINT $party_xp_scripts(~%script_resref%~) ~~
 
                 LPF ADD_CRE_EFFECT INT_VAR opcode = EFF_OPCODE_SCRIPT_MODIFY_LOCAL_VAR 
@@ -51,9 +41,16 @@ DEFINE_ACTION_FUNCTION APPLY_CREATURES_ADJUSTMENTS BEGIN
         BUT_ONLY
 
 
-    ACTION_PHP_EACH party_xp_parameters AS key => calculated_xp BEGIN 
-        OUTER_SPRINT script_resref ~%key_0%~
-        OUTER_SET xp_value = ~%key_1%~
+    ACTION_PHP_EACH party_xp_parameters AS script_resref => xp_value BEGIN 
+
+        LAF MATH_ROUND_DOWN_TO_SIGFIGS 
+            INT_VAR value = (xp_value / MAX_IN_PARTY) 
+                    sigfigs = 2
+            RET calculated_xp = out
+            END
+        ACTION_IF (calculated_xp = 0) BEGIN 
+            OUTER_SET calculated_xp = 1
+        END
 
         OUTER_SPRINT party_xp_script $party_xp_scripts(~%script_resref%~)
 
@@ -75,6 +72,8 @@ DEFINE_ACTION_FUNCTION APPLY_CREATURES_ADJUSTMENTS BEGIN
             END
         ~~~~~
         
+        LOG ~Extending script %script_resref% for XP value %xp_value%. Calculated XP: %calculated_xp%~
+
         OUTER_SPRINT $party_xp_scripts(~%script_resref%~) ~%party_xp_script%~
     END
 

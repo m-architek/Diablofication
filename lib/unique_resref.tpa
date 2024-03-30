@@ -8,29 +8,22 @@ DEFINE_DIMORPHIC_FUNCTION UNIQUE_RESREF
           key = ~~
   RET resref
   BEGIN
-    OUTER_SPRINT ids_file ~%namespace%_UNIQUE_RESREF.IDS~
+    OUTER_SPRINT ids_name ~%namespace%_UNIQUE_RESREF~
+    OUTER_SPRINT ids_file ~%ids_name%.IDS~
 
     ACTION_IF (NOT FILE_EXISTS_IN_GAME ~%ids_file%~) BEGIN
         COPY + ~.../blank~ ~override/%ids_file%~
     END
 
-    COPY_EXISTING - ~%ids_file%~ ~~
-        READ_2DA_ENTRIES_NOW entries 1
-        BUT_ONLY
-
-    OUTER_SET exists = 0
+    OUTER_SET exists = IDS_OF_SYMBOL (~%ids_name%~ ~%key%~)
     OUTER_SET tail = 0
 
-    OUTER_FOR (row = 0; row < entries; ++row) BEGIN 
-        OUTER_SPRINT this_value $entries(~%row%~ 0)
-        OUTER_SPRINT this_key $entries(~%row%~ 1)
+    ACTION_IF (exists = "-1") BEGIN 
+        OUTER_SET exists = 0
 
-        ACTION_IF (~%this_key%~ STR_EQ ~%key%~) BEGIN 
-            OUTER_SET exists = this_value
-        END
-        ACTION_IF (this_value > tail) BEGIN 
-            OUTER_SET tail = this_value
-        END
+        COPY_EXISTING - ~%ids_file%~ ~~
+            COUNT_2DA_ROWS 1 tail
+            BUT_ONLY
     END
 
     OUTER_SET value = exists ? exists : tail + 1
@@ -43,6 +36,6 @@ DEFINE_DIMORPHIC_FUNCTION UNIQUE_RESREF
     OUTER_SPRINT resref ~%namespace%%base36%~
     
     ACTION_IF (STRING_LENGTH ~%resref%~ > 8) BEGIN 
-        FAIL ~UNIQUE_RESREF exceeds namespace limit: %namespace% (%tail%)~
+        FAIL ~UNIQUE_RESREF exceeds namespace limit: %resref% (%tail%)~
     END
 END
