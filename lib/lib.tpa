@@ -21,3 +21,9 @@ INCLUDE ~%lib%/spl.tpa~
 INCLUDE ~%lib%/start_next_cutscene.tpa~
 INCLUDE ~%lib%/statdesc.tpa~
 INCLUDE ~%lib%/sto.tpa~
+INCLUDE ~%lib%/unique_resref.tpa~
+
+<<<<<<<< .../blank
+>>>>>>>>
+
+OUTER_SPRINT s ~[%TAB% %LNL%%MNL%%WNL%]~

@@ -1,0 +1,48 @@
+/**
+ * This is alternative version of WeiDU GET_UNIQUE_FILE_NAME function
+ * See: https://github.com/WeiDUorg/weidu/blob/111b111/src/tph/include/get_unique_file_name.tpa
+ * It works faster on bigger datasets and allows to provide custom namespace
+ */
+DEFINE_DIMORPHIC_FUNCTION UNIQUE_RESREF
+  STR_VAR namespace = ~%MOD_PREFIX%_~
+          key = ~~
+  RET resref
+  BEGIN
+    OUTER_SPRINT ids_file ~%namespace%_UNIQUE_RESREF.IDS~
+
+    ACTION_IF (NOT FILE_EXISTS_IN_GAME ~%ids_file%~) BEGIN
+        COPY + ~.../blank~ ~override/%ids_file%~
+    END
+
+    COPY_EXISTING - ~%ids_file%~ ~~
+        READ_2DA_ENTRIES_NOW entries 1
+        BUT_ONLY
+
+    OUTER_SET exists = 0
+    OUTER_SET tail = 0
+
+    OUTER_FOR (row = 0; row < entries; ++row) BEGIN 
+        OUTER_SPRINT this_value $entries(~%row%~ 0)
+        OUTER_SPRINT this_key $entries(~%row%~ 1)
+
+        ACTION_IF (~%this_key%~ STR_EQ ~%key%~) BEGIN 
+            OUTER_SET exists = this_value
+        END
+        ACTION_IF (this_value > tail) BEGIN 
+            OUTER_SET tail = this_value
+        END
+    END
+
+    OUTER_SET value = exists ? exists : tail + 1
+
+    ACTION_IF (NOT exists) BEGIN 
+        APPEND + ~%ids_file%~ ~%value% %key%~
+    END
+
+    LAF ~MATH_BASE36~ INT_VAR base10 = value RET base36 END
+    OUTER_SPRINT resref ~%namespace%%base36%~
+    
+    ACTION_IF (STRING_LENGTH ~%resref%~ > 8) BEGIN 
+        FAIL ~UNIQUE_RESREF exceeds namespace limit: %namespace% (%tail%)~
+    END
+END

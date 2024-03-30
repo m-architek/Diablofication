@@ -109,25 +109,21 @@ END
 
 
 DEFINE_PATCH_FUNCTION RESOLVE_CRE_OVERRIDE_SCRIPT
-    INT_VAR script_index = ~~
     STR_VAR prefix = ~%COMPONENT_PREFIX%~
     RET script_resref
-        script_index
 BEGIN 
     READ_ASCII CRE_SCRIPT_OVERRIDE_OFFSET script_resref
 
-    PATCH_IF (NOT FILE_EXISTS_IN_GAME ~%script_resref%.BCS~) BEGIN 
-        LPF MATH_BASE36 INT_VAR base10 = script_index RET base36 END
-        SPRINT script_resref ~%prefix%%base36%~
+    PATCH_IF (~%script_resref%~ STR_EQ ~~ OR ~%script_resref%~ STR_EQ ~None~) BEGIN 
 
-        PATCH_IF (STRING_LENGTH ~%script_resref%~ > 8) BEGIN 
-            PATCH_FAIL ~Provided index extends namespace limit (%script_index% -> %script_resref%)~
-        END
+        LPF UNIQUE_RESREF 
+            STR_VAR namespace = ~%prefix%~
+                    key = ~%SOURCE_EXT%#%SOURCE_RES%#SCRIPT#OVERRIDE~
+            RET script_resref = resref
+            END
 
         PATCH_LOG ~Applying Override script to %SOURCE_EXT% %SOURCE_RES%: %script_resref%~
         WRITE_ASCII CRE_SCRIPT_OVERRIDE_OFFSET ~%script_resref%~ #8 
-
-        SET script_index = script_index + 1
     END
 END
 

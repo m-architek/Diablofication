@@ -10,12 +10,8 @@ NO_IF_EVAL_BUG
 ALWAYS
     CLEAR_EVERYTHING
     OUTER_SET IS_EEEX = MOD_IS_INSTALLED ~EEex.tp2~ ~0~
-    OUTER_SPRINT s ~[%TAB% %LNL%%MNL%%WNL%]~
     ACTION_DEFINE_ARRAY PLAYERS BEGIN Player1 Player2 Player3 Player4 Player5 Player6 END
     OUTER_SET MAX_IN_PARTY = 6
-    
-    <<<<<<<< .../blank
-    >>>>>>>>
 
     OUTER_SPRINT config ~%MOD_FOLDER%/config~
     OUTER_SPRINT lib ~%MOD_FOLDER%/lib~

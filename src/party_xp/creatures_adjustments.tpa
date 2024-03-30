@@ -10,7 +10,6 @@ DEFINE_ACTION_FUNCTION APPLY_CREATURES_ADJUSTMENTS BEGIN
 
     LAF COUNT_EXISTING STR_VAR glob = ~^.+\.cre$~ RET count END
     OUTER_SET counter = 0
-    OUTER_SET script_index = 0
 
     COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
 
@@ -19,13 +18,12 @@ DEFINE_ACTION_FUNCTION APPLY_CREATURES_ADJUSTMENTS BEGIN
 
             PATCH_IF (xp_value > 0) BEGIN 
                 
-                LPF RESOLVE_CRE_OVERRIDE_SCRIPT INT_VAR script_index
+                LPF RESOLVE_CRE_OVERRIDE_SCRIPT
                     STR_VAR prefix = ~%RESREF_BCS_PREFIX%~
                     RET script_resref 
-                        script_index
                     END
 
-                LPF MATH_ROUND_DOWN_TO_SIGFIGS INT_VAR value = (xp_value / 6) 
+                LPF MATH_ROUND_DOWN_TO_SIGFIGS INT_VAR value = (xp_value / MAX_IN_PARTY) 
                     sigfigs = 2
                     RET calculated_xp = out
                     END

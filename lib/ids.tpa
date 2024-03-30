@@ -10,7 +10,6 @@ DEFINE_ACTION_FUNCTION SPELL_IDS_ADD_SPELL
     RET spell_resource
 BEGIN 
     ADD_SPELL ~.../blank~ spell_type spell_level ~%ids_name%~
-    CLEAR_IDS_MAP
     
     LAF SPELL_IDS_RESOURCE_OF_SYMBOL 
         STR_VAR ids_name

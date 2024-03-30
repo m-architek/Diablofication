@@ -16,7 +16,7 @@ END
 DEFINE_PATCH_FUNCTION PATCH_ADD_XP_PARTY BEGIN
     REPLACE_EVALUATE CASE_INSENSITIVE ~AddExperienceParty(\([0-9]+\))~
         BEGIN
-            LPF MATH_ROUND_DOWN_TO_SIGFIGS INT_VAR value = (MATCH1 / 6) 
+            LPF MATH_ROUND_DOWN_TO_SIGFIGS INT_VAR value = (MATCH1 / MAX_IN_PARTY) 
                 sigfigs = 3
                 RET calculated_xp = out
                 END

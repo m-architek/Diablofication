@@ -260,20 +260,20 @@ BEGIN
     PATCH_MATCH ~%SOURCE_EXT%~ WITH
         ~EFF~ BEGIN
             INNER_ACTION BEGIN
-                LAF GET_UNIQUE_FILE_NAME STR_VAR extension = ~%SOURCE_EXT%~ 
-                        base = ~%patch_name%#EFF_CLONE#%SOURCE_RES%~
-                    RET filename
+                LAF UNIQUE_RESREF 
+                    STR_VAR key = ~%patch_name%#EFF#%SOURCE_RES%#CLONE~
+                    RET resref
                     END
                 
-                LOG ~Clone %SOURCE_EXT% %SOURCE_RES% as %filename%.%SOURCE_EXT% (%patch_name%)~ 
+                LOG ~Clone %SOURCE_EXT% %SOURCE_RES% as %resref%.%SOURCE_EXT% (%patch_name%)~ 
 
-                COPY_EXISTING ~%SOURCE_RES%.%SOURCE_EXT%~ ~override/%filename%.%SOURCE_EXT%~
+                COPY_EXISTING ~%SOURCE_RES%.%SOURCE_EXT%~ ~override/%resref%.%SOURCE_EXT%~
                     LPF PATCH_EFF_EFFECT_APPLY_PATCH_ALTER INT_VAR offset_shift = 0
                         STR_VAR patch_name patch_ref eff_strategy_ref
                         END
             END
 
-            SPRINT $~%created_eff_resources_ref%~(~%SOURCE_RES%~ ~%filename%~) ~%patch_name%~
+            SPRINT $~%created_eff_resources_ref%~(~%SOURCE_RES%~ ~%resref%~) ~%patch_name%~
             SET effects_count_diff = 0
         END
         DEFAULT
