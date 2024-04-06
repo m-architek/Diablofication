@@ -76,8 +76,7 @@
       <li><a href="#identification">Identification For All</a></li>
       <li><a href="#party-revive">Party Revive After Combat (Beta)</a></li>
       <li><a href="#character-respawn">Character Respawn (Beta)</a></li>
-      <li><a href="#party-xp">Split Party Experience (Beta)</a></li>
-      <li><a href="#noncombat-xp">Remove Non-Combat Experience</a></li>
+      <li><a href="#party-xp">Party Size Not Change XP Progression (Beta)</a></li>
       <li><a href="#identified-ammo">Identified Ammunition</a></li>
       <li><a href="#spells-regen">Spells Regeneration (Beta)</a></li>
       <li><a href="#level1-hp">More HP on Level One</a></li>
@@ -94,7 +93,7 @@
       Town Portal spell scrolls are added to store in every temple. These scrolls can be used to cast Town Portal spell be every character 
       that meets standard requirements for using scrolls (regardless of ability to use arcane magic).</p>
             
-    <p><strong>Compatibility:</strong> Town Portal would work correctly on areas added by other mods, if installed after them.</p>
+    <p><strong>Compatibility:</strong> Town Portal will work correctly on areas added by other mods, if installed after them.</p>
       
     <br />
 
@@ -103,7 +102,7 @@
     <p>This component changes Identify spell scrolls so they can be used be every character that meets standard requirements for using scrolls 
       (regardless of ability to use arcane magic). Also, Identify scrolls are added to store in every temple.</p>
             
-    <p><strong>Compatibility:</strong> Component would affect temples added by other mods, if installed after them.</p>
+    <p><strong>Compatibility:</strong> Component will affect temples added by other mods, if installed after them.</p>
       
     <br />
 
@@ -131,21 +130,13 @@
 
     <br />
 
-    <h3 id="party-xp">Split Party Experience (Beta)</h3>
+    <h3 id="party-xp">Party Size Not Change XP Progression (Beta)</h3>
 
-    <p>Split experience points rewards and distibute it equaly between current party members. 
-      This means mambers of smaller parites will no longer receive more experiance from enemies, quests and dialogues.</p>
+    <p>Experience point rewards are splitted by maximum party size and distibuted equaly between current party members.
+      This means members of smaller parties will no longer receive more experience from enemies, quests and dialogues.
+      It also removes experiance point rewards from thief ability usage and spell learning.</p>
 
-    <p><strong>Compatibility:</strong> Component will split experience rewards from enemies, quests and dialogues added by other mods, if installed after them.</p>
-
-    <br />
-
-    <h3 id="noncombat-xp">Remove Non-Combat Experience</h3>
-
-    <p>Removes experience points rewards from quests, dialogues, thief ability usages and spells learning. 
-      This affects only experience rewards that are granted to whole party.</p>
-
-    <p><strong>Compatibility:</strong> Component will remove experience rewards from quests and dialogues added by other mods, if installed after them.</p>
+    <p><strong>Compatibility:</strong> Component will affect enemies, quests and dialogues added by other mods, if installed after them.</p>
 
     <br />
 
@@ -171,27 +162,23 @@
       At the same time, amount of HP gained with every level is decreased, so difference between HP from
       original rules and those applied by this component is getting smaller with every level up.</p>
 
-    <p><strong>Compatibility:</strong> This components would recalculate initial HP of companions added by other mods only 
-      if installed after them. Note that HP progression rules would apply to every character, regardless of mod installation order. 
-      That means companions added after this component would suffer both low initial HP and low HP progression. 
-      This component will not be compatible with modifications that alters HP progression rules or HP of companions, 
+    <p><strong>Compatibility:</strong> This component should be installed after every mod that add new companions. 
+      Component is not compatible with modifications that alters HP progression rules or HP of companions, 
       like "Max HP at Level One", "Higher HP on Level Up", "Allow HP Rolls Through Level 20 [Angel]" or 
       "Maximum HP Creatures [the bigg]" from <a href="https://www.gibberlings3.net/mods/tweaks/tweaks/">Tweaks Anthology</a>.</p>
 
-    <p><strong>Tip:</strong> This component ignores "Maximum HP" game option. It always calculates HP using "Maximum HP" rule.</p>
+    <p><strong>Note:</strong> This component ignores "Maximum HP" game option. It always calculates HP using "Maximum HP" rule.</p>
 
     <br />
 
     <h3 id="proficiency">More Proficiency Points</h3>
 
-    <p>Increases frequency of getting weapon proficiency points, especially for fighters and other classes that are good with weapons.</p>
+    <p>Increases frequency of getting weapon proficiency points, especially for fighters and other classes that are good with weapons.
+      Component doesn't change starting proficiency points of companions. They will however use new progression rules on every level up.</p>
 
     <p><strong>Compatibility:</strong> This component has no compatibility restrictions.</p>
 
-    <p><strong>Tip:</strong> Component doesn't change starting proficiency points of companions. 
-      They will however use new progression rules on every level up.</p>
-
-    <p><strong>Tip:</strong> Despite having spare proficiency points, you won't be able to unlock next level of weapon mastery faster 
+    <p><strong>Note:</strong> Despite having spare proficiency points, you won't be able to unlock next level of weapon mastery faster 
       then in original rules.</p>
 
     <br />
@@ -202,24 +189,21 @@
       keeping character always in the center of the screen. 
       You can unlock camera using right click on "select all" button.</p>
 
-    <p><strong>Compatibility:</strong> This component should be installed after UI overhaul mods. 
-      It would not affect negatively cutscenes added by other mods, if installed after them.</p>
+    <p><strong>Compatibility:</strong> This component should be installed after UI overhaul mods and 
+      after every mod that add new custscenes.</p>
 
-    <p><strong>Limitations:</strong> By default, camera lock is performed using character action list.
-      That means, if character is in the middle of some action, like movement or spell casting, 
-      camera lock will be delayed until action is finished.       
-      <a href="https://eeex-docs.readthedocs.io/en/latest/">EEex</a> allows to overcome this limitation. 
-      Additionally, it allows to perform camera lock on party leader after double click on "select all" button.
-      Also, in multiplayer game without EEex, camera unlock on "select all" right click not work for players other then host.
-      If you want to use Camera Lock with EEex, please make sure to install EEex before Camera Lock.
+    <p><strong>Pre-Requirements:</strong> Consider installing <a href="https://eeex-docs.readthedocs.io/en/latest/">EEex</a> 
+      before this component, expecially if you plan to play mulitplayer or non-solo singleplayer. 
+      EEex removes delay in changing camera lock subject when character is in the middle of the action (like movement or spell casting). 
+      Additionally, it allows to perform camera lock on party leader after double click on "select all" button. 
+      In multiplayer game without EEex, camera unlock on "select all" right click not work for players other then host. 
       Component was tested with EEex version v0.9.19-alpha, please use this version of EEex or later.</p>
 
-    <p><strong>Tip:</strong> Move your character using right click button to avoid group select when view is still in
-      move.</p>
+    <p><strong>Tip:</strong> Move your characters using right click to avoid group select when view is still in move.</p>
 
-    <p><strong>Tip:</strong> View movement is much smoother on higher framerate. You can consider adjusting 
-      game framerate by editing "Maximum Frame Rate" option in Baldur.lua config file (you can find it next to your saved games). 
-      Note that this setting changes overall game speed.</p>
+    <p><strong>Tip:</strong> View movement is much smoother on higher frame rate. You can consider adjusting 
+      game frame rate by editing "Maximum Frame Rate" option in Baldur.lua config file (you can find it next to your saved games). 
+      Note that this setting changes overall game speed. For my playthroughs I usually use 45 frame rate value (x1.5 game speed).</p>
 
     <br />
 
@@ -296,10 +280,10 @@
 
     <h3 id="v0_8">v0.8</h3>
     <ul>
-      <li>Split Party Experience (Beta) for BG1 EE v2.6 (no SoD support).</li>
+      <li>Party Size Not Change XP Progression (Beta) for BG1 EE v2.6 (no SoD support).</li>
       <li>Identified Ammunition for BG1 EE v2.6 (no SoD support).</li>
-      <li>Remove Non-Combat Experience: changed to not remove experience rewards granted for each player separately.</li>
       <li>Party Revive After Combat (Beta): changed death to remove poison effect to avoid revive loop when character is poisoned.</li>
+      <li>Remove Non-Combat Experience is now dropped in favor of Party Size Not Affect XP Progression component.</li>
     </ul>
 
     <h3 id="v0_7">v0.7</h3>

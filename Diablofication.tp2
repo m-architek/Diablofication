@@ -97,7 +97,7 @@ WITH_SCOPE BEGIN
 END
 
 
-BEGIN "Split Party Experience (Beta)" 
+BEGIN "Party Size Not Change XP Progression (Beta)" 
 LABEL ~db-diablofication-party_xp~
 REQUIRE_PREDICATE GAME_IS ~bgee~ ~BG1 EE is required.~
 REQUIRE_PREDICATE NOT GAME_INCLUDES ~sod~ ~SoD not supported.~
@@ -105,21 +105,6 @@ REQUIRE_PREDICATE NOT GAME_INCLUDES ~sod~ ~SoD not supported.~
 WITH_SCOPE BEGIN
     OUTER_SPRINT COMPONENT ~party_xp~
     OUTER_SPRINT COMPONENT_PREFIX ~%PARTY_XP%~
-    OUTER_SPRINT COMPONENT_FOLDER ~%src%/%COMPONENT%~
-
-    ACTION_TIME ~%COMPONENT%~ BEGIN 
-        INCLUDE ~%COMPONENT_FOLDER%/main.tpa~
-    END
-END
-
-
-BEGIN "Remove Non-Combat Experience"
-LABEL ~db-diablofication-noncombat_xp~
-REQUIRE_PREDICATE GAME_IS ~bgee~ ~BG1 EE is required.~
-REQUIRE_PREDICATE NOT GAME_INCLUDES ~sod~ ~SoD not supported.~
-
-WITH_SCOPE BEGIN
-    OUTER_SPRINT COMPONENT ~noncombat_xp~
     OUTER_SPRINT COMPONENT_FOLDER ~%src%/%COMPONENT%~
 
     ACTION_TIME ~%COMPONENT%~ BEGIN 
