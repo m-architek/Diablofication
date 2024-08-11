@@ -76,7 +76,7 @@
       <li><a href="#identification">Identification For All</a></li>
       <li><a href="#party-revive">Party Revive After Combat (Beta)</a></li>
       <li><a href="#character-respawn">Character Respawn (Beta)</a></li>
-      <li><a href="#party-xp">Party Size Not Change XP Progression (Beta)</a></li>
+      <li><a href="#party-xp">XP Progression Independent From Party Size (Beta)</a></li>
       <li><a href="#identified-ammo">Identified Ammunition</a></li>
       <li><a href="#spells-regen">Spells Regeneration (Beta)</a></li>
       <li><a href="#level1-hp">More HP on Level One</a></li>
@@ -109,7 +109,8 @@
     <h3 id="party-revive">Party Revive After Combat (Beta)</h3>
 
     <p>Makes all forms of death of all party members (including protagonist) temporary until the end of combat.
-      Game over occurs only when all characters have been eliminated.</p>
+      Game over occurs only when all characters have been eliminated.
+      Characters after revive will be fatigued and will require rest to gain full combat capabilities again.</p>
 
     <p><strong>Compatibility:</strong> This component should be installed after every mod that add new items or spells. 
       It is not compatible with “Death Cam” component of <a href="https://www.gibberlings3.net/mods/tweaks/tweaks/">Tweaks Anthology</a>.</p>
@@ -130,7 +131,7 @@
 
     <br />
 
-    <h3 id="party-xp">Party Size Not Change XP Progression (Beta)</h3>
+    <h3 id="party-xp">XP Progression Independent From Party Size (Beta)</h3>
 
     <p>Experience point rewards are splitted by maximum party size and distibuted equaly between current party members.
       This means members of smaller parties will no longer receive more experience from enemies, quests and dialogues.
@@ -280,10 +281,14 @@
 
     <h3 id="v0_8">v0.8</h3>
     <ul>
-      <li>Party Size Not Change XP Progression (Beta) for BG1 EE v2.6 (no SoD support).</li>
+      <li>XP Progression Independent From Party Size (Beta) for BG1 EE v2.6 (no SoD support).</li>
       <li>Identified Ammunition for BG1 EE v2.6 (no SoD support).</li>
-      <li>Party Revive After Combat (Beta): changed death to remove poison effect to avoid revive loop when character is poisoned.</li>
-      <li>Remove Non-Combat Experience is now dropped in favor of Party Size Not Affect XP Progression component.</li>
+      <li>Party Revive After Combat (Beta):</li>
+      <ul>
+        <li>changed death to remove poison effect to avoid revive loop when character is poisoned,</li>
+        <li>added fatigue modifier penalty to process of revive.</li>
+      </ul>
+      <li>Remove Non-Combat Experience is now dropped in favor of XP Progression Independent From Party Size component.</li>
     </ul>
 
     <h3 id="v0_7">v0.7</h3>

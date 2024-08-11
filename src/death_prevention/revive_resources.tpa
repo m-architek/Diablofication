@@ -63,6 +63,11 @@ BEGIN
             opcode = EFF_OPCODE_SET_SEQ
             parameter2 = 1 // Awake
             END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_FATIGUE_MODIFIER
+            parameter1 = 7
+            parameter2 = 0 // Cumulative Modifier
+            END
 END
 
 
@@ -100,6 +105,11 @@ BEGIN
             opcode = EFF_OPCODE_SET_SEQ
             parameter2 = 1 // Awake
             END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_FATIGUE_MODIFIER
+            parameter1 = 7
+            parameter2 = 0 // Cumulative Modifier
+            END
 END
 
 
@@ -132,5 +142,10 @@ BEGIN
         LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
             opcode = EFF_OPCODE_PLAY_SOUND
             STR_VAR resource = ~EFF_E02~
+            END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_FATIGUE_MODIFIER
+            parameter1 = 7
+            parameter2 = 0 // Cumulative Modifier
             END
 END
