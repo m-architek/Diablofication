@@ -1,0 +1,41 @@
+DEFINE_ACTION_FUNCTION APPLY_REVIVE_PENALTY
+    RET revive_penalty_spell
+BEGIN
+    LAF APPLY_REVIVE_PENALTY_GET_FATIGUE_MOD RET fatigue_mod END
+
+    OUTER_SPRINT revive_penalty_spell ~%RESREF_SPL_REVIVE_PENALTY%~
+
+    CREATE ~SPL~ ~%revive_penalty_spell%~
+        LPF ADD_SPL_ABILITY RET ability_index END
+        LPF ADD_SPL_ABILITY_EFFECT INT_VAR ability_index 
+            opcode = EFF_OPCODE_FATIGUE_MODIFIER
+            parameter1 = fatigue_mod
+            parameter2 = 0 // Cumulative Modifier
+            END
+END
+
+
+DEFINE_ACTION_FUNCTION APPLY_REVIVE_PENALTY_GET_FATIGUE_MOD
+    RET fatigue_mod
+BEGIN
+    COPY_EXISTING - ~fatigmod.2da~ ~~
+        CLEAR_ARRAY fatigmod
+        LPF READ_2DA_TABLE RET_ARRAY fatigmod = out END
+        BUT_ONLY 
+
+    OUTER_SET fatigue_mod = 0
+    OUTER_SET luck_mod = 0
+
+    ACTION_PHP_EACH fatigmod AS key => this_luck_mod BEGIN 
+        OUTER_SET this_fatigue_mod = ~%key_0%~
+        
+        ACTION_IF (
+                this_luck_mod < 0 
+                AND (luck_mod = 0 OR this_luck_mod >= luck_mod)
+                AND (fatigue_mod = 0 OR fatigue_mod < this_fatigue_mod)
+        ) BEGIN 
+            OUTER_SET fatigue_mod = this_fatigue_mod
+            OUTER_SET luck_mod = this_luck_mod
+        END
+    END
+END

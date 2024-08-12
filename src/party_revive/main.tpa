@@ -1,6 +1,7 @@
 INCLUDE ~%src%/death_prevention/lib.tpa~
 
 INCLUDE ~%COMPONENT_FOLDER%/resources.tpa~
+INCLUDE ~%COMPONENT_FOLDER%/revive_penalty.tpa~
 INCLUDE ~%COMPONENT_FOLDER%/party_revive.tpa~
 INCLUDE ~%COMPONENT_FOLDER%/companions_adjustments.tpa~
 INCLUDE ~%COMPONENT_FOLDER%/death_reactions.tpa~
@@ -29,6 +30,10 @@ LAF APPLY_DEATH_PREVENTION
         revive_cooldown_timer 
     END
 
+LAF APPLY_REVIVE_PENALTY
+    RET revive_penalty_spell
+    END
+
 LAF APPLY_PARTY_REVIVE 
     STR_VAR death_state_variable
             petrification_state_variable
@@ -36,6 +41,7 @@ LAF APPLY_PARTY_REVIVE
             revive_death_spell
             revive_petrification_spell
             revive_imprisonment_spell
+            revive_penalty_spell
             revive_cooldown_timer
     END
 

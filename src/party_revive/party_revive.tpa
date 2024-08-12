@@ -5,6 +5,7 @@ DEFINE_ACTION_FUNCTION APPLY_PARTY_REVIVE
             revive_death_spell = 0
             revive_petrification_spell = 0
             revive_imprisonment_spell = 0
+            revive_penalty_spell = 0
             revive_cooldown_timer = 0
 BEGIN 
     <<<<<<<< .../party_revive.baf
@@ -17,6 +18,7 @@ BEGIN
     THEN
         RESPONSE #100
             ApplySpellRES("%revive_death_spell%", %player%)
+            ApplySpellRES("%revive_penalty_spell%", %player%)
     END
 
     IF
@@ -28,6 +30,7 @@ BEGIN
     THEN
         RESPONSE #100
             ApplySpellRES("%revive_petrification_spell%", %player%)
+            ApplySpellRES("%revive_penalty_spell%", %player%)
     END
 
     IF
@@ -39,6 +42,7 @@ BEGIN
     THEN
         RESPONSE #100
             ApplySpellRES("%revive_imprisonment_spell%", %player%)
+            ApplySpellRES("%revive_penalty_spell%", %player%)
     END
     >>>>>>>>
 
